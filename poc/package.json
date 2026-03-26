@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
+    "start": "npx serve .",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -11,5 +12,8 @@
   "description": "",
   "dependencies": {
     "@ruffle-rs/ruffle": "^0.2.0-nightly.2026.3.26"
+  },
+  "devDependencies": {
+    "serve": "^14.2.6"
   }
 }
