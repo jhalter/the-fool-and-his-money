@@ -1,0 +1,193 @@
+global cActiveSN, cHelpSN, pHelp, currPuzzle, directToScreenHelp, cFinale, playMode, pmZero, pmPlay, pmHelp, pmClick, pmSave, pmActivate
+
+on help_Init
+  [  0] pushzero ................................ <0>
+  [  1] setglobal 514 ........................... directToScreenHelp = 0
+  [  4] getglobal 265 ........................... <cHelpSN>
+  [  7] pusharglistnoret 1 ...................... <cHelpSN>
+  [  9] extcall 413 ............................. _Set_DirectorInControl(cHelpSN)
+  [ 12] getglobal 265 ........................... <cHelpSN>
+  [ 15] pushzero ................................ <0>
+  [ 16] pusharglistnoret 2 ...................... <cHelpSN, 0>
+  [ 18] extcall 397 ............................. misc_VisStaticSprite(cHelpSN, 0)
+  [ 21] getglobal 265 ........................... <cHelpSN>
+  [ 24] pusharglist 1 ........................... <cHelpSN>
+  [ 26] extcall 429 ............................. <sprite(cHelpSN)>
+  [ 29] pushint16 402 ........................... <402>
+  [ 32] setobjprop 445 .......................... sprite(cHelpSN).locH = 402
+  [ 35] getglobal 265 ........................... <cHelpSN>
+  [ 38] pusharglist 1 ........................... <cHelpSN>
+  [ 40] extcall 429 ............................. <sprite(cHelpSN)>
+  [ 43] pushint16 472 ........................... <472>
+  [ 46] setobjprop 447 .......................... sprite(cHelpSN).locV = 472
+  [ 49] ret
+end
+
+on help_Show
+  [  0] pushint8 1 .............................. <1>
+  [  2] pusharglistnoret 1 ...................... <1>
+  [  4] extcall 443 ............................. arrow_F_Show(1)
+  [  7] pushint8 1 .............................. <1>
+  [  9] pusharglistnoret 1 ...................... <1>
+  [ 11] extcall 444 ............................. arrow_R_Show(1)
+  [ 14] getglobal 102 ........................... <pmHelp>
+  [ 16] setglobal 45 ............................ playMode = pmHelp
+  [ 18] getglobal 265 ........................... <cHelpSN>
+  [ 21] pusharglistnoret 1 ...................... <cHelpSN>
+  [ 23] extcall 413 ............................. _Set_DirectorInControl(cHelpSN)
+  [ 26] getglobal 48 ............................ <cActiveSN>
+  [ 28] pusharglist 1 ........................... <cActiveSN>
+  [ 30] extcall 429 ............................. <sprite(cActiveSN)>
+  [ 33] pushcons 0 .............................. <"gHelpInProgress">
+  [ 35] pushcons 1 .............................. <"1">
+  [ 37] pusharglistnoret 3 ...................... <sprite(cActiveSN), "gHelpInProgress", "1">
+  [ 39] objcall 439 ............................. sprite(cActiveSN).setVariable("gHelpInProgress", "1")
+  [ 42] getglobal 265 ........................... <cHelpSN>
+  [ 45] pusharglist 1 ........................... <cHelpSN>
+  [ 47] extcall 429 ............................. <sprite(cHelpSN)>
+  [ 50] pushcons 0 .............................. <"gHelpInProgress">
+  [ 52] pushcons 1 .............................. <"1">
+  [ 54] pusharglistnoret 3 ...................... <sprite(cHelpSN), "gHelpInProgress", "1">
+  [ 56] objcall 439 ............................. sprite(cHelpSN).setVariable("gHelpInProgress", "1")
+  [ 59] getglobal 48 ............................ <cActiveSN>
+  [ 61] pusharglist 1 ........................... <cActiveSN>
+  [ 63] extcall 429 ............................. <sprite(cActiveSN)>
+  [ 66] getobjprop 446 .......................... <sprite(cActiveSN).height>
+  [ 69] pushint16 580 ........................... <580>
+  [ 72] eq ...................................... <sprite(cActiveSN).height = 580>
+  [ 73] jmpifz [ 93] ............................ if sprite(cActiveSN).height = 580 then
+  [ 76] pushint8 1 .............................. <1>
+  [ 78] pusharglist 1 ........................... <1>
+  [ 80] extcall 429 ............................. <sprite(1)>
+  [ 83] pushzero ................................ <0>
+  [ 84] setobjprop 458 .......................... sprite(1).directToStage = 0
+  [ 87] pushint16 666 ........................... <666>
+  [ 90] setglobal 514 ........................... directToScreenHelp = 666
+  [ 93] pushcons 2 .............................. <"gFlashCommand">
+  [ 95] pushint8 5 .............................. <5>
+  [ 97] pusharglistnoret 2 ...................... <"gFlashCommand", 5>
+  [ 99] extcall 51 .............................. misc_SetFlash("gFlashCommand", 5)
+  [101] getglobal 101 ........................... <pHelp>
+  [103] getglobal 24 ............................ <currPuzzle>
+  [105] pusharglist 2 ........................... <pHelp, currPuzzle>
+  [107] objcall 17 .............................. <pHelp[currPuzzle]>
+  [109] pushcons 3 .............................. <"/">
+  [111] containsstr ............................. <pHelp[currPuzzle] contains "/">
+  [112] jmpifz [159] ............................ if pHelp[currPuzzle] contains "/" then / else
+  [115] getglobal 265 ........................... <cHelpSN>
+  [118] pusharglist 1 ........................... <cHelpSN>
+  [120] extcall 429 ............................. <sprite(cHelpSN)>
+  [123] pushcons 4 .............................. <"chunkHelp">
+  [125] getglobal 101 ........................... <pHelp>
+  [127] getglobal 24 ............................ <currPuzzle>
+  [129] pusharglist 2 ........................... <pHelp, currPuzzle>
+  [131] objcall 17 .............................. <pHelp[currPuzzle]>
+  [133] pusharglistnoret 3 ...................... <sprite(cHelpSN), "chunkHelp", pHelp[currPuzzle]>
+  [135] objcall 439 ............................. sprite(cHelpSN).setVariable("chunkHelp", pHelp[currPuzzle])
+  [138] getglobal 265 ........................... <cHelpSN>
+  [141] pusharglistnoret 1 ...................... <cHelpSN>
+  [143] extcall 399 ............................. misc_CallSprite(cHelpSN)
+  [146] getglobal 265 ........................... <cHelpSN>
+  [149] pushint8 1 .............................. <1>
+  [151] pusharglistnoret 2 ...................... <cHelpSN, 1>
+  [153] extcall 397 ............................. misc_VisStaticSprite(cHelpSN, 1)
+  [156] jmp [174]
+  [159] pushcons 5 .............................. <"Help -">
+  [161] getglobal 101 ........................... <pHelp>
+  [163] getglobal 24 ............................ <currPuzzle>
+  [165] pusharglist 2 ........................... <pHelp, currPuzzle>
+  [167] objcall 17 .............................. <pHelp[currPuzzle]>
+  [169] joinpadstr .............................. <"Help -" && pHelp[currPuzzle]>
+  [170] pusharglistnoret 1 ...................... <"Help -" && pHelp[currPuzzle]>
+  [172] extcall 174 ............................. _PUT("Help -" && pHelp[currPuzzle])
+  [174] pushint8 5 .............................. <5>
+  [176] pusharglistnoret 1 ...................... <5>
+  [178] extcall 41 .............................. misc_ClearQueue(5)
+  [180] ret
+end
+
+on help_Hide
+  [  0] getglobal 265 ........................... <cHelpSN>
+  [  3] pusharglistnoret 1 ...................... <cHelpSN>
+  [  5] extcall 413 ............................. _Set_DirectorInControl(cHelpSN)
+  [  8] getglobal 48 ............................ <cActiveSN>
+  [ 10] pusharglist 1 ........................... <cActiveSN>
+  [ 12] extcall 429 ............................. <sprite(cActiveSN)>
+  [ 15] pushcons 0 .............................. <"gHelpInProgress">
+  [ 17] pushcons 6 .............................. <"0">
+  [ 19] pusharglistnoret 3 ...................... <sprite(cActiveSN), "gHelpInProgress", "0">
+  [ 21] objcall 439 ............................. sprite(cActiveSN).setVariable("gHelpInProgress", "0")
+  [ 24] getglobal 265 ........................... <cHelpSN>
+  [ 27] pusharglist 1 ........................... <cHelpSN>
+  [ 29] extcall 429 ............................. <sprite(cHelpSN)>
+  [ 32] pushcons 0 .............................. <"gHelpInProgress">
+  [ 34] pushcons 6 .............................. <"0">
+  [ 36] pusharglistnoret 3 ...................... <sprite(cHelpSN), "gHelpInProgress", "0">
+  [ 38] objcall 439 ............................. sprite(cHelpSN).setVariable("gHelpInProgress", "0")
+  [ 41] getglobal 265 ........................... <cHelpSN>
+  [ 44] pushzero ................................ <0>
+  [ 45] pusharglistnoret 2 ...................... <cHelpSN, 0>
+  [ 47] extcall 397 ............................. misc_VisStaticSprite(cHelpSN, 0)
+  [ 50] pushint8 5 .............................. <5>
+  [ 52] pusharglistnoret 1 ...................... <5>
+  [ 54] extcall 41 .............................. misc_ClearQueue(5)
+  [ 56] pushzero ................................ <0>
+  [ 57] pusharglistnoret 1 ...................... <0>
+  [ 59] extcall 243 ............................. menu_Display(0)
+  [ 61] gettoplevelprop 14 ...................... <_movie>
+  [ 63] pusharglist 1 ........................... <_movie>
+  [ 65] objcall 56 .............................. <_movie.rollover()>
+  [ 67] getglobal 265 ........................... <cHelpSN>
+  [ 70] eq ...................................... <_movie.rollover() = cHelpSN>
+  [ 71] jmpifz [ 89] ............................ if _movie.rollover() = cHelpSN then / else
+  [ 74] gettoplevelprop 62 ...................... <_mouse>
+  [ 76] getobjprop 63 ........................... <_mouse.mouseH>
+  [ 78] gettoplevelprop 62 ...................... <_mouse>
+  [ 80] getobjprop 64 ........................... <_mouse.mouseV>
+  [ 82] pusharglistnoret 2 ...................... <_mouse.mouseH, _mouse.mouseV>
+  [ 84] extcall 61 .............................. menu_MouseOver(_mouse.mouseH, _mouse.mouseV)
+  [ 86] jmp [ 93]
+  [ 89] pusharglistnoret 0 ...................... <>
+  [ 91] extcall 66 .............................. menu_ExitDisplay()
+  [ 93] getglobal 514 ........................... <directToScreenHelp>
+  [ 96] pushint16 666 ........................... <666>
+  [ 99] eq ...................................... <directToScreenHelp = 666>
+  [100] jmpifz [111] ............................ if directToScreenHelp = 666 then / else
+  [103] pushint8 5 .............................. <5>
+  [105] setglobal 514 ........................... directToScreenHelp = 5
+  [108] jmp [115]
+  [111] getglobal 46 ............................ <pmPlay>
+  [113] setglobal 45 ............................ playMode = pmPlay
+  [115] ret
+end
+
+on help_RefreshAfterClose
+  [  0] getglobal 48 ............................ <cActiveSN>
+  [  2] pusharglist 1 ........................... <cActiveSN>
+  [  4] extcall 429 ............................. <sprite(cActiveSN)>
+  [  7] getobjprop 458 .......................... <sprite(cActiveSN).directToStage>
+  [ 10] pushzero ................................ <0>
+  [ 11] eq ...................................... <sprite(cActiveSN).directToStage = 0>
+  [ 12] jmpifz [ 60] ............................ if sprite(cActiveSN).directToStage = 0 then
+  [ 15] getglobal 514 ........................... <directToScreenHelp>
+  [ 18] pushzero ................................ <0>
+  [ 19] eq ...................................... <directToScreenHelp = 0>
+  [ 20] jmpifz [ 42] ............................ if directToScreenHelp = 0 then / else
+  [ 23] getglobal 48 ............................ <cActiveSN>
+  [ 25] pusharglist 1 ........................... <cActiveSN>
+  [ 27] extcall 429 ............................. <sprite(cActiveSN)>
+  [ 30] pushint8 1 .............................. <1>
+  [ 32] setobjprop 458 .......................... sprite(cActiveSN).directToStage = 1
+  [ 35] getglobal 46 ............................ <pmPlay>
+  [ 37] setglobal 45 ............................ playMode = pmPlay
+  [ 39] jmp [ 60]
+  [ 42] getglobal 514 ........................... <directToScreenHelp>
+  [ 45] pushint8 5 .............................. <5>
+  [ 47] lteq .................................... <directToScreenHelp <= 5>
+  [ 48] jmpifz [ 60] ............................ if directToScreenHelp <= 5 then
+  [ 51] getglobal 514 ........................... <directToScreenHelp>
+  [ 54] pushint8 1 .............................. <1>
+  [ 56] sub ..................................... <directToScreenHelp - 1>
+  [ 57] setglobal 514 ........................... directToScreenHelp = directToScreenHelp - 1
+  [ 60] ret
+end

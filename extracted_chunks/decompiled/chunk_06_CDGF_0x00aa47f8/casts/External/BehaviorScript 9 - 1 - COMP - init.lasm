@@ -1,0 +1,11 @@
+on prepareFrame
+  [  0] pusharglistnoret 0 ...................... <>
+  [  2] extcall 4 ............................... comp_Main_PrepareInit()
+  [  4] ret
+end
+
+on exitFrame
+  [  0] pusharglistnoret 0 ...................... <>
+  [  2] extcall 5 ............................... comp_Main_ExitInit()
+  [  4] ret
+end

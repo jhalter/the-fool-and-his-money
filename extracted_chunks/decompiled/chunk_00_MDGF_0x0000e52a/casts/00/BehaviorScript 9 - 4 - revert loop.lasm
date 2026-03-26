@@ -1,0 +1,19 @@
+global fName, cOpenGameNum
+
+on exitFrame
+  [  0] getglobal 6 ............................. <fName>
+  [  2] getglobal 7 ............................. <cOpenGameNum>
+  [  4] pusharglist 2 ........................... <fName, cOpenGameNum>
+  [  6] objcall 8 ............................... <fName[cOpenGameNum]>
+  [  8] pushcons 0 .............................. <EMPTY>
+  [ 10] nteq .................................... <fName[cOpenGameNum] <> EMPTY>
+  [ 11] jmpifz [ 18] ............................ if fName[cOpenGameNum] <> EMPTY then
+  [ 14] pusharglistnoret 0 ...................... <>
+  [ 16] extcall 9 ............................... xferFoolFileCliff()
+  [ 18] gettoplevelprop 10 ...................... <_movie>
+  [ 20] gettoplevelprop 10 ...................... <_movie>
+  [ 22] getobjprop 11 ........................... <_movie.frame>
+  [ 24] pusharglistnoret 2 ...................... <_movie, _movie.frame>
+  [ 26] objcall 12 .............................. _movie.go(_movie.frame)
+  [ 28] ret
+end

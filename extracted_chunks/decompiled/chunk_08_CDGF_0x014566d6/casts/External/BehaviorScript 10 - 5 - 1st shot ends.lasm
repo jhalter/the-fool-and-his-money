@@ -1,0 +1,5 @@
+on exitFrame
+  [  0] pusharglistnoret 0 ...................... <>
+  [  2] extcall 11 .............................. pro_Play_5()
+  [  4] ret
+end

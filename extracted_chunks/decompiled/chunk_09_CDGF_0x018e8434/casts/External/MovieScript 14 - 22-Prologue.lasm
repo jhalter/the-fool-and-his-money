@@ -1,0 +1,482 @@
+global cPrologue, cGameMenus, cActiveSN, c_Interface_Mode, currRollOver, lastRollOver, currMenuDisplay, currPuzzle, pStat, playMode, pmZero, pmPlay, pmHelp, pmClick, pmSave, pmDeActivate, pmActivate
+
+on pro_Play_1
+  [  0] pushcons 0 .............................. <"The Prologue">
+  [  2] pusharglistnoret 1 ...................... <"The Prologue">
+  [  4] extcall 26 .............................. init_Window_Title("The Prologue")
+  [  6] pusharglistnoret 0 ...................... <>
+  [  8] extcall 402 ............................. misc_HidePuzzleSprites()
+  [ 11] pusharglistnoret 0 ...................... <>
+  [ 13] localcall 8 ............................. pro_Interface()
+  [ 15] gettoplevelprop 81 ...................... <_player>
+  [ 17] pushint8 1 .............................. <1>
+  [ 19] inv ..................................... <-1>
+  [ 20] pusharglistnoret 2 ...................... <_player, -1>
+  [ 22] objcall 83 .............................. _player.cursor(-1)
+  [ 24] getglobal 91 ............................ <pmZero>
+  [ 26] setglobal 45 ............................ playMode = pmZero
+  [ 28] pushzero ................................ <0>
+  [ 29] setglobal 55 ............................ currRollOver = 0
+  [ 31] pushzero ................................ <0>
+  [ 32] setglobal 65 ............................ lastRollOver = 0
+  [ 34] pushzero ................................ <0>
+  [ 35] setglobal 96 ............................ currMenuDisplay = 0
+  [ 37] pusharglistnoret 0 ...................... <>
+  [ 39] extcall 405 ............................. noCommandKeys()
+  [ 42] pushzero ................................ <0>
+  [ 43] pusharglistnoret 1 ...................... <0>
+  [ 45] extcall 41 .............................. misc_ClearQueue(0)
+  [ 47] pushint8 1 .............................. <1>
+  [ 49] pusharglistnoret 1 ...................... <1>
+  [ 51] extcall 47 .............................. setDirectToStage(1)
+  [ 53] pushint8 1 .............................. <1>
+  [ 55] pushint8 65 ............................. <65>
+  [ 57] pusharglistnoret 2 ...................... <1, 65>
+  [ 59] extcall 412 ............................. misc_SetFlashVolume(1, 65)
+  [ 62] pushint8 1 .............................. <1>
+  [ 64] pusharglist 1 ........................... <1>
+  [ 66] extcall 429 ............................. <sprite(1)>
+  [ 69] pushint8 1 .............................. <1>
+  [ 71] pusharglistnoret 2 ...................... <sprite(1), 1>
+  [ 73] objcall 430 ............................. sprite(1).goToFrame(1)
+  [ 76] pushint8 1 .............................. <1>
+  [ 78] pusharglist 1 ........................... <1>
+  [ 80] extcall 429 ............................. <sprite(1)>
+  [ 83] pushint8 1 .............................. <1>
+  [ 85] setobjprop 434 .......................... sprite(1).visible = 1
+  [ 88] pushint8 1 .............................. <1>
+  [ 90] pusharglist 1 ........................... <1>
+  [ 92] extcall 429 ............................. <sprite(1)>
+  [ 95] pusharglistnoret 1 ...................... <sprite(1)>
+  [ 97] objcall 431 ............................. sprite(1).stop()
+  [100] pushint8 2 .............................. <2>
+  [102] pushint8 65 ............................. <65>
+  [104] pusharglistnoret 2 ...................... <2, 65>
+  [106] extcall 412 ............................. misc_SetFlashVolume(2, 65)
+  [109] pushint8 2 .............................. <2>
+  [111] pusharglist 1 ........................... <2>
+  [113] extcall 429 ............................. <sprite(2)>
+  [116] pushint8 1 .............................. <1>
+  [118] pusharglistnoret 2 ...................... <sprite(2), 1>
+  [120] objcall 430 ............................. sprite(2).goToFrame(1)
+  [123] pushint8 2 .............................. <2>
+  [125] pusharglist 1 ........................... <2>
+  [127] extcall 429 ............................. <sprite(2)>
+  [130] pushint8 1 .............................. <1>
+  [132] setobjprop 434 .......................... sprite(2).visible = 1
+  [135] pushint8 2 .............................. <2>
+  [137] pusharglist 1 ........................... <2>
+  [139] extcall 429 ............................. <sprite(2)>
+  [142] pusharglistnoret 1 ...................... <sprite(2)>
+  [144] objcall 540 ............................. sprite(2).play()
+  [147] ret
+end
+
+on pro_Play_2
+  [  0] getglobal 45 ............................ <playMode>
+  [  2] peek 0 .................................. case playMode of
+  [  4] getglobal 75 ............................ <pmDeActivate>
+  [  6] eq
+  [  7] jmpifz [ 17] ............................ (case) pmDeActivate:
+  [ 10] pusharglistnoret 0 ...................... <>
+  [ 12] localcall 11 ............................ pro_DeActivate()
+  [ 14] jmp [ 60] ............................... (case) otherwise:
+  [ 17] pushint8 2 .............................. <2>
+  [ 19] setglobal 48 ............................ cActiveSN = 2
+  [ 21] pushcons 1 .............................. <"prologueCue">
+  [ 23] pushint8 1 .............................. <1>
+  [ 25] pusharglist 2 ........................... <"prologueCue", 1>
+  [ 27] extcall 43 .............................. <misc_GetFlash("prologueCue", 1)>
+  [ 29] pushint8 1 .............................. <1>
+  [ 31] eq ...................................... <misc_GetFlash("prologueCue", 1) = 1>
+  [ 32] jmpifz [ 50] ............................ if misc_GetFlash("prologueCue", 1) = 1 then / else
+  [ 35] pushint8 1 .............................. <1>
+  [ 37] pusharglist 1 ........................... <1>
+  [ 39] extcall 429 ............................. <sprite(1)>
+  [ 42] pusharglistnoret 1 ...................... <sprite(1)>
+  [ 44] objcall 540 ............................. sprite(1).play()
+  [ 47] jmp [ 60]
+  [ 50] gettoplevelprop 14 ...................... <_movie>
+  [ 52] gettoplevelprop 14 ...................... <_movie>
+  [ 54] getobjprop 44 ........................... <_movie.frame>
+  [ 56] pusharglistnoret 2 ...................... <_movie, _movie.frame>
+  [ 58] objcall 18 .............................. _movie.go(_movie.frame)
+  [ 60] pop 1 ................................... end case
+  [ 62] ret
+end
+
+on pro_Play_3
+  [  0] getglobal 45 ............................ <playMode>
+  [  2] peek 0 .................................. case playMode of
+  [  4] getglobal 75 ............................ <pmDeActivate>
+  [  6] eq
+  [  7] jmpifz [ 17] ............................ (case) pmDeActivate:
+  [ 10] pusharglistnoret 0 ...................... <>
+  [ 12] localcall 11 ............................ pro_DeActivate()
+  [ 14] jmp [ 78] ............................... (case) otherwise:
+  [ 17] pushint8 1 .............................. <1>
+  [ 19] setglobal 48 ............................ cActiveSN = 1
+  [ 21] pushcons 1 .............................. <"prologueCue">
+  [ 23] pushint8 1 .............................. <1>
+  [ 25] pusharglist 2 ........................... <"prologueCue", 1>
+  [ 27] extcall 43 .............................. <misc_GetFlash("prologueCue", 1)>
+  [ 29] pushint8 2 .............................. <2>
+  [ 31] eq ...................................... <misc_GetFlash("prologueCue", 1) = 2>
+  [ 32] jmpifz [ 68] ............................ if misc_GetFlash("prologueCue", 1) = 2 then / else
+  [ 35] pushint8 1 .............................. <1>
+  [ 37] pusharglist 1 ........................... <1>
+  [ 39] extcall 429 ............................. <sprite(1)>
+  [ 42] pushzero ................................ <0>
+  [ 43] setobjprop 434 .......................... sprite(1).visible = 0
+  [ 46] pushint8 2 .............................. <2>
+  [ 48] pusharglist 1 ........................... <2>
+  [ 50] extcall 429 ............................. <sprite(2)>
+  [ 53] pushzero ................................ <0>
+  [ 54] setobjprop 434 .......................... sprite(2).visible = 0
+  [ 57] gettoplevelprop 14 ...................... <_movie>
+  [ 59] pushcons 2 .............................. <"PRO-2">
+  [ 61] pusharglistnoret 2 ...................... <_movie, "PRO-2">
+  [ 63] objcall 18 .............................. _movie.go("PRO-2")
+  [ 65] jmp [ 78]
+  [ 68] gettoplevelprop 14 ...................... <_movie>
+  [ 70] gettoplevelprop 14 ...................... <_movie>
+  [ 72] getobjprop 44 ........................... <_movie.frame>
+  [ 74] pusharglistnoret 2 ...................... <_movie, _movie.frame>
+  [ 76] objcall 18 .............................. _movie.go(_movie.frame)
+  [ 78] pop 1 ................................... end case
+  [ 80] ret
+end
+
+on pro_Play_4
+  [  0] getglobal 45 ............................ <playMode>
+  [  2] peek 0 .................................. case playMode of
+  [  4] getglobal 75 ............................ <pmDeActivate>
+  [  6] eq
+  [  7] jmpifz [ 17] ............................ (case) pmDeActivate:
+  [ 10] pusharglistnoret 0 ...................... <>
+  [ 12] localcall 11 ............................ pro_DeActivate()
+  [ 14] jmp [141] ............................... (case) otherwise:
+  [ 17] pushint8 1 .............................. <1>
+  [ 19] pusharglistnoret 1 ...................... <1>
+  [ 21] extcall 47 .............................. setDirectToStage(1)
+  [ 23] pushint8 1 .............................. <1>
+  [ 25] setglobal 48 ............................ cActiveSN = 1
+  [ 27] pushcons 1 .............................. <"prologueCue">
+  [ 29] pushint8 1 .............................. <1>
+  [ 31] pusharglist 2 ........................... <"prologueCue", 1>
+  [ 33] extcall 43 .............................. <misc_GetFlash("prologueCue", 1)>
+  [ 35] pushint8 1 .............................. <1>
+  [ 37] eq ...................................... <misc_GetFlash("prologueCue", 1) = 1>
+  [ 38] jmpifz [ 96] ............................ if misc_GetFlash("prologueCue", 1) = 1 then
+  [ 41] pushint8 1 .............................. <1>
+  [ 43] pushint8 60 ............................. <60>
+  [ 45] pusharglistnoret 2 ...................... <1, 60>
+  [ 47] extcall 412 ............................. misc_SetFlashVolume(1, 60)
+  [ 50] pushint8 1 .............................. <1>
+  [ 52] pusharglist 1 ........................... <1>
+  [ 54] extcall 429 ............................. <sprite(1)>
+  [ 57] pushint8 1 .............................. <1>
+  [ 59] setobjprop 434 .......................... sprite(1).visible = 1
+  [ 62] pushint8 1 .............................. <1>
+  [ 64] pusharglist 1 ........................... <1>
+  [ 66] extcall 429 ............................. <sprite(1)>
+  [ 69] pushint8 1 .............................. <1>
+  [ 71] pusharglistnoret 2 ...................... <sprite(1), 1>
+  [ 73] objcall 430 ............................. sprite(1).goToFrame(1)
+  [ 76] pushint8 1 .............................. <1>
+  [ 78] pusharglist 1 ........................... <1>
+  [ 80] extcall 429 ............................. <sprite(1)>
+  [ 83] pusharglistnoret 1 ...................... <sprite(1)>
+  [ 85] objcall 540 ............................. sprite(1).play()
+  [ 88] pushcons 1 .............................. <"prologueCue">
+  [ 90] pushint8 2 .............................. <2>
+  [ 92] pusharglistnoret 2 ...................... <"prologueCue", 2>
+  [ 94] extcall 51 .............................. misc_SetFlash("prologueCue", 2)
+  [ 96] pushcons 1 .............................. <"prologueCue">
+  [ 98] pushint8 1 .............................. <1>
+  [100] pusharglist 2 ........................... <"prologueCue", 1>
+  [102] extcall 43 .............................. <misc_GetFlash("prologueCue", 1)>
+  [104] pushint8 3 .............................. <3>
+  [106] eq ...................................... <misc_GetFlash("prologueCue", 1) = 3>
+  [107] jmpifz [131] ............................ if misc_GetFlash("prologueCue", 1) = 3 then
+  [110] pushint8 2 .............................. <2>
+  [112] pushzero ................................ <0>
+  [113] pusharglistnoret 2 ...................... <2, 0>
+  [115] extcall 412 ............................. misc_SetFlashVolume(2, 0)
+  [118] pushint8 2 .............................. <2>
+  [120] pusharglist 1 ........................... <2>
+  [122] extcall 429 ............................. <sprite(2)>
+  [125] pushint8 1 .............................. <1>
+  [127] setobjprop 434 .......................... sprite(2).visible = 1
+  [130] ret ..................................... exit
+  [131] gettoplevelprop 14 ...................... <_movie>
+  [133] gettoplevelprop 14 ...................... <_movie>
+  [135] getobjprop 44 ........................... <_movie.frame>
+  [137] pusharglistnoret 2 ...................... <_movie, _movie.frame>
+  [139] objcall 18 .............................. _movie.go(_movie.frame)
+  [141] pop 1 ................................... end case
+  [143] ret
+end
+
+on pro_Play_5
+  [  0] getglobal 45 ............................ <playMode>
+  [  2] peek 0 .................................. case playMode of
+  [  4] getglobal 75 ............................ <pmDeActivate>
+  [  6] eq
+  [  7] jmpifz [ 17] ............................ (case) pmDeActivate:
+  [ 10] pusharglistnoret 0 ...................... <>
+  [ 12] localcall 11 ............................ pro_DeActivate()
+  [ 14] jmp [105] ............................... (case) otherwise:
+  [ 17] pushint8 1 .............................. <1>
+  [ 19] setglobal 48 ............................ cActiveSN = 1
+  [ 21] pushcons 1 .............................. <"prologueCue">
+  [ 23] pushint8 1 .............................. <1>
+  [ 25] pusharglist 2 ........................... <"prologueCue", 1>
+  [ 27] extcall 43 .............................. <misc_GetFlash("prologueCue", 1)>
+  [ 29] pushint8 4 .............................. <4>
+  [ 31] eq ...................................... <misc_GetFlash("prologueCue", 1) = 4>
+  [ 32] jmpifz [ 95] ............................ if misc_GetFlash("prologueCue", 1) = 4 then / else
+  [ 35] pushint8 2 .............................. <2>
+  [ 37] pusharglist 1 ........................... <2>
+  [ 39] extcall 429 ............................. <sprite(2)>
+  [ 42] pushcons 3 .............................. <"dim1">
+  [ 44] pushsymb 434 ............................ <#visible>
+  [ 47] pushint8 1 .............................. <1>
+  [ 49] pusharglistnoret 4 ...................... <sprite(2), "dim1", #visible, 1>
+  [ 51] objcall 541 ............................. sprite(2).setFlashProperty("dim1", #visible, 1)
+  [ 54] pushint8 2 .............................. <2>
+  [ 56] pusharglist 1 ........................... <2>
+  [ 58] extcall 429 ............................. <sprite(2)>
+  [ 61] pushcons 4 .............................. <"dim2">
+  [ 63] pushsymb 434 ............................ <#visible>
+  [ 66] pushint8 1 .............................. <1>
+  [ 68] pusharglistnoret 4 ...................... <sprite(2), "dim2", #visible, 1>
+  [ 70] objcall 541 ............................. sprite(2).setFlashProperty("dim2", #visible, 1)
+  [ 73] pushint8 2 .............................. <2>
+  [ 75] pusharglist 1 ........................... <2>
+  [ 77] extcall 429 ............................. <sprite(2)>
+  [ 80] pushcons 5 .............................. <"dim3">
+  [ 82] pushsymb 434 ............................ <#visible>
+  [ 85] pushint8 1 .............................. <1>
+  [ 87] pusharglistnoret 4 ...................... <sprite(2), "dim3", #visible, 1>
+  [ 89] objcall 541 ............................. sprite(2).setFlashProperty("dim3", #visible, 1)
+  [ 92] jmp [105]
+  [ 95] gettoplevelprop 14 ...................... <_movie>
+  [ 97] gettoplevelprop 14 ...................... <_movie>
+  [ 99] getobjprop 44 ........................... <_movie.frame>
+  [101] pusharglistnoret 2 ...................... <_movie, _movie.frame>
+  [103] objcall 18 .............................. _movie.go(_movie.frame)
+  [105] pop 1 ................................... end case
+  [107] ret
+end
+
+on pro_Play_6
+  [  0] getglobal 45 ............................ <playMode>
+  [  2] peek 0 .................................. case playMode of
+  [  4] getglobal 75 ............................ <pmDeActivate>
+  [  6] eq
+  [  7] jmpifz [ 17] ............................ (case) pmDeActivate:
+  [ 10] pusharglistnoret 0 ...................... <>
+  [ 12] localcall 11 ............................ pro_DeActivate()
+  [ 14] jmp [102] ............................... (case) otherwise:
+  [ 17] pushint8 1 .............................. <1>
+  [ 19] setglobal 48 ............................ cActiveSN = 1
+  [ 21] pushcons 1 .............................. <"prologueCue">
+  [ 23] pushint8 1 .............................. <1>
+  [ 25] pusharglist 2 ........................... <"prologueCue", 1>
+  [ 27] extcall 43 .............................. <misc_GetFlash("prologueCue", 1)>
+  [ 29] pushint8 5 .............................. <5>
+  [ 31] eq ...................................... <misc_GetFlash("prologueCue", 1) = 5>
+  [ 32] jmpifz [ 92] ............................ if misc_GetFlash("prologueCue", 1) = 5 then / else
+  [ 35] pushint8 2 .............................. <2>
+  [ 37] pusharglist 1 ........................... <2>
+  [ 39] extcall 429 ............................. <sprite(2)>
+  [ 42] pushcons 4 .............................. <"dim2">
+  [ 44] pushsymb 434 ............................ <#visible>
+  [ 47] pushzero ................................ <0>
+  [ 48] pusharglistnoret 4 ...................... <sprite(2), "dim2", #visible, 0>
+  [ 50] objcall 541 ............................. sprite(2).setFlashProperty("dim2", #visible, 0)
+  [ 53] pushint8 2 .............................. <2>
+  [ 55] pusharglist 1 ........................... <2>
+  [ 57] extcall 429 ............................. <sprite(2)>
+  [ 60] pushcons 6 .............................. <"and1">
+  [ 62] pushsymb 434 ............................ <#visible>
+  [ 65] pushzero ................................ <0>
+  [ 66] pusharglistnoret 4 ...................... <sprite(2), "and1", #visible, 0>
+  [ 68] objcall 541 ............................. sprite(2).setFlashProperty("and1", #visible, 0)
+  [ 71] pushint8 2 .............................. <2>
+  [ 73] pusharglist 1 ........................... <2>
+  [ 75] extcall 429 ............................. <sprite(2)>
+  [ 78] pushcons 7 .............................. <"and2">
+  [ 80] pushsymb 434 ............................ <#visible>
+  [ 83] pushzero ................................ <0>
+  [ 84] pusharglistnoret 4 ...................... <sprite(2), "and2", #visible, 0>
+  [ 86] objcall 541 ............................. sprite(2).setFlashProperty("and2", #visible, 0)
+  [ 89] jmp [102]
+  [ 92] gettoplevelprop 14 ...................... <_movie>
+  [ 94] gettoplevelprop 14 ...................... <_movie>
+  [ 96] getobjprop 44 ........................... <_movie.frame>
+  [ 98] pusharglistnoret 2 ...................... <_movie, _movie.frame>
+  [100] objcall 18 .............................. _movie.go(_movie.frame)
+  [102] pop 1 ................................... end case
+  [104] ret
+end
+
+on pro_Play_7
+  [  0] getglobal 45 ............................ <playMode>
+  [  2] peek 0 .................................. case playMode of
+  [  4] getglobal 75 ............................ <pmDeActivate>
+  [  6] eq
+  [  7] jmpifz [ 17] ............................ (case) pmDeActivate:
+  [ 10] pusharglistnoret 0 ...................... <>
+  [ 12] localcall 11 ............................ pro_DeActivate()
+  [ 14] jmp [ 62] ............................... (case) otherwise:
+  [ 17] pushint8 1 .............................. <1>
+  [ 19] setglobal 48 ............................ cActiveSN = 1
+  [ 21] pushcons 1 .............................. <"prologueCue">
+  [ 23] pushint8 1 .............................. <1>
+  [ 25] pusharglist 2 ........................... <"prologueCue", 1>
+  [ 27] extcall 43 .............................. <misc_GetFlash("prologueCue", 1)>
+  [ 29] pushint8 6 .............................. <6>
+  [ 31] eq ...................................... <misc_GetFlash("prologueCue", 1) = 6>
+  [ 32] jmpifz [ 52] ............................ if misc_GetFlash("prologueCue", 1) = 6 then / else
+  [ 35] getglobal 93 ............................ <pStat>
+  [ 37] getglobal 248 ........................... <cPrologue>
+  [ 39] pushint8 100 ............................ <100>
+  [ 41] pusharglistnoret 3 ...................... <pStat, cPrologue, 100>
+  [ 43] objcall 35 .............................. pStat[cPrologue] = 100
+  [ 45] pusharglistnoret 0 ...................... <>
+  [ 47] localcall 10 ............................ pro_Abort()
+  [ 49] jmp [ 62]
+  [ 52] gettoplevelprop 14 ...................... <_movie>
+  [ 54] gettoplevelprop 14 ...................... <_movie>
+  [ 56] getobjprop 44 ........................... <_movie.frame>
+  [ 58] pusharglistnoret 2 ...................... <_movie, _movie.frame>
+  [ 60] objcall 18 .............................. _movie.go(_movie.frame)
+  [ 62] pop 1 ................................... end case
+  [ 64] ret
+end
+
+on pro_Play_8
+  [  0] gettoplevelprop 14 ...................... <_movie>
+  [  2] gettoplevelprop 14 ...................... <_movie>
+  [  4] getobjprop 44 ........................... <_movie.frame>
+  [  6] pusharglistnoret 2 ...................... <_movie, _movie.frame>
+  [  8] objcall 18 .............................. _movie.go(_movie.frame)
+  [ 10] getglobal 45 ............................ <playMode>
+  [ 12] getglobal 91 ............................ <pmZero>
+  [ 14] eq ...................................... <playMode = pmZero>
+  [ 15] jmpifz [ 25] ............................ if playMode = pmZero then
+  [ 18] getglobal 21 ............................ <cGameMenus>
+  [ 20] pushzero ................................ <0>
+  [ 21] pusharglistnoret 2 ...................... <cGameMenus, 0>
+  [ 23] extcall 20 .............................. initLaunch(cGameMenus, 0)
+  [ 25] ret
+end
+
+on pro_Interface
+  [  0] pushint8 3 .............................. <3>
+  [  2] setglobal 80 ............................ c_Interface_Mode = 3
+  [  4] gettoplevelprop 81 ...................... <_player>
+  [  6] pusharglistnoret 1 ...................... <_player>
+  [  8] objcall 82 .............................. _player.flushInputEvents()
+  [ 10] pushcons 8 .............................. <"pro_Abort">
+  [ 12] pushint8 1 .............................. <1>
+  [ 14] set 0 ................................... set the mouseDownScript to "pro_Abort"
+  [ 16] pushcons 8 .............................. <"pro_Abort">
+  [ 18] pushint8 2 .............................. <2>
+  [ 20] set 0 ................................... set the mouseUpScript to "pro_Abort"
+  [ 22] pushcons 8 .............................. <"pro_Abort">
+  [ 24] pushint8 3 .............................. <3>
+  [ 26] set 0 ................................... set the keyDownScript to "pro_Abort"
+  [ 28] pushcons 8 .............................. <"pro_Abort">
+  [ 30] pushint8 4 .............................. <4>
+  [ 32] set 0 ................................... set the keyUpScript to "pro_Abort"
+  [ 34] gettoplevelprop 81 ...................... <_player>
+  [ 36] pushint8 1 .............................. <1>
+  [ 38] inv ..................................... <-1>
+  [ 39] pusharglistnoret 2 ...................... <_player, -1>
+  [ 41] objcall 83 .............................. _player.cursor(-1)
+  [ 43] ret
+end
+
+on pro_Zero_Variables
+  [  0] pushint8 2 .............................. <2>
+  [  2] setglobal 48 ............................ cActiveSN = 2
+  [  4] pushcons 1 .............................. <"prologueCue">
+  [  6] pushzero ................................ <0>
+  [  7] pusharglistnoret 2 ...................... <"prologueCue", 0>
+  [  9] extcall 51 .............................. misc_SetFlash("prologueCue", 0)
+  [ 11] pushint8 1 .............................. <1>
+  [ 13] setglobal 48 ............................ cActiveSN = 1
+  [ 15] pushcons 1 .............................. <"prologueCue">
+  [ 17] pushzero ................................ <0>
+  [ 18] pusharglistnoret 2 ...................... <"prologueCue", 0>
+  [ 20] extcall 51 .............................. misc_SetFlash("prologueCue", 0)
+  [ 22] ret
+end
+
+on pro_Abort
+  [  0] pushcons 9 .............................. <"ESC ignore">
+  [  2] pusharglist 1 ........................... <"ESC ignore">
+  [  4] extcall 414 ............................. <escapeKey("ESC ignore")>
+  [  7] pushint8 1 .............................. <1>
+  [  9] eq ...................................... <escapeKey("ESC ignore") = 1>
+  [ 10] jmpifz [ 14] ............................ if escapeKey("ESC ignore") = 1 then
+  [ 13] ret ..................................... exit
+  [ 14] pusharglistnoret 0 ...................... <>
+  [ 16] localcall 9 ............................. pro_Zero_Variables()
+  [ 18] getglobal 21 ............................ <cGameMenus>
+  [ 20] pushzero ................................ <0>
+  [ 21] pusharglistnoret 2 ...................... <cGameMenus, 0>
+  [ 23] extcall 20 .............................. initLaunch(cGameMenus, 0)
+  [ 25] ret
+end
+
+on pro_DeActivate
+  [  0] pusharglistnoret 0 ...................... <>
+  [  2] localcall 9 ............................. pro_Zero_Variables()
+  [  4] pusharglistnoret 0 ...................... <>
+  [  6] extcall 251 ............................. noInterface()
+  [  8] gettoplevelprop 14 ...................... <_movie>
+  [ 10] pushcons 10 ............................. <"P-FOCUS">
+  [ 12] pusharglistnoret 2 ...................... <_movie, "P-FOCUS">
+  [ 14] objcall 18 .............................. _movie.go("P-FOCUS")
+  [ 16] ret
+end
+
+on pro_Activate
+  [  0] gettoplevelprop 14 ...................... <_movie>
+  [  2] gettoplevelprop 14 ...................... <_movie>
+  [  4] getobjprop 44 ........................... <_movie.frame>
+  [  6] pusharglistnoret 2 ...................... <_movie, _movie.frame>
+  [  8] objcall 18 .............................. _movie.go(_movie.frame)
+  [ 10] getglobal 45 ............................ <playMode>
+  [ 12] getglobal 78 ............................ <pmActivate>
+  [ 14] eq ...................................... <playMode = pmActivate>
+  [ 15] jmpifz [ 25] ............................ if playMode = pmActivate then
+  [ 18] getglobal 21 ............................ <cGameMenus>
+  [ 20] pushzero ................................ <0>
+  [ 21] pusharglistnoret 2 ...................... <cGameMenus, 0>
+  [ 23] extcall 20 .............................. initLaunch(cGameMenus, 0)
+  [ 25] ret
+end
+
+on pro_Quit
+  [  0] pushint8 99 ............................. <99>
+  [  2] setglobal 24 ............................ currPuzzle = 99
+  [  4] gettoplevelprop 14 ...................... <_movie>
+  [  6] gettoplevelprop 14 ...................... <_movie>
+  [  8] getobjprop 44 ........................... <_movie.frame>
+  [ 10] pusharglistnoret 2 ...................... <_movie, _movie.frame>
+  [ 12] objcall 18 .............................. _movie.go(_movie.frame)
+  [ 14] getglobal 45 ............................ <playMode>
+  [ 16] getglobal 78 ............................ <pmActivate>
+  [ 18] eq ...................................... <playMode = pmActivate>
+  [ 19] jmpifz [ 29] ............................ if playMode = pmActivate then
+  [ 22] getglobal 21 ............................ <cGameMenus>
+  [ 24] pushzero ................................ <0>
+  [ 25] pusharglistnoret 2 ...................... <cGameMenus, 0>
+  [ 27] extcall 20 .............................. initLaunch(cGameMenus, 0)
+  [ 29] ret
+end

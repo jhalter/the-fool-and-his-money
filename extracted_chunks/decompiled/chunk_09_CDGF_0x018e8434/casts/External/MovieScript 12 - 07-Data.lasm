@@ -1,0 +1,1916 @@
+global QU, pNum, pVolume, pFrame, pSeven, pWordStat63, menuName, titleName, dataCount, chunkMenuName, cPuzzleTotal, currPuzzle, csGrid, csJumble, csClickCode, csPhrase, csConcat, csLetterSlide, csPatchPirate, csPatchStamp, csMorphText, csHerb, csTracer, csInventory, csSeven, csAuction, csWager, csTarot, csWagerTarot, csPentacle, csPreFinale, csMorph, csCoins, csHalves, csFillin, csPatchSlider, csMansion, csDEL, csHEX, csREM, csCON
+
+on getData MN, N, V, S, TN, spriteName
+  [  0] getglobal 517 ........................... <dataCount>
+  [  3] pushint8 1 .............................. <1>
+  [  5] add ..................................... <dataCount + 1>
+  [  6] setglobal 517 ........................... dataCount = dataCount + 1
+  [  9] getglobal 517 ........................... <dataCount>
+  [ 12] getglobal 262 ........................... <cPuzzleTotal>
+  [ 15] lteq .................................... <dataCount <= cPuzzleTotal>
+  [ 16] jmpifz [241] ............................ if dataCount <= cPuzzleTotal then / else
+  [ 19] getglobal 390 ........................... <menuName>
+  [ 22] getglobal 517 ........................... <dataCount>
+  [ 25] getparam 0 .............................. <MN>
+  [ 27] pusharglistnoret 3 ...................... <menuName, dataCount, MN>
+  [ 29] objcall 35 .............................. menuName[dataCount] = MN
+  [ 31] getglobal 471 ........................... <titleName>
+  [ 34] getglobal 517 ........................... <dataCount>
+  [ 37] getparam 4 .............................. <TN>
+  [ 39] pusharglistnoret 3 ...................... <titleName, dataCount, TN>
+  [ 41] objcall 35 .............................. titleName[dataCount] = TN
+  [ 43] getglobal 365 ........................... <pNum>
+  [ 46] getglobal 517 ........................... <dataCount>
+  [ 49] getparam 1 .............................. <N>
+  [ 51] pusharglistnoret 3 ...................... <pNum, dataCount, N>
+  [ 53] objcall 35 .............................. pNum[dataCount] = N
+  [ 55] getglobal 330 ........................... <pVolume>
+  [ 58] getglobal 517 ........................... <dataCount>
+  [ 61] getparam 2 .............................. <V>
+  [ 63] pusharglistnoret 3 ...................... <pVolume, dataCount, V>
+  [ 65] objcall 35 .............................. pVolume[dataCount] = V
+  [ 67] getglobal 331 ........................... <pFrame>
+  [ 70] getglobal 517 ........................... <dataCount>
+  [ 73] getparam 3 .............................. <S>
+  [ 75] pusharglistnoret 3 ...................... <pFrame, dataCount, S>
+  [ 77] objcall 35 .............................. pFrame[dataCount] = S
+  [ 79] getglobal 517 ........................... <dataCount>
+  [ 82] pushint8 72 ............................. <72>
+  [ 84] lteq .................................... <dataCount <= 72>
+  [ 85] jmpifz [108] ............................ if dataCount <= 72 then
+  [ 88] getglobal 506 ........................... <chunkMenuName>
+  [ 91] getglobal 390 ........................... <menuName>
+  [ 94] getglobal 517 ........................... <dataCount>
+  [ 97] pusharglist 2 ........................... <menuName, dataCount>
+  [ 99] objcall 17 .............................. <menuName[dataCount]>
+  [101] joinstr ................................. <chunkMenuName & menuName[dataCount]>
+  [102] pushcons 0 .............................. <"|">
+  [104] joinstr ................................. <chunkMenuName & menuName[dataCount] & "|">
+  [105] setglobal 506 ........................... chunkMenuName = chunkMenuName & menuName[dataCount] & "|"
+  [108] pushzero ................................ <0>
+  [109] pushint16 666 ........................... <666>
+  [112] eq ...................................... <0 = 666>
+  [113] jmpifz [238] ............................ if 0 = 666 then
+  [116] pushcons 1 .............................. <EMPTY>
+  [118] setparam 3 .............................. S = EMPTY
+  [120] pushint8 1 .............................. <1>
+  [122] setlocal 0
+  [124] getlocal 0
+  [126] getparam 0 .............................. <MN>
+  [128] getobjprop 134 .......................... <MN.length>
+  [130] lteq
+  [131] jmpifz [222] ............................ repeat with x = 1 to MN.length
+  [134] getparam 0 .............................. <MN>
+  [136] pushsymb 135 ............................ <#char>
+  [138] getlocal 0 .............................. <x>
+  [140] pusharglist 3 ........................... <MN, #char, x>
+  [142] objcall 136 ............................. <MN.char[x]>
+  [144] pushcons 2 .............................. <"-">
+  [146] eq ...................................... <MN.char[x] = "-">
+  [147] jmpifz [160] ............................ if MN.char[x] = "-" then
+  [150] getparam 3 .............................. <S>
+  [152] pushcons 3 .............................. <"_">
+  [154] joinstr ................................. <S & "_">
+  [155] setparam 3 .............................. S = S & "_"
+  [157] jmp [213] ............................... next repeat
+  [160] getparam 0 .............................. <MN>
+  [162] pushsymb 135 ............................ <#char>
+  [164] getlocal 0 .............................. <x>
+  [166] pusharglist 3 ........................... <MN, #char, x>
+  [168] objcall 136 ............................. <MN.char[x]>
+  [170] pushcons 4 .............................. <"'">
+  [172] eq ...................................... <MN.char[x] = "'">
+  [173] jmpifz [179] ............................ if MN.char[x] = "'" then
+  [176] jmp [213] ............................... next repeat
+  [179] getparam 0 .............................. <MN>
+  [181] pushsymb 135 ............................ <#char>
+  [183] getlocal 0 .............................. <x>
+  [185] pusharglist 3 ........................... <MN, #char, x>
+  [187] objcall 136 ............................. <MN.char[x]>
+  [189] pushcons 5 .............................. <" ">
+  [191] eq ...................................... <MN.char[x] = " ">
+  [192] jmpifz [198] ............................ if MN.char[x] = " " then
+  [195] jmp [213] ............................... next repeat
+  [198] getparam 3 .............................. <S>
+  [200] getparam 0 .............................. <MN>
+  [202] pushsymb 135 ............................ <#char>
+  [204] getlocal 0 .............................. <x>
+  [206] pusharglist 3 ........................... <MN, #char, x>
+  [208] objcall 136 ............................. <MN.char[x]>
+  [210] joinstr ................................. <S & MN.char[x]>
+  [211] setparam 3 .............................. S = S & MN.char[x]
+  [213] pushint8 1
+  [215] getlocal 0
+  [217] add
+  [218] setlocal 0
+  [220] endrepeat [124]
+  [222] pushcons 6 .............................. <"_e_">
+  [224] getparam 3 .............................. <S>
+  [226] joinstr ................................. <"_e_" & S>
+  [227] pushcons 7 .............................. <"=">
+  [229] joinpadstr .............................. <"_e_" & S && "=">
+  [230] getglobal 517 ........................... <dataCount>
+  [233] joinpadstr .............................. <"_e_" & S && "=" && dataCount>
+  [234] pusharglistnoret 1 ...................... <"_e_" & S && "=" && dataCount>
+  [236] extcall 174 ............................. _PUT("_e_" & S && "=" && dataCount)
+  [238] jmp [253]
+  [241] pushint8 1 .............................. <1>
+  [243] getglobal 517 ........................... <dataCount>
+  [246] pushcons 8 .............................. <"too many of Puzzle Data">
+  [248] joinpadstr .............................. <dataCount && "too many of Puzzle Data">
+  [249] pusharglistnoret 2 ...................... <1, dataCount && "too many of Puzzle Data">
+  [251] extcall 207 ............................. showAlert(1, dataCount && "too many of Puzzle Data")
+  [253] ret
+end
+
+on gatherAllData
+  [  0] pushint8 1 .............................. <1>
+  [  2] setlocal 0
+  [  4] getlocal 0
+  [  6] getglobal 262 ........................... <cPuzzleTotal>
+  [  9] lteq
+  [ 10] jmpifz [ 64] ............................ repeat with x = 1 to cPuzzleTotal
+  [ 13] getglobal 390 ........................... <menuName>
+  [ 16] getlocal 0 .............................. <x>
+  [ 18] pushcons 1 .............................. <EMPTY>
+  [ 20] pusharglistnoret 3 ...................... <menuName, x, EMPTY>
+  [ 22] objcall 35 .............................. menuName[x] = EMPTY
+  [ 24] getglobal 365 ........................... <pNum>
+  [ 27] getlocal 0 .............................. <x>
+  [ 29] pushzero ................................ <0>
+  [ 30] pusharglistnoret 3 ...................... <pNum, x, 0>
+  [ 32] objcall 35 .............................. pNum[x] = 0
+  [ 34] getglobal 330 ........................... <pVolume>
+  [ 37] getlocal 0 .............................. <x>
+  [ 39] pushzero ................................ <0>
+  [ 40] pusharglistnoret 3 ...................... <pVolume, x, 0>
+  [ 42] objcall 35 .............................. pVolume[x] = 0
+  [ 44] getglobal 331 ........................... <pFrame>
+  [ 47] getlocal 0 .............................. <x>
+  [ 49] pushcons 1 .............................. <EMPTY>
+  [ 51] pusharglistnoret 3 ...................... <pFrame, x, EMPTY>
+  [ 53] objcall 35 .............................. pFrame[x] = EMPTY
+  [ 55] pushint8 1
+  [ 57] getlocal 0
+  [ 59] add
+  [ 60] setlocal 0
+  [ 62] endrepeat [  4]
+  [ 64] pushzero ................................ <0>
+  [ 65] setglobal 517 ........................... dataCount = 0
+  [ 68] pushcons 1 .............................. <EMPTY>
+  [ 70] setglobal 506 ........................... chunkMenuName = EMPTY
+  [ 73] pushcons 9 .............................. <"Prologue">
+  [ 75] pushint8 1 .............................. <1>
+  [ 77] pushint8 80 ............................. <80>
+  [ 79] pushcons 10 ............................. <"PRO-1">
+  [ 81] pushcons 11 ............................. <"The Prologue">
+  [ 83] pushcons 12 ............................. <"xxx">
+  [ 85] pusharglistnoret 6 ...................... <"Prologue", 1, 80, "PRO-1", "The Prologue", "xxx">
+  [ 87] localcall 0 ............................. getData("Prologue", 1, 80, "PRO-1", "The Prologue", "xxx")
+  [ 89] pushcons 13 ............................. <"Payne">
+  [ 91] pushint8 1 .............................. <1>
+  [ 93] pushint8 100 ............................ <100>
+  [ 95] pushcons 14 ............................. <"patchwork">
+  [ 97] pushcons 15 ............................. <"Payne's Patchwork">
+  [ 99] pushcons 12 ............................. <"xxx">
+  [101] pusharglistnoret 6 ...................... <"Payne", 1, 100, "patchwork", "Payne's Patchwork", "xxx">
+  [103] localcall 0 ............................. getData("Payne", 1, 100, "patchwork", "Payne's Patchwork", "xxx")
+  [105] getglobal 289 ........................... <csPatchPirate>
+  [108] pushint8 1 .............................. <1>
+  [110] getglobal 517 ........................... <dataCount>
+  [113] pusharglistnoret 3 ...................... <csPatchPirate, 1, dataCount>
+  [115] objcall 35 .............................. csPatchPirate[1] = dataCount
+  [117] pushcons 16 ............................. <"Ursula">
+  [119] pushint8 1 .............................. <1>
+  [121] pushint8 100 ............................ <100>
+  [123] pushcons 17 ............................. <"morph-moon">
+  [125] pushcons 18 ............................. <"Ursula's Umbrage">
+  [127] pushcons 19 ............................. <"_morph">
+  [129] pusharglistnoret 6 ...................... <"Ursula", 1, 100, "morph-moon", "Ursula's Umbrage", "_morph">
+  [131] localcall 0 ............................. getData("Ursula", 1, 100, "morph-moon", "Ursula's Umbrage", "_morph")
+  [133] getglobal 521 ........................... <csMorph>
+  [136] pushint8 1 .............................. <1>
+  [138] getglobal 517 ........................... <dataCount>
+  [141] pusharglistnoret 3 ...................... <csMorph, 1, dataCount>
+  [143] objcall 35 .............................. csMorph[1] = dataCount
+  [145] pushcons 20 ............................. <"Lawley">
+  [147] pushint8 1 .............................. <1>
+  [149] pushint8 100 ............................ <100>
+  [151] pushcons 21 ............................. <"phrase">
+  [153] pushcons 22 ............................. <"Lawley's Literals">
+  [155] pushcons 12 ............................. <"xxx">
+  [157] pusharglistnoret 6 ...................... <"Lawley", 1, 100, "phrase", "Lawley's Literals", "xxx">
+  [159] localcall 0 ............................. getData("Lawley", 1, 100, "phrase", "Lawley's Literals", "xxx")
+  [161] getglobal 360 ........................... <csPhrase>
+  [164] pushint8 1 .............................. <1>
+  [166] getglobal 517 ........................... <dataCount>
+  [169] pusharglistnoret 3 ...................... <csPhrase, 1, dataCount>
+  [171] objcall 35 .............................. csPhrase[1] = dataCount
+  [173] pushcons 23 ............................. <"Wyck">
+  [175] pushint8 1 .............................. <1>
+  [177] pushint8 100 ............................ <100>
+  [179] pushcons 24 ............................. <"wager">
+  [181] pushcons 25 ............................. <"Wyck's Wager">
+  [183] pushcons 26 ............................. <"_wager">
+  [185] pusharglistnoret 6 ...................... <"Wyck", 1, 100, "wager", "Wyck's Wager", "_wager">
+  [187] localcall 0 ............................. getData("Wyck", 1, 100, "wager", "Wyck's Wager", "_wager")
+  [189] getglobal 217 ........................... <csWager>
+  [191] pushint8 1 .............................. <1>
+  [193] getglobal 517 ........................... <dataCount>
+  [196] pusharglistnoret 3 ...................... <csWager, 1, dataCount>
+  [198] objcall 35 .............................. csWager[1] = dataCount
+  [200] pushcons 27 ............................. <"Needham">
+  [202] pushint8 1 .............................. <1>
+  [204] pushint8 100 ............................ <100>
+  [206] pushcons 28 ............................. <"concat">
+  [208] pushcons 29 ............................. <"Needham's Knowledge">
+  [210] pushcons 12 ............................. <"xxx">
+  [212] pusharglistnoret 6 ...................... <"Needham", 1, 100, "concat", "Needham's Knowledge", "xxx">
+  [214] localcall 0 ............................. getData("Needham", 1, 100, "concat", "Needham's Knowledge", "xxx")
+  [216] getglobal 359 ........................... <csConcat>
+  [219] pushint8 1 .............................. <1>
+  [221] getglobal 517 ........................... <dataCount>
+  [224] pusharglistnoret 3 ...................... <csConcat, 1, dataCount>
+  [226] objcall 35 .............................. csConcat[1] = dataCount
+  [228] pushcons 30 ............................. <"Garrison">
+  [230] pushint8 1 .............................. <1>
+  [232] pushint8 100 ............................ <100>
+  [234] pushcons 31 ............................. <"4x4">
+  [236] pushcons 32 ............................. <"Garrison's Gridlock">
+  [238] pushcons 12 ............................. <"xxx">
+  [240] pusharglistnoret 6 ...................... <"Garrison", 1, 100, "4x4", "Garrison's Gridlock", "xxx">
+  [242] localcall 0 ............................. getData("Garrison", 1, 100, "4x4", "Garrison's Gridlock", "xxx")
+  [244] getglobal 363 ........................... <csGrid>
+  [247] pushint8 1 .............................. <1>
+  [249] getglobal 517 ........................... <dataCount>
+  [252] pusharglistnoret 3 ...................... <csGrid, 1, dataCount>
+  [254] objcall 35 .............................. csGrid[1] = dataCount
+  [256] pushcons 33 ............................. <"Quintin">
+  [258] pushint8 1 .............................. <1>
+  [260] pushint8 100 ............................ <100>
+  [262] pushcons 34 ............................. <"coins">
+  [264] pushcons 35 ............................. <"Quintin's Quandary">
+  [266] pushcons 12 ............................. <"xxx">
+  [268] pusharglistnoret 6 ...................... <"Quintin", 1, 100, "coins", "Quintin's Quandary", "xxx">
+  [270] localcall 0 ............................. getData("Quintin", 1, 100, "coins", "Quintin's Quandary", "xxx")
+  [272] getglobal 522 ........................... <csCoins>
+  [275] pushint8 1 .............................. <1>
+  [277] getglobal 517 ........................... <dataCount>
+  [280] pusharglistnoret 3 ...................... <csCoins, 1, dataCount>
+  [282] objcall 35 .............................. csCoins[1] = dataCount
+  [284] pushcons 36 ............................. <"Moxley">
+  [286] pushint8 1 .............................. <1>
+  [288] pushint8 100 ............................ <100>
+  [290] pushcons 37 ............................. <"morph-text">
+  [292] pushcons 38 ............................. <"Moxley's Metamorphosis">
+  [294] pushcons 39 ............................. <"_morph-text">
+  [296] pusharglistnoret 6 ...................... <"Moxley", 1, 100, "morph-text", "Moxley's Metamorphosis", "_morph-text">
+  [298] localcall 0 ............................. getData("Moxley", 1, 100, "morph-text", "Moxley's Metamorphosis", "_morph-text")
+  [300] getglobal 356 ........................... <csMorphText>
+  [303] pushint8 1 .............................. <1>
+  [305] getglobal 517 ........................... <dataCount>
+  [308] pusharglistnoret 3 ...................... <csMorphText, 1, dataCount>
+  [310] objcall 35 .............................. csMorphText[1] = dataCount
+  [312] pushcons 40 ............................. <"Sabina">
+  [314] pushint8 1 .............................. <1>
+  [316] pushint8 100 ............................ <100>
+  [318] pushcons 41 ............................. <"stamp">
+  [320] pushcons 42 ............................. <"Sabina's Scramble">
+  [322] pushcons 12 ............................. <"xxx">
+  [324] pusharglistnoret 6 ...................... <"Sabina", 1, 100, "stamp", "Sabina's Scramble", "xxx">
+  [326] localcall 0 ............................. getData("Sabina", 1, 100, "stamp", "Sabina's Scramble", "xxx")
+  [328] getglobal 357 ........................... <csPatchStamp>
+  [331] pushint8 1 .............................. <1>
+  [333] getglobal 517 ........................... <dataCount>
+  [336] pusharglistnoret 3 ...................... <csPatchStamp, 1, dataCount>
+  [338] objcall 35 .............................. csPatchStamp[1] = dataCount
+  [340] pushcons 43 ............................. <"Jasper">
+  [342] pushint8 1 .............................. <1>
+  [344] pushint8 100 ............................ <100>
+  [346] pushcons 44 ............................. <"jumble">
+  [348] pushcons 45 ............................. <"Jasper Junction">
+  [350] pushcons 12 ............................. <"xxx">
+  [352] pusharglistnoret 6 ...................... <"Jasper", 1, 100, "jumble", "Jasper Junction", "xxx">
+  [354] localcall 0 ............................. getData("Jasper", 1, 100, "jumble", "Jasper Junction", "xxx")
+  [356] getglobal 362 ........................... <csJumble>
+  [359] pushint8 1 .............................. <1>
+  [361] getglobal 517 ........................... <dataCount>
+  [364] pusharglistnoret 3 ...................... <csJumble, 1, dataCount>
+  [366] objcall 35 .............................. csJumble[1] = dataCount
+  [368] pushcons 46 ............................. <"Agar">
+  [370] pushint8 1 .............................. <1>
+  [372] pushint8 100 ............................ <100>
+  [374] pushcons 47 ............................. <"auction">
+  [376] pushcons 48 ............................. <"Agar's Auction">
+  [378] pushcons 12 ............................. <"xxx">
+  [380] pusharglistnoret 6 ...................... <"Agar", 1, 100, "auction", "Agar's Auction", "xxx">
+  [382] localcall 0 ............................. getData("Agar", 1, 100, "auction", "Agar's Auction", "xxx")
+  [384] getglobal 351 ........................... <csAuction>
+  [387] pushint8 1 .............................. <1>
+  [389] getglobal 517 ........................... <dataCount>
+  [392] pusharglistnoret 3 ...................... <csAuction, 1, dataCount>
+  [394] objcall 35 .............................. csAuction[1] = dataCount
+  [396] pushcons 49 ............................. <"McGucken">
+  [398] pushint8 2 .............................. <2>
+  [400] pushint8 100 ............................ <100>
+  [402] pushcons 37 ............................. <"morph-text">
+  [404] pushcons 50 ............................. <"McGucken's Metamorphosis">
+  [406] pushcons 39 ............................. <"_morph-text">
+  [408] pusharglistnoret 6 ...................... <"McGucken", 2, 100, "morph-text", "McGucken's Metamorphosis", "_morph-text">
+  [410] localcall 0 ............................. getData("McGucken", 2, 100, "morph-text", "McGucken's Metamorphosis", "_morph-text")
+  [412] getglobal 356 ........................... <csMorphText>
+  [415] pushint8 2 .............................. <2>
+  [417] getglobal 517 ........................... <dataCount>
+  [420] pusharglistnoret 3 ...................... <csMorphText, 2, dataCount>
+  [422] objcall 35 .............................. csMorphText[2] = dataCount
+  [424] pushcons 51 ............................. <"Horton">
+  [426] pushint8 1 .............................. <1>
+  [428] pushint8 100 ............................ <100>
+  [430] pushcons 52 ............................. <"cross-slide">
+  [432] pushcons 53 ............................. <"Horton's Horizontals">
+  [434] pushcons 12 ............................. <"xxx">
+  [436] pusharglistnoret 6 ...................... <"Horton", 1, 100, "cross-slide", "Horton's Horizontals", "xxx">
+  [438] localcall 0 ............................. getData("Horton", 1, 100, "cross-slide", "Horton's Horizontals", "xxx")
+  [440] getglobal 358 ........................... <csLetterSlide>
+  [443] pushint8 1 .............................. <1>
+  [445] getglobal 517 ........................... <dataCount>
+  [448] pusharglistnoret 3 ...................... <csLetterSlide, 1, dataCount>
+  [450] objcall 35 .............................. csLetterSlide[1] = dataCount
+  [452] pushcons 54 ............................. <"Caine">
+  [454] pushint8 1 .............................. <1>
+  [456] pushint8 100 ............................ <100>
+  [458] pushcons 55 ............................. <"code-grid">
+  [460] pushcons 56 ............................. <"Caine's Curses">
+  [462] pushcons 12 ............................. <"xxx">
+  [464] pusharglistnoret 6 ...................... <"Caine", 1, 100, "code-grid", "Caine's Curses", "xxx">
+  [466] localcall 0 ............................. getData("Caine", 1, 100, "code-grid", "Caine's Curses", "xxx")
+  [468] getglobal 361 ........................... <csClickCode>
+  [471] pushint8 1 .............................. <1>
+  [473] getglobal 517 ........................... <dataCount>
+  [476] pusharglistnoret 3 ...................... <csClickCode, 1, dataCount>
+  [478] objcall 35 .............................. csClickCode[1] = dataCount
+  [480] pushcons 57 ............................. <"Voorst">
+  [482] pushint8 1 .............................. <1>
+  [484] pushint8 100 ............................ <100>
+  [486] pushcons 58 ............................. <"sevens">
+  [488] pushcons 59 ............................. <"Voorst's Vendition">
+  [490] pushcons 12 ............................. <"xxx">
+  [492] pusharglistnoret 6 ...................... <"Voorst", 1, 100, "sevens", "Voorst's Vendition", "xxx">
+  [494] localcall 0 ............................. getData("Voorst", 1, 100, "sevens", "Voorst's Vendition", "xxx")
+  [496] getglobal 352 ........................... <csSeven>
+  [499] pushint8 1 .............................. <1>
+  [501] getglobal 517 ........................... <dataCount>
+  [504] pusharglistnoret 3 ...................... <csSeven, 1, dataCount>
+  [506] objcall 35 .............................. csSeven[1] = dataCount
+  [508] pushcons 60 ............................. <"Massey">
+  [510] pushint8 3 .............................. <3>
+  [512] pushint8 100 ............................ <100>
+  [514] pushcons 37 ............................. <"morph-text">
+  [516] pushcons 61 ............................. <"Massey's Metamorphosis">
+  [518] pushcons 39 ............................. <"_morph-text">
+  [520] pusharglistnoret 6 ...................... <"Massey", 3, 100, "morph-text", "Massey's Metamorphosis", "_morph-text">
+  [522] localcall 0 ............................. getData("Massey", 3, 100, "morph-text", "Massey's Metamorphosis", "_morph-text")
+  [524] getglobal 356 ........................... <csMorphText>
+  [527] pushint8 3 .............................. <3>
+  [529] getglobal 517 ........................... <dataCount>
+  [532] pusharglistnoret 3 ...................... <csMorphText, 3, dataCount>
+  [534] objcall 35 .............................. csMorphText[3] = dataCount
+  [536] pushcons 62 ............................. <"Wallop">
+  [538] pushint8 2 .............................. <2>
+  [540] pushint8 100 ............................ <100>
+  [542] pushcons 24 ............................. <"wager">
+  [544] pushcons 63 ............................. <"Wallop's Wager">
+  [546] pushcons 26 ............................. <"_wager">
+  [548] pusharglistnoret 6 ...................... <"Wallop", 2, 100, "wager", "Wallop's Wager", "_wager">
+  [550] localcall 0 ............................. getData("Wallop", 2, 100, "wager", "Wallop's Wager", "_wager")
+  [552] getglobal 217 ........................... <csWager>
+  [554] pushint8 2 .............................. <2>
+  [556] getglobal 517 ........................... <dataCount>
+  [559] pusharglistnoret 3 ...................... <csWager, 2, dataCount>
+  [561] objcall 35 .............................. csWager[2] = dataCount
+  [563] pushcons 64 ............................. <"Pringle">
+  [565] pushint8 2 .............................. <2>
+  [567] pushint8 100 ............................ <100>
+  [569] pushcons 14 ............................. <"patchwork">
+  [571] pushcons 65 ............................. <"Pringle's Patchwork">
+  [573] pushcons 12 ............................. <"xxx">
+  [575] pusharglistnoret 6 ...................... <"Pringle", 2, 100, "patchwork", "Pringle's Patchwork", "xxx">
+  [577] localcall 0 ............................. getData("Pringle", 2, 100, "patchwork", "Pringle's Patchwork", "xxx")
+  [579] getglobal 289 ........................... <csPatchPirate>
+  [582] pushint8 2 .............................. <2>
+  [584] getglobal 517 ........................... <dataCount>
+  [587] pusharglistnoret 3 ...................... <csPatchPirate, 2, dataCount>
+  [589] objcall 35 .............................. csPatchPirate[2] = dataCount
+  [591] pushcons 66 ............................. <"Buckbee">
+  [593] pushint8 1 .............................. <1>
+  [595] pushint8 100 ............................ <100>
+  [597] pushcons 67 ............................. <"halves">
+  [599] pushcons 68 ............................. <"Buckbee's Bones">
+  [601] pushcons 12 ............................. <"xxx">
+  [603] pusharglistnoret 6 ...................... <"Buckbee", 1, 100, "halves", "Buckbee's Bones", "xxx">
+  [605] localcall 0 ............................. getData("Buckbee", 1, 100, "halves", "Buckbee's Bones", "xxx")
+  [607] getglobal 523 ........................... <csHalves>
+  [610] pushint8 1 .............................. <1>
+  [612] getglobal 517 ........................... <dataCount>
+  [615] pusharglistnoret 3 ...................... <csHalves, 1, dataCount>
+  [617] objcall 35 .............................. csHalves[1] = dataCount
+  [619] pushcons 69 ............................. <"Radcliff">
+  [621] pushint8 1 .............................. <1>
+  [623] pushint8 100 ............................ <100>
+  [625] pushcons 70 ............................. <"herbs">
+  [627] pushcons 71 ............................. <"Radcliff's Reminiscences">
+  [629] pushcons 12 ............................. <"xxx">
+  [631] pusharglistnoret 6 ...................... <"Radcliff", 1, 100, "herbs", "Radcliff's Reminiscences", "xxx">
+  [633] localcall 0 ............................. getData("Radcliff", 1, 100, "herbs", "Radcliff's Reminiscences", "xxx")
+  [635] getglobal 355 ........................... <csHerb>
+  [638] pushint8 1 .............................. <1>
+  [640] getglobal 517 ........................... <dataCount>
+  [643] pusharglistnoret 3 ...................... <csHerb, 1, dataCount>
+  [645] objcall 35 .............................. csHerb[1] = dataCount
+  [647] pushcons 72 ............................. <"Norfolk">
+  [649] pushint8 2 .............................. <2>
+  [651] pushint8 100 ............................ <100>
+  [653] pushcons 28 ............................. <"concat">
+  [655] pushcons 73 ............................. <"Norfolk's Knowledge">
+  [657] pushcons 12 ............................. <"xxx">
+  [659] pusharglistnoret 6 ...................... <"Norfolk", 2, 100, "concat", "Norfolk's Knowledge", "xxx">
+  [661] localcall 0 ............................. getData("Norfolk", 2, 100, "concat", "Norfolk's Knowledge", "xxx")
+  [663] getglobal 359 ........................... <csConcat>
+  [666] pushint8 2 .............................. <2>
+  [668] getglobal 517 ........................... <dataCount>
+  [671] pusharglistnoret 3 ...................... <csConcat, 2, dataCount>
+  [673] objcall 35 .............................. csConcat[2] = dataCount
+  [675] pushcons 74 ............................. <"Gliston">
+  [677] pushint8 2 .............................. <2>
+  [679] pushint8 100 ............................ <100>
+  [681] pushcons 31 ............................. <"4x4">
+  [683] pushcons 75 ............................. <"Gliston's Gridlock">
+  [685] pushcons 12 ............................. <"xxx">
+  [687] pusharglistnoret 6 ...................... <"Gliston", 2, 100, "4x4", "Gliston's Gridlock", "xxx">
+  [689] localcall 0 ............................. getData("Gliston", 2, 100, "4x4", "Gliston's Gridlock", "xxx")
+  [691] getglobal 363 ........................... <csGrid>
+  [694] pushint8 2 .............................. <2>
+  [696] getglobal 517 ........................... <dataCount>
+  [699] pusharglistnoret 3 ...................... <csGrid, 2, dataCount>
+  [701] objcall 35 .............................. csGrid[2] = dataCount
+  [703] pushcons 76 ............................. <"Yapp">
+  [705] pushint8 1 .............................. <1>
+  [707] pushint8 100 ............................ <100>
+  [709] pushcons 77 ............................. <"fill-in">
+  [711] pushcons 78 ............................. <"Yapp's Yearning">
+  [713] pushcons 12 ............................. <"xxx">
+  [715] pusharglistnoret 6 ...................... <"Yapp", 1, 100, "fill-in", "Yapp's Yearning", "xxx">
+  [717] localcall 0 ............................. getData("Yapp", 1, 100, "fill-in", "Yapp's Yearning", "xxx")
+  [719] getglobal 349 ........................... <csFillin>
+  [722] pushint8 1 .............................. <1>
+  [724] getglobal 517 ........................... <dataCount>
+  [727] pusharglistnoret 3 ...................... <csFillin, 1, dataCount>
+  [729] objcall 35 .............................. csFillin[1] = dataCount
+  [731] pushcons 79 ............................. <"Hayden">
+  [733] pushint8 2 .............................. <2>
+  [735] pushint8 100 ............................ <100>
+  [737] pushcons 52 ............................. <"cross-slide">
+  [739] pushcons 80 ............................. <"Hayden's Horizontals">
+  [741] pushcons 12 ............................. <"xxx">
+  [743] pusharglistnoret 6 ...................... <"Hayden", 2, 100, "cross-slide", "Hayden's Horizontals", "xxx">
+  [745] localcall 0 ............................. getData("Hayden", 2, 100, "cross-slide", "Hayden's Horizontals", "xxx")
+  [747] getglobal 358 ........................... <csLetterSlide>
+  [750] pushint8 2 .............................. <2>
+  [752] getglobal 517 ........................... <dataCount>
+  [755] pusharglistnoret 3 ...................... <csLetterSlide, 2, dataCount>
+  [757] objcall 35 .............................. csLetterSlide[2] = dataCount
+  [759] pushcons 81 ............................. <"Roderick">
+  [761] pushint8 2 .............................. <2>
+  [763] pushint8 100 ............................ <100>
+  [765] pushcons 70 ............................. <"herbs">
+  [767] pushcons 82 ............................. <"Roderick's Reminiscences">
+  [769] pushcons 12 ............................. <"xxx">
+  [771] pusharglistnoret 6 ...................... <"Roderick", 2, 100, "herbs", "Roderick's Reminiscences", "xxx">
+  [773] localcall 0 ............................. getData("Roderick", 2, 100, "herbs", "Roderick's Reminiscences", "xxx")
+  [775] getglobal 355 ........................... <csHerb>
+  [778] pushint8 2 .............................. <2>
+  [780] getglobal 517 ........................... <dataCount>
+  [783] pusharglistnoret 3 ...................... <csHerb, 2, dataCount>
+  [785] objcall 35 .............................. csHerb[2] = dataCount
+  [787] pushcons 83 ............................. <"Vibbard">
+  [789] pushint8 2 .............................. <2>
+  [791] pushint8 100 ............................ <100>
+  [793] pushcons 58 ............................. <"sevens">
+  [795] pushcons 84 ............................. <"Vibbard's Vendition">
+  [797] pushcons 12 ............................. <"xxx">
+  [799] pusharglistnoret 6 ...................... <"Vibbard", 2, 100, "sevens", "Vibbard's Vendition", "xxx">
+  [801] localcall 0 ............................. getData("Vibbard", 2, 100, "sevens", "Vibbard's Vendition", "xxx")
+  [803] getglobal 352 ........................... <csSeven>
+  [806] pushint8 2 .............................. <2>
+  [808] getglobal 517 ........................... <dataCount>
+  [811] pusharglistnoret 3 ...................... <csSeven, 2, dataCount>
+  [813] objcall 35 .............................. csSeven[2] = dataCount
+  [815] pushcons 85 ............................. <"Lommis">
+  [817] pushint8 2 .............................. <2>
+  [819] pushint8 100 ............................ <100>
+  [821] pushcons 21 ............................. <"phrase">
+  [823] pushcons 86 ............................. <"Lommis's Literals">
+  [825] pushcons 12 ............................. <"xxx">
+  [827] pusharglistnoret 6 ...................... <"Lommis", 2, 100, "phrase", "Lommis's Literals", "xxx">
+  [829] localcall 0 ............................. getData("Lommis", 2, 100, "phrase", "Lommis's Literals", "xxx")
+  [831] getglobal 360 ........................... <csPhrase>
+  [834] pushint8 2 .............................. <2>
+  [836] getglobal 517 ........................... <dataCount>
+  [839] pusharglistnoret 3 ...................... <csPhrase, 2, dataCount>
+  [841] objcall 35 .............................. csPhrase[2] = dataCount
+  [843] pushcons 87 ............................. <"Cutting">
+  [845] pushint8 2 .............................. <2>
+  [847] pushint8 100 ............................ <100>
+  [849] pushcons 55 ............................. <"code-grid">
+  [851] pushcons 88 ............................. <"Cutting's Curses">
+  [853] pushcons 12 ............................. <"xxx">
+  [855] pusharglistnoret 6 ...................... <"Cutting", 2, 100, "code-grid", "Cutting's Curses", "xxx">
+  [857] localcall 0 ............................. getData("Cutting", 2, 100, "code-grid", "Cutting's Curses", "xxx")
+  [859] getglobal 361 ........................... <csClickCode>
+  [862] pushint8 2 .............................. <2>
+  [864] getglobal 517 ........................... <dataCount>
+  [867] pusharglistnoret 3 ...................... <csClickCode, 2, dataCount>
+  [869] objcall 35 .............................. csClickCode[2] = dataCount
+  [871] pushcons 89 ............................. <"Jost">
+  [873] pushint8 2 .............................. <2>
+  [875] pushint8 100 ............................ <100>
+  [877] pushcons 44 ............................. <"jumble">
+  [879] pushcons 90 ............................. <"Jost Junction">
+  [881] pushcons 12 ............................. <"xxx">
+  [883] pusharglistnoret 6 ...................... <"Jost", 2, 100, "jumble", "Jost Junction", "xxx">
+  [885] localcall 0 ............................. getData("Jost", 2, 100, "jumble", "Jost Junction", "xxx")
+  [887] getglobal 362 ........................... <csJumble>
+  [890] pushint8 2 .............................. <2>
+  [892] getglobal 517 ........................... <dataCount>
+  [895] pusharglistnoret 3 ...................... <csJumble, 2, dataCount>
+  [897] objcall 35 .............................. csJumble[2] = dataCount
+  [899] pushcons 91 ............................. <"Rymore">
+  [901] pushint8 3 .............................. <3>
+  [903] pushint8 100 ............................ <100>
+  [905] pushcons 70 ............................. <"herbs">
+  [907] pushcons 92 ............................. <"Rymore's Reminiscences">
+  [909] pushcons 12 ............................. <"xxx">
+  [911] pusharglistnoret 6 ...................... <"Rymore", 3, 100, "herbs", "Rymore's Reminiscences", "xxx">
+  [913] localcall 0 ............................. getData("Rymore", 3, 100, "herbs", "Rymore's Reminiscences", "xxx")
+  [915] getglobal 355 ........................... <csHerb>
+  [918] pushint8 3 .............................. <3>
+  [920] getglobal 517 ........................... <dataCount>
+  [923] pusharglistnoret 3 ...................... <csHerb, 3, dataCount>
+  [925] objcall 35 .............................. csHerb[3] = dataCount
+  [927] pushcons 93 ............................. <"Argyle">
+  [929] pushint8 2 .............................. <2>
+  [931] pushint8 100 ............................ <100>
+  [933] pushcons 47 ............................. <"auction">
+  [935] pushcons 94 ............................. <"Argyle's Auction">
+  [937] pushcons 12 ............................. <"xxx">
+  [939] pusharglistnoret 6 ...................... <"Argyle", 2, 100, "auction", "Argyle's Auction", "xxx">
+  [941] localcall 0 ............................. getData("Argyle", 2, 100, "auction", "Argyle's Auction", "xxx")
+  [943] getglobal 351 ........................... <csAuction>
+  [946] pushint8 2 .............................. <2>
+  [948] getglobal 517 ........................... <dataCount>
+  [951] pusharglistnoret 3 ...................... <csAuction, 2, dataCount>
+  [953] objcall 35 .............................. csAuction[2] = dataCount
+  [955] pushcons 95 ............................. <"Snodgrass">
+  [957] pushint8 2 .............................. <2>
+  [959] pushint8 100 ............................ <100>
+  [961] pushcons 41 ............................. <"stamp">
+  [963] pushcons 96 ............................. <"Snodgrass's Scramble">
+  [965] pushcons 12 ............................. <"xxx">
+  [967] pusharglistnoret 6 ...................... <"Snodgrass", 2, 100, "stamp", "Snodgrass's Scramble", "xxx">
+  [969] localcall 0 ............................. getData("Snodgrass", 2, 100, "stamp", "Snodgrass's Scramble", "xxx")
+  [971] getglobal 357 ........................... <csPatchStamp>
+  [974] pushint8 2 .............................. <2>
+  [976] getglobal 517 ........................... <dataCount>
+  [979] pusharglistnoret 3 ...................... <csPatchStamp, 2, dataCount>
+  [981] objcall 35 .............................. csPatchStamp[2] = dataCount
+  [983] pushcons 97 ............................. <"Ingram">
+  [985] pushint8 1 .............................. <1>
+  [987] pushint8 100 ............................ <100>
+  [989] pushcons 98 ............................. <"inventory">
+  [991] pushcons 99 ............................. <"Ingram's Inventory">
+  [993] pushcons 12 ............................. <"xxx">
+  [995] pusharglistnoret 6 ...................... <"Ingram", 1, 100, "inventory", "Ingram's Inventory", "xxx">
+  [997] localcall 0 ............................. getData("Ingram", 1, 100, "inventory", "Ingram's Inventory", "xxx")
+  [999] getglobal 353 ........................... <csInventory>
+  [1002] pushint8 1 ............................. <1>
+  [1004] getglobal 517 .......................... <dataCount>
+  [1007] pusharglistnoret 3 ..................... <csInventory, 1, dataCount>
+  [1009] objcall 35 ............................. csInventory[1] = dataCount
+  [1011] pushcons 100 ........................... <"Wentworth">
+  [1013] pushint8 3 ............................. <3>
+  [1015] pushint8 100 ........................... <100>
+  [1017] pushcons 24 ............................ <"wager">
+  [1019] pushcons 101 ........................... <"Wentworth's Wager">
+  [1021] pushcons 26 ............................ <"_wager">
+  [1023] pusharglistnoret 6 ..................... <"Wentworth", 3, 100, "wager", "Wentworth's Wager", "_wager">
+  [1025] localcall 0 ............................ getData("Wentworth", 3, 100, "wager", "Wentworth's Wager", "_wager")
+  [1027] getglobal 217 .......................... <csWager>
+  [1029] pushint8 3 ............................. <3>
+  [1031] getglobal 517 .......................... <dataCount>
+  [1034] pusharglistnoret 3 ..................... <csWager, 3, dataCount>
+  [1036] objcall 35 ............................. csWager[3] = dataCount
+  [1038] pushcons 102 ........................... <"Riason">
+  [1040] pushint8 4 ............................. <4>
+  [1042] pushint8 100 ........................... <100>
+  [1044] pushcons 70 ............................ <"herbs">
+  [1046] pushcons 103 ........................... <"Riason's Reminiscences">
+  [1048] pushcons 12 ............................ <"xxx">
+  [1050] pusharglistnoret 6 ..................... <"Riason", 4, 100, "herbs", "Riason's Reminiscences", "xxx">
+  [1052] localcall 0 ............................ getData("Riason", 4, 100, "herbs", "Riason's Reminiscences", "xxx")
+  [1054] getglobal 355 .......................... <csHerb>
+  [1057] pushint8 4 ............................. <4>
+  [1059] getglobal 517 .......................... <dataCount>
+  [1062] pusharglistnoret 3 ..................... <csHerb, 4, dataCount>
+  [1064] objcall 35 ............................. csHerb[4] = dataCount
+  [1066] pushcons 104 ........................... <"Handel">
+  [1068] pushint8 3 ............................. <3>
+  [1070] pushint8 100 ........................... <100>
+  [1072] pushcons 52 ............................ <"cross-slide">
+  [1074] pushcons 105 ........................... <"Handel's Horizontals">
+  [1076] pushcons 12 ............................ <"xxx">
+  [1078] pusharglistnoret 6 ..................... <"Handel", 3, 100, "cross-slide", "Handel's Horizontals", "xxx">
+  [1080] localcall 0 ............................ getData("Handel", 3, 100, "cross-slide", "Handel's Horizontals", "xxx")
+  [1082] getglobal 358 .......................... <csLetterSlide>
+  [1085] pushint8 3 ............................. <3>
+  [1087] getglobal 517 .......................... <dataCount>
+  [1090] pusharglistnoret 3 ..................... <csLetterSlide, 3, dataCount>
+  [1092] objcall 35 ............................. csLetterSlide[3] = dataCount
+  [1094] pushcons 106 ........................... <"Percy">
+  [1096] pushint8 3 ............................. <3>
+  [1098] pushint8 100 ........................... <100>
+  [1100] pushcons 14 ............................ <"patchwork">
+  [1102] pushcons 107 ........................... <"Percy's Patchwork">
+  [1104] pushcons 12 ............................ <"xxx">
+  [1106] pusharglistnoret 6 ..................... <"Percy", 3, 100, "patchwork", "Percy's Patchwork", "xxx">
+  [1108] localcall 0 ............................ getData("Percy", 3, 100, "patchwork", "Percy's Patchwork", "xxx")
+  [1110] getglobal 289 .......................... <csPatchPirate>
+  [1113] pushint8 3 ............................. <3>
+  [1115] getglobal 517 .......................... <dataCount>
+  [1118] pusharglistnoret 3 ..................... <csPatchPirate, 3, dataCount>
+  [1120] objcall 35 ............................. csPatchPirate[3] = dataCount
+  [1122] pushcons 108 ........................... <"Telfair">
+  [1124] pushint8 1 ............................. <1>
+  [1126] pushint8 100 ........................... <100>
+  [1128] pushcons 109 ........................... <"tracer">
+  [1130] pushcons 110 ........................... <"Telfair's Tracer">
+  [1132] pushcons 12 ............................ <"xxx">
+  [1134] pusharglistnoret 6 ..................... <"Telfair", 1, 100, "tracer", "Telfair's Tracer", "xxx">
+  [1136] localcall 0 ............................ getData("Telfair", 1, 100, "tracer", "Telfair's Tracer", "xxx")
+  [1138] getglobal 354 .......................... <csTracer>
+  [1141] pushint8 1 ............................. <1>
+  [1143] getglobal 517 .......................... <dataCount>
+  [1146] pusharglistnoret 3 ..................... <csTracer, 1, dataCount>
+  [1148] objcall 35 ............................. csTracer[1] = dataCount
+  [1150] pushcons 111 ........................... <"Nairne">
+  [1152] pushint8 3 ............................. <3>
+  [1154] pushint8 100 ........................... <100>
+  [1156] pushcons 28 ............................ <"concat">
+  [1158] pushcons 112 ........................... <"Nairne's Knowledge">
+  [1160] pushcons 12 ............................ <"xxx">
+  [1162] pusharglistnoret 6 ..................... <"Nairne", 3, 100, "concat", "Nairne's Knowledge", "xxx">
+  [1164] localcall 0 ............................ getData("Nairne", 3, 100, "concat", "Nairne's Knowledge", "xxx")
+  [1166] getglobal 359 .......................... <csConcat>
+  [1169] pushint8 3 ............................. <3>
+  [1171] getglobal 517 .......................... <dataCount>
+  [1174] pusharglistnoret 3 ..................... <csConcat, 3, dataCount>
+  [1176] objcall 35 ............................. csConcat[3] = dataCount
+  [1178] pushcons 113 ........................... <"Harleigh">
+  [1180] pushint8 4 ............................. <4>
+  [1182] pushint8 100 ........................... <100>
+  [1184] pushcons 52 ............................ <"cross-slide">
+  [1186] pushcons 114 ........................... <"Harleigh's Horizontals">
+  [1188] pushcons 12 ............................ <"xxx">
+  [1190] pusharglistnoret 6 ..................... <"Harleigh", 4, 100, "cross-slide", "Harleigh's Horizontals", "xxx">
+  [1192] localcall 0 ............................ getData("Harleigh", 4, 100, "cross-slide", "Harleigh's Horizontals", "xxx")
+  [1194] getglobal 358 .......................... <csLetterSlide>
+  [1197] pushint8 4 ............................. <4>
+  [1199] getglobal 517 .......................... <dataCount>
+  [1202] pusharglistnoret 3 ..................... <csLetterSlide, 4, dataCount>
+  [1204] objcall 35 ............................. csLetterSlide[4] = dataCount
+  [1206] pushcons 115 ........................... <"Girdwood">
+  [1208] pushint8 3 ............................. <3>
+  [1210] pushint8 100 ........................... <100>
+  [1212] pushcons 31 ............................ <"4x4">
+  [1214] pushcons 116 ........................... <"Girdwood's Gridlock">
+  [1216] pushcons 12 ............................ <"xxx">
+  [1218] pusharglistnoret 6 ..................... <"Girdwood", 3, 100, "4x4", "Girdwood's Gridlock", "xxx">
+  [1220] localcall 0 ............................ getData("Girdwood", 3, 100, "4x4", "Girdwood's Gridlock", "xxx")
+  [1222] getglobal 363 .......................... <csGrid>
+  [1225] pushint8 3 ............................. <3>
+  [1227] getglobal 517 .......................... <dataCount>
+  [1230] pusharglistnoret 3 ..................... <csGrid, 3, dataCount>
+  [1232] objcall 35 ............................. csGrid[3] = dataCount
+  [1234] pushcons 117 ........................... <"Soule">
+  [1236] pushint8 3 ............................. <3>
+  [1238] pushint8 100 ........................... <100>
+  [1240] pushcons 41 ............................ <"stamp">
+  [1242] pushcons 118 ........................... <"Soule's Scramble">
+  [1244] pushcons 12 ............................ <"xxx">
+  [1246] pusharglistnoret 6 ..................... <"Soule", 3, 100, "stamp", "Soule's Scramble", "xxx">
+  [1248] localcall 0 ............................ getData("Soule", 3, 100, "stamp", "Soule's Scramble", "xxx")
+  [1250] getglobal 357 .......................... <csPatchStamp>
+  [1253] pushint8 3 ............................. <3>
+  [1255] getglobal 517 .......................... <dataCount>
+  [1258] pusharglistnoret 3 ..................... <csPatchStamp, 3, dataCount>
+  [1260] objcall 35 ............................. csPatchStamp[3] = dataCount
+  [1262] pushcons 119 ........................... <"Thwaite">
+  [1264] pushint8 2 ............................. <2>
+  [1266] pushint8 100 ........................... <100>
+  [1268] pushcons 109 ........................... <"tracer">
+  [1270] pushcons 120 ........................... <"Thwaite's Tracer">
+  [1272] pushcons 12 ............................ <"xxx">
+  [1274] pusharglistnoret 6 ..................... <"Thwaite", 2, 100, "tracer", "Thwaite's Tracer", "xxx">
+  [1276] localcall 0 ............................ getData("Thwaite", 2, 100, "tracer", "Thwaite's Tracer", "xxx")
+  [1278] getglobal 354 .......................... <csTracer>
+  [1281] pushint8 2 ............................. <2>
+  [1283] getglobal 517 .......................... <dataCount>
+  [1286] pusharglistnoret 3 ..................... <csTracer, 2, dataCount>
+  [1288] objcall 35 ............................. csTracer[2] = dataCount
+  [1290] pushcons 121 ........................... <"Augustine">
+  [1292] pushint8 3 ............................. <3>
+  [1294] pushint8 100 ........................... <100>
+  [1296] pushcons 47 ............................ <"auction">
+  [1298] pushcons 122 ........................... <"Augustine's Auction">
+  [1300] pushcons 12 ............................ <"xxx">
+  [1302] pusharglistnoret 6 ..................... <"Augustine", 3, 100, "auction", "Augustine's Auction", "xxx">
+  [1304] localcall 0 ............................ getData("Augustine", 3, 100, "auction", "Augustine's Auction", "xxx")
+  [1306] getglobal 351 .......................... <csAuction>
+  [1309] pushint8 3 ............................. <3>
+  [1311] getglobal 517 .......................... <dataCount>
+  [1314] pusharglistnoret 3 ..................... <csAuction, 3, dataCount>
+  [1316] objcall 35 ............................. csAuction[3] = dataCount
+  [1318] pushcons 123 ........................... <"Crichton">
+  [1320] pushint8 3 ............................. <3>
+  [1322] pushint8 100 ........................... <100>
+  [1324] pushcons 55 ............................ <"code-grid">
+  [1326] pushcons 124 ........................... <"Crichton's Curses">
+  [1328] pushcons 12 ............................ <"xxx">
+  [1330] pusharglistnoret 6 ..................... <"Crichton", 3, 100, "code-grid", "Crichton's Curses", "xxx">
+  [1332] localcall 0 ............................ getData("Crichton", 3, 100, "code-grid", "Crichton's Curses", "xxx")
+  [1334] getglobal 361 .......................... <csClickCode>
+  [1337] pushint8 3 ............................. <3>
+  [1339] getglobal 517 .......................... <dataCount>
+  [1342] pusharglistnoret 3 ..................... <csClickCode, 3, dataCount>
+  [1344] objcall 35 ............................. csClickCode[3] = dataCount
+  [1346] pushcons 125 ........................... <"Huddleston">
+  [1348] pushint8 5 ............................. <5>
+  [1350] pushint8 100 ........................... <100>
+  [1352] pushcons 52 ............................ <"cross-slide">
+  [1354] pushcons 126 ........................... <"Huddleston's Horizontals">
+  [1356] pushcons 12 ............................ <"xxx">
+  [1358] pusharglistnoret 6 ..................... <"Huddleston", 5, 100, "cross-slide", "Huddleston's Horizontals", "xxx">
+  [1360] localcall 0 ............................ getData("Huddleston", 5, 100, "cross-slide", "Huddleston's Horizontals", "xxx")
+  [1362] getglobal 358 .......................... <csLetterSlide>
+  [1365] pushint8 5 ............................. <5>
+  [1367] getglobal 517 .......................... <dataCount>
+  [1370] pusharglistnoret 3 ..................... <csLetterSlide, 5, dataCount>
+  [1372] objcall 35 ............................. csLetterSlide[5] = dataCount
+  [1374] pushcons 127 ........................... <"Iacobbe">
+  [1376] pushint8 2 ............................. <2>
+  [1378] pushint8 100 ........................... <100>
+  [1380] pushcons 98 ............................ <"inventory">
+  [1382] pushcons 128 ........................... <"Iacobbe's Inventory">
+  [1384] pushcons 12 ............................ <"xxx">
+  [1386] pusharglistnoret 6 ..................... <"Iacobbe", 2, 100, "inventory", "Iacobbe's Inventory", "xxx">
+  [1388] localcall 0 ............................ getData("Iacobbe", 2, 100, "inventory", "Iacobbe's Inventory", "xxx")
+  [1390] getglobal 353 .......................... <csInventory>
+  [1393] pushint8 2 ............................. <2>
+  [1395] getglobal 517 .......................... <dataCount>
+  [1398] pusharglistnoret 3 ..................... <csInventory, 2, dataCount>
+  [1400] objcall 35 ............................. csInventory[2] = dataCount
+  [1402] pushcons 129 ........................... <"Tilton">
+  [1404] pushint8 3 ............................. <3>
+  [1406] pushint8 100 ........................... <100>
+  [1408] pushcons 109 ........................... <"tracer">
+  [1410] pushcons 130 ........................... <"Tilton's Tracer">
+  [1412] pushcons 12 ............................ <"xxx">
+  [1414] pusharglistnoret 6 ..................... <"Tilton", 3, 100, "tracer", "Tilton's Tracer", "xxx">
+  [1416] localcall 0 ............................ getData("Tilton", 3, 100, "tracer", "Tilton's Tracer", "xxx")
+  [1418] getglobal 354 .......................... <csTracer>
+  [1421] pushint8 3 ............................. <3>
+  [1423] getglobal 517 .......................... <dataCount>
+  [1426] pusharglistnoret 3 ..................... <csTracer, 3, dataCount>
+  [1428] objcall 35 ............................. csTracer[3] = dataCount
+  [1430] pushcons 131 ........................... <"Vranken">
+  [1432] pushint8 3 ............................. <3>
+  [1434] pushint8 100 ........................... <100>
+  [1436] pushcons 58 ............................ <"sevens">
+  [1438] pushcons 132 ........................... <"Vranken's Vendition">
+  [1440] pushcons 12 ............................ <"xxx">
+  [1442] pusharglistnoret 6 ..................... <"Vranken", 3, 100, "sevens", "Vranken's Vendition", "xxx">
+  [1444] localcall 0 ............................ getData("Vranken", 3, 100, "sevens", "Vranken's Vendition", "xxx")
+  [1446] getglobal 352 .......................... <csSeven>
+  [1449] pushint8 3 ............................. <3>
+  [1451] getglobal 517 .......................... <dataCount>
+  [1454] pusharglistnoret 3 ..................... <csSeven, 3, dataCount>
+  [1456] objcall 35 ............................. csSeven[3] = dataCount
+  [1458] pushcons 133 ........................... <"Jeckel">
+  [1460] pushint8 3 ............................. <3>
+  [1462] pushint8 100 ........................... <100>
+  [1464] pushcons 44 ............................ <"jumble">
+  [1466] pushcons 134 ........................... <"Jeckel Junction">
+  [1468] pushcons 12 ............................ <"xxx">
+  [1470] pusharglistnoret 6 ..................... <"Jeckel", 3, 100, "jumble", "Jeckel Junction", "xxx">
+  [1472] localcall 0 ............................ getData("Jeckel", 3, 100, "jumble", "Jeckel Junction", "xxx")
+  [1474] getglobal 362 .......................... <csJumble>
+  [1477] pushint8 3 ............................. <3>
+  [1479] getglobal 517 .......................... <dataCount>
+  [1482] pusharglistnoret 3 ..................... <csJumble, 3, dataCount>
+  [1484] objcall 35 ............................. csJumble[3] = dataCount
+  [1486] pushcons 135 ........................... <"Lydia">
+  [1488] pushint8 3 ............................. <3>
+  [1490] pushint8 100 ........................... <100>
+  [1492] pushcons 21 ............................ <"phrase">
+  [1494] pushcons 136 ........................... <"Lydia's Literals">
+  [1496] pushcons 12 ............................ <"xxx">
+  [1498] pusharglistnoret 6 ..................... <"Lydia", 3, 100, "phrase", "Lydia's Literals", "xxx">
+  [1500] localcall 0 ............................ getData("Lydia", 3, 100, "phrase", "Lydia's Literals", "xxx")
+  [1502] getglobal 360 .......................... <csPhrase>
+  [1505] pushint8 3 ............................. <3>
+  [1507] getglobal 517 .......................... <dataCount>
+  [1510] pusharglistnoret 3 ..................... <csPhrase, 3, dataCount>
+  [1512] objcall 35 ............................. csPhrase[3] = dataCount
+  [1514] pushcons 137 ........................... <"Hyde">
+  [1516] pushint8 6 ............................. <6>
+  [1518] pushint8 100 ........................... <100>
+  [1520] pushcons 52 ............................ <"cross-slide">
+  [1522] pushcons 138 ........................... <"Hyde's Horizontals">
+  [1524] pushcons 12 ............................ <"xxx">
+  [1526] pusharglistnoret 6 ..................... <"Hyde", 6, 100, "cross-slide", "Hyde's Horizontals", "xxx">
+  [1528] localcall 0 ............................ getData("Hyde", 6, 100, "cross-slide", "Hyde's Horizontals", "xxx")
+  [1530] getglobal 358 .......................... <csLetterSlide>
+  [1533] pushint8 6 ............................. <6>
+  [1535] getglobal 517 .......................... <dataCount>
+  [1538] pusharglistnoret 3 ..................... <csLetterSlide, 6, dataCount>
+  [1540] objcall 35 ............................. csLetterSlide[6] = dataCount
+  [1542] pushcons 139 ........................... <"Tassel">
+  [1544] pushint8 4 ............................. <4>
+  [1546] pushint8 100 ........................... <100>
+  [1548] pushcons 109 ........................... <"tracer">
+  [1550] pushcons 140 ........................... <"Tassel's Tracer">
+  [1552] pushcons 12 ............................ <"xxx">
+  [1554] pusharglistnoret 6 ..................... <"Tassel", 4, 100, "tracer", "Tassel's Tracer", "xxx">
+  [1556] localcall 0 ............................ getData("Tassel", 4, 100, "tracer", "Tassel's Tracer", "xxx")
+  [1558] getglobal 354 .......................... <csTracer>
+  [1561] pushint8 4 ............................. <4>
+  [1563] getglobal 517 .......................... <dataCount>
+  [1566] pusharglistnoret 3 ..................... <csTracer, 4, dataCount>
+  [1568] objcall 35 ............................. csTracer[4] = dataCount
+  [1570] pushcons 141 ........................... <"Weir">
+  [1572] pushint8 4 ............................. <4>
+  [1574] pushint8 100 ........................... <100>
+  [1576] pushcons 24 ............................ <"wager">
+  [1578] pushcons 142 ........................... <"Weir's Wager">
+  [1580] pushcons 26 ............................ <"_wager">
+  [1582] pusharglistnoret 6 ..................... <"Weir", 4, 100, "wager", "Weir's Wager", "_wager">
+  [1584] localcall 0 ............................ getData("Weir", 4, 100, "wager", "Weir's Wager", "_wager")
+  [1586] getglobal 217 .......................... <csWager>
+  [1588] pushint8 4 ............................. <4>
+  [1590] getglobal 517 .......................... <dataCount>
+  [1593] pusharglistnoret 3 ..................... <csWager, 4, dataCount>
+  [1595] objcall 35 ............................. csWager[4] = dataCount
+  [1597] pushcons 143 ........................... <"Playfair">
+  [1599] pushint8 4 ............................. <4>
+  [1601] pushint8 100 ........................... <100>
+  [1603] pushcons 14 ............................ <"patchwork">
+  [1605] pushcons 144 ........................... <"Playfair's Patchwork">
+  [1607] pushcons 12 ............................ <"xxx">
+  [1609] pusharglistnoret 6 ..................... <"Playfair", 4, 100, "patchwork", "Playfair's Patchwork", "xxx">
+  [1611] localcall 0 ............................ getData("Playfair", 4, 100, "patchwork", "Playfair's Patchwork", "xxx")
+  [1613] getglobal 289 .......................... <csPatchPirate>
+  [1616] pushint8 4 ............................. <4>
+  [1618] getglobal 517 .......................... <dataCount>
+  [1621] pusharglistnoret 3 ..................... <csPatchPirate, 4, dataCount>
+  [1623] objcall 35 ............................. csPatchPirate[4] = dataCount
+  [1625] pushcons 145 ........................... <"Zachariah">
+  [1627] pushint8 4 ............................. <4>
+  [1629] pushint8 100 ........................... <100>
+  [1631] pushcons 146 ........................... <"slider">
+  [1633] pushcons 147 ........................... <"Zachariah's Zigzags">
+  [1635] pushcons 12 ............................ <"xxx">
+  [1637] pusharglistnoret 6 ..................... <"Zachariah", 4, 100, "slider", "Zachariah's Zigzags", "xxx">
+  [1639] localcall 0 ............................ getData("Zachariah", 4, 100, "slider", "Zachariah's Zigzags", "xxx")
+  [1641] getglobal 524 .......................... <csPatchSlider>
+  [1644] pushint8 1 ............................. <1>
+  [1646] getglobal 517 .......................... <dataCount>
+  [1649] pusharglistnoret 3 ..................... <csPatchSlider, 1, dataCount>
+  [1651] objcall 35 ............................. csPatchSlider[1] = dataCount
+  [1653] pushcons 148 ........................... <"Granville">
+  [1655] pushint8 4 ............................. <4>
+  [1657] pushint8 100 ........................... <100>
+  [1659] pushcons 31 ............................ <"4x4">
+  [1661] pushcons 149 ........................... <"Granville's Gridlock">
+  [1663] pushcons 12 ............................ <"xxx">
+  [1665] pusharglistnoret 6 ..................... <"Granville", 4, 100, "4x4", "Granville's Gridlock", "xxx">
+  [1667] localcall 0 ............................ getData("Granville", 4, 100, "4x4", "Granville's Gridlock", "xxx")
+  [1669] getglobal 363 .......................... <csGrid>
+  [1672] pushint8 4 ............................. <4>
+  [1674] getglobal 517 .......................... <dataCount>
+  [1677] pusharglistnoret 3 ..................... <csGrid, 4, dataCount>
+  [1679] objcall 35 ............................. csGrid[4] = dataCount
+  [1681] pushcons 150 ........................... <"Jurchik">
+  [1683] pushint8 4 ............................. <4>
+  [1685] pushint8 100 ........................... <100>
+  [1687] pushcons 44 ............................ <"jumble">
+  [1689] pushcons 151 ........................... <"Jurchik Junction">
+  [1691] pushcons 12 ............................ <"xxx">
+  [1693] pusharglistnoret 6 ..................... <"Jurchik", 4, 100, "jumble", "Jurchik Junction", "xxx">
+  [1695] localcall 0 ............................ getData("Jurchik", 4, 100, "jumble", "Jurchik Junction", "xxx")
+  [1697] getglobal 362 .......................... <csJumble>
+  [1700] pushint8 4 ............................. <4>
+  [1702] getglobal 517 .......................... <dataCount>
+  [1705] pusharglistnoret 3 ..................... <csJumble, 4, dataCount>
+  [1707] objcall 35 ............................. csJumble[4] = dataCount
+  [1709] pushcons 152 ........................... <"Vanderveer">
+  [1711] pushint8 4 ............................. <4>
+  [1713] pushint8 100 ........................... <100>
+  [1715] pushcons 58 ............................ <"sevens">
+  [1717] pushcons 153 ........................... <"Vanderveer's Vendition">
+  [1719] pushcons 12 ............................ <"xxx">
+  [1721] pusharglistnoret 6 ..................... <"Vanderveer", 4, 100, "sevens", "Vanderveer's Vendition", "xxx">
+  [1723] localcall 0 ............................ getData("Vanderveer", 4, 100, "sevens", "Vanderveer's Vendition", "xxx")
+  [1725] getglobal 352 .......................... <csSeven>
+  [1728] pushint8 4 ............................. <4>
+  [1730] getglobal 517 .......................... <dataCount>
+  [1733] pusharglistnoret 3 ..................... <csSeven, 4, dataCount>
+  [1735] objcall 35 ............................. csSeven[4] = dataCount
+  [1737] pushcons 154 ........................... <"Ostheim">
+  [1739] pushint8 1 ............................. <1>
+  [1741] pushint8 100 ........................... <100>
+  [1743] pushcons 155 ........................... <"market">
+  [1745] pushcons 156 ........................... <"Ostheim's Orchestration">
+  [1747] pushcons 12 ............................ <"xxx">
+  [1749] pusharglistnoret 6 ..................... <"Ostheim", 1, 100, "market", "Ostheim's Orchestration", "xxx">
+  [1751] localcall 0 ............................ getData("Ostheim", 1, 100, "market", "Ostheim's Orchestration", "xxx")
+  [1753] getglobal 350 .......................... <csPentacle>
+  [1756] pushint8 1 ............................. <1>
+  [1758] getglobal 517 .......................... <dataCount>
+  [1761] pusharglistnoret 3 ..................... <csPentacle, 1, dataCount>
+  [1763] objcall 35 ............................. csPentacle[1] = dataCount
+  [1765] pushcons 157 ........................... <"Iver">
+  [1767] pushint8 3 ............................. <3>
+  [1769] pushint8 100 ........................... <100>
+  [1771] pushcons 98 ............................ <"inventory">
+  [1773] pushcons 158 ........................... <"Iver's Inventory">
+  [1775] pushcons 12 ............................ <"xxx">
+  [1777] pusharglistnoret 6 ..................... <"Iver", 3, 100, "inventory", "Iver's Inventory", "xxx">
+  [1779] localcall 0 ............................ getData("Iver", 3, 100, "inventory", "Iver's Inventory", "xxx")
+  [1781] getglobal 353 .......................... <csInventory>
+  [1784] pushint8 3 ............................. <3>
+  [1786] getglobal 517 .......................... <dataCount>
+  [1789] pusharglistnoret 3 ..................... <csInventory, 3, dataCount>
+  [1791] objcall 35 ............................. csInventory[3] = dataCount
+  [1793] pushcons 159 ........................... <"Conklin">
+  [1795] pushint8 4 ............................. <4>
+  [1797] pushint8 100 ........................... <100>
+  [1799] pushcons 55 ............................ <"code-grid">
+  [1801] pushcons 160 ........................... <"Conklin's Curses">
+  [1803] pushcons 12 ............................ <"xxx">
+  [1805] pusharglistnoret 6 ..................... <"Conklin", 4, 100, "code-grid", "Conklin's Curses", "xxx">
+  [1807] localcall 0 ............................ getData("Conklin", 4, 100, "code-grid", "Conklin's Curses", "xxx")
+  [1809] getglobal 361 .......................... <csClickCode>
+  [1812] pushint8 4 ............................. <4>
+  [1814] getglobal 517 .......................... <dataCount>
+  [1817] pusharglistnoret 3 ..................... <csClickCode, 4, dataCount>
+  [1819] objcall 35 ............................. csClickCode[4] = dataCount
+  [1821] pushcons 161 ........................... <"Skidmore">
+  [1823] pushint8 4 ............................. <4>
+  [1825] pushint8 100 ........................... <100>
+  [1827] pushcons 41 ............................ <"stamp">
+  [1829] pushcons 162 ........................... <"Skidmore's Scramble">
+  [1831] pushcons 12 ............................ <"xxx">
+  [1833] pusharglistnoret 6 ..................... <"Skidmore", 4, 100, "stamp", "Skidmore's Scramble", "xxx">
+  [1835] localcall 0 ............................ getData("Skidmore", 4, 100, "stamp", "Skidmore's Scramble", "xxx")
+  [1837] getglobal 357 .......................... <csPatchStamp>
+  [1840] pushint8 4 ............................. <4>
+  [1842] getglobal 517 .......................... <dataCount>
+  [1845] pusharglistnoret 3 ..................... <csPatchStamp, 4, dataCount>
+  [1847] objcall 35 ............................. csPatchStamp[4] = dataCount
+  [1849] pushcons 163 ........................... <"Ockley">
+  [1851] pushint8 2 ............................. <2>
+  [1853] pushint8 100 ........................... <100>
+  [1855] pushcons 155 ........................... <"market">
+  [1857] pushcons 164 ........................... <"Ockley's Orchestration">
+  [1859] pushcons 12 ............................ <"xxx">
+  [1861] pusharglistnoret 6 ..................... <"Ockley", 2, 100, "market", "Ockley's Orchestration", "xxx">
+  [1863] localcall 0 ............................ getData("Ockley", 2, 100, "market", "Ockley's Orchestration", "xxx")
+  [1865] getglobal 350 .......................... <csPentacle>
+  [1868] pushint8 2 ............................. <2>
+  [1870] getglobal 517 .......................... <dataCount>
+  [1873] pusharglistnoret 3 ..................... <csPentacle, 2, dataCount>
+  [1875] objcall 35 ............................. csPentacle[2] = dataCount
+  [1877] pushcons 165 ........................... <"Laroche">
+  [1879] pushint8 4 ............................. <4>
+  [1881] pushint8 100 ........................... <100>
+  [1883] pushcons 21 ............................ <"phrase">
+  [1885] pushcons 166 ........................... <"Laroche's Literals">
+  [1887] pushcons 12 ............................ <"xxx">
+  [1889] pusharglistnoret 6 ..................... <"Laroche", 4, 100, "phrase", "Laroche's Literals", "xxx">
+  [1891] localcall 0 ............................ getData("Laroche", 4, 100, "phrase", "Laroche's Literals", "xxx")
+  [1893] getglobal 360 .......................... <csPhrase>
+  [1896] pushint8 4 ............................. <4>
+  [1898] getglobal 517 .......................... <dataCount>
+  [1901] pusharglistnoret 3 ..................... <csPhrase, 4, dataCount>
+  [1903] objcall 35 ............................. csPhrase[4] = dataCount
+  [1905] pushcons 167 ........................... <"Hernshaw">
+  [1907] pushint8 7 ............................. <7>
+  [1909] pushint8 100 ........................... <100>
+  [1911] pushcons 52 ............................ <"cross-slide">
+  [1913] pushcons 168 ........................... <"Hernshaw's Horizontals">
+  [1915] pushcons 12 ............................ <"xxx">
+  [1917] pusharglistnoret 6 ..................... <"Hernshaw", 7, 100, "cross-slide", "Hernshaw's Horizontals", "xxx">
+  [1919] localcall 0 ............................ getData("Hernshaw", 7, 100, "cross-slide", "Hernshaw's Horizontals", "xxx")
+  [1921] getglobal 358 .......................... <csLetterSlide>
+  [1924] pushint8 7 ............................. <7>
+  [1926] getglobal 517 .......................... <dataCount>
+  [1929] pusharglistnoret 3 ..................... <csLetterSlide, 7, dataCount>
+  [1931] objcall 35 ............................. csLetterSlide[7] = dataCount
+  [1933] pushcons 169 ........................... <"Nisbett">
+  [1935] pushint8 4 ............................. <4>
+  [1937] pushint8 100 ........................... <100>
+  [1939] pushcons 28 ............................ <"concat">
+  [1941] pushcons 170 ........................... <"Nisbett's Knowledge">
+  [1943] pushcons 12 ............................ <"xxx">
+  [1945] pusharglistnoret 6 ..................... <"Nisbett", 4, 100, "concat", "Nisbett's Knowledge", "xxx">
+  [1947] localcall 0 ............................ getData("Nisbett", 4, 100, "concat", "Nisbett's Knowledge", "xxx")
+  [1949] getglobal 359 .......................... <csConcat>
+  [1952] pushint8 4 ............................. <4>
+  [1954] getglobal 517 .......................... <dataCount>
+  [1957] pusharglistnoret 3 ..................... <csConcat, 4, dataCount>
+  [1959] objcall 35 ............................. csConcat[4] = dataCount
+  [1961] pushcons 171 ........................... <"Olmstead">
+  [1963] pushint8 3 ............................. <3>
+  [1965] pushint8 100 ........................... <100>
+  [1967] pushcons 155 ........................... <"market">
+  [1969] pushcons 172 ........................... <"Olmstead's Orchestration">
+  [1971] pushcons 12 ............................ <"xxx">
+  [1973] pusharglistnoret 6 ..................... <"Olmstead", 3, 100, "market", "Olmstead's Orchestration", "xxx">
+  [1975] localcall 0 ............................ getData("Olmstead", 3, 100, "market", "Olmstead's Orchestration", "xxx")
+  [1977] getglobal 350 .......................... <csPentacle>
+  [1980] pushint8 3 ............................. <3>
+  [1982] getglobal 517 .......................... <dataCount>
+  [1985] pusharglistnoret 3 ..................... <csPentacle, 3, dataCount>
+  [1987] objcall 35 ............................. csPentacle[3] = dataCount
+  [1989] pushcons 173 ........................... <"Aldridge">
+  [1991] pushint8 4 ............................. <4>
+  [1993] pushint8 100 ........................... <100>
+  [1995] pushcons 47 ............................ <"auction">
+  [1997] pushcons 174 ........................... <"Aldridge's Auction">
+  [1999] pushcons 12 ............................ <"xxx">
+  [2001] pusharglistnoret 6 ..................... <"Aldridge", 4, 100, "auction", "Aldridge's Auction", "xxx">
+  [2003] localcall 0 ............................ getData("Aldridge", 4, 100, "auction", "Aldridge's Auction", "xxx")
+  [2005] getglobal 351 .......................... <csAuction>
+  [2008] pushint8 4 ............................. <4>
+  [2010] getglobal 517 .......................... <dataCount>
+  [2013] pusharglistnoret 3 ..................... <csAuction, 4, dataCount>
+  [2015] objcall 35 ............................. csAuction[4] = dataCount
+  [2017] pushcons 175 ........................... <"Wickliff">
+  [2019] pushint8 5 ............................. <5>
+  [2021] pushint8 100 ........................... <100>
+  [2023] pushcons 24 ............................ <"wager">
+  [2025] pushcons 176 ........................... <"Wickliff's Wager">
+  [2027] pushcons 26 ............................ <"_wager">
+  [2029] pusharglistnoret 6 ..................... <"Wickliff", 5, 100, "wager", "Wickliff's Wager", "_wager">
+  [2031] localcall 0 ............................ getData("Wickliff", 5, 100, "wager", "Wickliff's Wager", "_wager")
+  [2033] getglobal 217 .......................... <csWager>
+  [2035] pushint8 5 ............................. <5>
+  [2037] getglobal 517 .......................... <dataCount>
+  [2040] pusharglistnoret 3 ..................... <csWager, 5, dataCount>
+  [2042] objcall 35 ............................. csWager[5] = dataCount
+  [2044] pushcons 177 ........................... <"Finale">
+  [2046] pushint8 72 ............................ <72>
+  [2048] pushint8 100 ........................... <100>
+  [2050] pushcons 178 ........................... <"pre-Finale">
+  [2052] pushcons 179 ........................... <"The Finale Awaits">
+  [2054] pushcons 180 ........................... <"_pre-Finale">
+  [2056] pusharglistnoret 6 ..................... <"Finale", 72, 100, "pre-Finale", "The Finale Awaits", "_pre-Finale">
+  [2058] localcall 0 ............................ getData("Finale", 72, 100, "pre-Finale", "The Finale Awaits", "_pre-Finale")
+  [2060] getglobal 517 .......................... <dataCount>
+  [2063] setglobal 348 .......................... csPreFinale = dataCount
+  [2066] pushcons 181 ........................... <"Pierpont">
+  [2068] pushint8 1 ............................. <1>
+  [2070] pushint8 100 ........................... <100>
+  [2072] pushcons 182 ........................... <"passwords">
+  [2074] pushcons 183 ........................... <"The First ">
+  [2076] pushcons 184 ........................... <"_passwords">
+  [2078] pusharglistnoret 6 ..................... <"Pierpont", 1, 100, "passwords", "The First ", "_passwords">
+  [2080] localcall 0 ............................ getData("Pierpont", 1, 100, "passwords", "The First ", "_passwords")
+  [2082] getglobal 448 .......................... <csMansion>
+  [2085] pushint8 1 ............................. <1>
+  [2087] getglobal 517 .......................... <dataCount>
+  [2090] pusharglistnoret 3 ..................... <csMansion, 1, dataCount>
+  [2092] objcall 35 ............................. csMansion[1] = dataCount
+  [2094] pushcons 185 ........................... <"Ingraham">
+  [2096] pushint8 2 ............................. <2>
+  [2098] pushint8 100 ........................... <100>
+  [2100] pushcons 182 ........................... <"passwords">
+  [2102] pushcons 186 ........................... <"The Second ">
+  [2104] pushcons 184 ........................... <"_passwords">
+  [2106] pusharglistnoret 6 ..................... <"Ingraham", 2, 100, "passwords", "The Second ", "_passwords">
+  [2108] localcall 0 ............................ getData("Ingraham", 2, 100, "passwords", "The Second ", "_passwords")
+  [2110] getglobal 448 .......................... <csMansion>
+  [2113] pushint8 2 ............................. <2>
+  [2115] getglobal 517 .......................... <dataCount>
+  [2118] pusharglistnoret 3 ..................... <csMansion, 2, dataCount>
+  [2120] objcall 35 ............................. csMansion[2] = dataCount
+  [2122] pushcons 187 ........................... <"Rosencrans">
+  [2124] pushint8 3 ............................. <3>
+  [2126] pushint8 100 ........................... <100>
+  [2128] pushcons 182 ........................... <"passwords">
+  [2130] pushcons 188 ........................... <"The Third ">
+  [2132] pushcons 184 ........................... <"_passwords">
+  [2134] pusharglistnoret 6 ..................... <"Rosencrans", 3, 100, "passwords", "The Third ", "_passwords">
+  [2136] localcall 0 ............................ getData("Rosencrans", 3, 100, "passwords", "The Third ", "_passwords")
+  [2138] getglobal 448 .......................... <csMansion>
+  [2141] pushint8 3 ............................. <3>
+  [2143] getglobal 517 .......................... <dataCount>
+  [2146] pusharglistnoret 3 ..................... <csMansion, 3, dataCount>
+  [2148] objcall 35 ............................. csMansion[3] = dataCount
+  [2150] pushcons 189 ........................... <"Abercrombie">
+  [2152] pushint8 4 ............................. <4>
+  [2154] pushint8 100 ........................... <100>
+  [2156] pushcons 182 ........................... <"passwords">
+  [2158] pushcons 190 ........................... <"The Fourth ">
+  [2160] pushcons 184 ........................... <"_passwords">
+  [2162] pusharglistnoret 6 ..................... <"Abercrombie", 4, 100, "passwords", "The Fourth ", "_passwords">
+  [2164] localcall 0 ............................ getData("Abercrombie", 4, 100, "passwords", "The Fourth ", "_passwords")
+  [2166] getglobal 448 .......................... <csMansion>
+  [2169] pushint8 4 ............................. <4>
+  [2171] getglobal 517 .......................... <dataCount>
+  [2174] pusharglistnoret 3 ..................... <csMansion, 4, dataCount>
+  [2176] objcall 35 ............................. csMansion[4] = dataCount
+  [2178] pushcons 191 ........................... <"Tremaine">
+  [2180] pushint8 5 ............................. <5>
+  [2182] pushint8 100 ........................... <100>
+  [2184] pushcons 182 ........................... <"passwords">
+  [2186] pushcons 192 ........................... <"The Fifth ">
+  [2188] pushcons 184 ........................... <"_passwords">
+  [2190] pusharglistnoret 6 ..................... <"Tremaine", 5, 100, "passwords", "The Fifth ", "_passwords">
+  [2192] localcall 0 ............................ getData("Tremaine", 5, 100, "passwords", "The Fifth ", "_passwords")
+  [2194] getglobal 448 .......................... <csMansion>
+  [2197] pushint8 5 ............................. <5>
+  [2199] getglobal 517 .......................... <dataCount>
+  [2202] pusharglistnoret 3 ..................... <csMansion, 5, dataCount>
+  [2204] objcall 35 ............................. csMansion[5] = dataCount
+  [2206] pushcons 193 ........................... <"Ethelbert">
+  [2208] pushint8 6 ............................. <6>
+  [2210] pushint8 100 ........................... <100>
+  [2212] pushcons 182 ........................... <"passwords">
+  [2214] pushcons 194 ........................... <"The Sixth ">
+  [2216] pushcons 184 ........................... <"_passwords">
+  [2218] pusharglistnoret 6 ..................... <"Ethelbert", 6, 100, "passwords", "The Sixth ", "_passwords">
+  [2220] localcall 0 ............................ getData("Ethelbert", 6, 100, "passwords", "The Sixth ", "_passwords")
+  [2222] getglobal 448 .......................... <csMansion>
+  [2225] pushint8 6 ............................. <6>
+  [2227] getglobal 517 .......................... <dataCount>
+  [2230] pusharglistnoret 3 ..................... <csMansion, 6, dataCount>
+  [2232] objcall 35 ............................. csMansion[6] = dataCount
+  [2234] pushcons 195 ........................... <"Schermerhorn">
+  [2236] pushint8 7 ............................. <7>
+  [2238] pushint8 100 ........................... <100>
+  [2240] pushcons 182 ........................... <"passwords">
+  [2242] pushcons 196 ........................... <"The Seventh ">
+  [2244] pushcons 184 ........................... <"_passwords">
+  [2246] pusharglistnoret 6 ..................... <"Schermerhorn", 7, 100, "passwords", "The Seventh ", "_passwords">
+  [2248] localcall 0 ............................ getData("Schermerhorn", 7, 100, "passwords", "The Seventh ", "_passwords")
+  [2250] getglobal 448 .......................... <csMansion>
+  [2253] pushint8 7 ............................. <7>
+  [2255] getglobal 517 .......................... <dataCount>
+  [2258] pusharglistnoret 3 ..................... <csMansion, 7, dataCount>
+  [2260] objcall 35 ............................. csMansion[7] = dataCount
+  [2262] pushcons 177 ........................... <"Finale">
+  [2264] pushint8 1 ............................. <1>
+  [2266] pushint8 100 ........................... <100>
+  [2268] pushcons 197 ........................... <"F01">
+  [2270] pushcons 198 ........................... <"The Finale">
+  [2272] pushcons 199 ........................... <"_finale-01">
+  [2274] pusharglistnoret 6 ..................... <"Finale", 1, 100, "F01", "The Finale", "_finale-01">
+  [2276] localcall 0 ............................ getData("Finale", 1, 100, "F01", "The Finale", "_finale-01")
+  [2278] pushcons 12 ............................ <"xxx">
+  [2280] pushint8 1 ............................. <1>
+  [2282] pushint8 100 ........................... <100>
+  [2284] pushcons 200 ........................... <"---">
+  [2286] pushcons 12 ............................ <"xxx">
+  [2288] pusharglistnoret 5 ..................... <"xxx", 1, 100, "---", "xxx">
+  [2290] localcall 0 ............................ getData("xxx", 1, 100, "---", "xxx")
+  [2292] pushcons 12 ............................ <"xxx">
+  [2294] pushint8 2 ............................. <2>
+  [2296] pushint8 100 ........................... <100>
+  [2298] pushcons 200 ........................... <"---">
+  [2300] pushcons 12 ............................ <"xxx">
+  [2302] pusharglistnoret 5 ..................... <"xxx", 2, 100, "---", "xxx">
+  [2304] localcall 0 ............................ getData("xxx", 2, 100, "---", "xxx")
+  [2306] pushcons 12 ............................ <"xxx">
+  [2308] pushint8 3 ............................. <3>
+  [2310] pushint8 100 ........................... <100>
+  [2312] pushcons 200 ........................... <"---">
+  [2314] pushcons 12 ............................ <"xxx">
+  [2316] pusharglistnoret 5 ..................... <"xxx", 3, 100, "---", "xxx">
+  [2318] localcall 0 ............................ getData("xxx", 3, 100, "---", "xxx")
+  [2320] pushcons 12 ............................ <"xxx">
+  [2322] pushint8 4 ............................. <4>
+  [2324] pushint8 100 ........................... <100>
+  [2326] pushcons 200 ........................... <"---">
+  [2328] pushcons 12 ............................ <"xxx">
+  [2330] pusharglistnoret 5 ..................... <"xxx", 4, 100, "---", "xxx">
+  [2332] localcall 0 ............................ getData("xxx", 4, 100, "---", "xxx")
+  [2334] pushcons 12 ............................ <"xxx">
+  [2336] pushint8 5 ............................. <5>
+  [2338] pushint8 100 ........................... <100>
+  [2340] pushcons 200 ........................... <"---">
+  [2342] pushcons 12 ............................ <"xxx">
+  [2344] pusharglistnoret 5 ..................... <"xxx", 5, 100, "---", "xxx">
+  [2346] localcall 0 ............................ getData("xxx", 5, 100, "---", "xxx")
+  [2348] pushcons 12 ............................ <"xxx">
+  [2350] pushint8 6 ............................. <6>
+  [2352] pushint8 100 ........................... <100>
+  [2354] pushcons 200 ........................... <"---">
+  [2356] pushcons 12 ............................ <"xxx">
+  [2358] pusharglistnoret 5 ..................... <"xxx", 6, 100, "---", "xxx">
+  [2360] localcall 0 ............................ getData("xxx", 6, 100, "---", "xxx")
+  [2362] pushcons 201 ........................... <"Tokens-Help">
+  [2364] pushint8 1 ............................. <1>
+  [2366] pushint8 100 ........................... <100>
+  [2368] pushcons 202 ........................... <"tokens-help">
+  [2370] pushcons 203 ........................... <"General Help">
+  [2372] pushcons 204 ........................... <"_tokens-help">
+  [2374] pusharglistnoret 6 ..................... <"Tokens-Help", 1, 100, "tokens-help", "General Help", "_tokens-help">
+  [2376] localcall 0 ............................ getData("Tokens-Help", 1, 100, "tokens-help", "General Help", "_tokens-help")
+  [2378] pushcons 205 ........................... <"Pre-HP">
+  [2380] pushint8 1 ............................. <1>
+  [2382] pushint8 75 ............................ <75>
+  [2384] pushcons 205 ........................... <"Pre-HP">
+  [2386] pushcons 206 ........................... <"The Twelve Tokens">
+  [2388] pushcons 207 ........................... <"_pre-HP">
+  [2390] pusharglistnoret 6 ..................... <"Pre-HP", 1, 75, "Pre-HP", "The Twelve Tokens", "_pre-HP">
+  [2392] localcall 0 ............................ getData("Pre-HP", 1, 75, "Pre-HP", "The Twelve Tokens", "_pre-HP")
+  [2394] pushcons 208 ........................... <"End-HP">
+  [2396] pushint8 1 ............................. <1>
+  [2398] pushint8 75 ............................ <75>
+  [2400] pushcons 208 ........................... <"End-HP">
+  [2402] pushcons 206 ........................... <"The Twelve Tokens">
+  [2404] pushcons 209 ........................... <"_end-HP">
+  [2406] pusharglistnoret 6 ..................... <"End-HP", 1, 75, "End-HP", "The Twelve Tokens", "_end-HP">
+  [2408] localcall 0 ............................ getData("End-HP", 1, 75, "End-HP", "The Twelve Tokens", "_end-HP")
+  [2410] pushcons 210 ........................... <"HP">
+  [2412] pushint8 1 ............................. <1>
+  [2414] pushint8 90 ............................ <90>
+  [2416] pushcons 210 ........................... <"HP">
+  [2418] pushcons 211 ........................... <"The High Priestess">
+  [2420] pushcons 212 ........................... <"_HP">
+  [2422] pusharglistnoret 6 ..................... <"HP", 1, 90, "HP", "The High Priestess", "_HP">
+  [2424] localcall 0 ............................ getData("HP", 1, 90, "HP", "The High Priestess", "_HP")
+  [2426] pushcons 213 ........................... <"SevenCups">
+  [2428] pushint8 1 ............................. <1>
+  [2430] pushint8 100 ........................... <100>
+  [2432] pushcons 214 ........................... <"seven-cups">
+  [2434] pushcons 215 ........................... <"The Seven Cups">
+  [2436] pushcons 216 ........................... <"_seven-cups">
+  [2438] pusharglistnoret 6 ..................... <"SevenCups", 1, 100, "seven-cups", "The Seven Cups", "_seven-cups">
+  [2440] localcall 0 ............................ getData("SevenCups", 1, 100, "seven-cups", "The Seven Cups", "_seven-cups")
+  [2442] pushcons 217 ........................... <"Tarot-1">
+  [2444] pushint8 1 ............................. <1>
+  [2446] pushint8 100 ........................... <100>
+  [2448] pushcons 218 ........................... <"tarot-1">
+  [2450] pushcons 219 ........................... <"Imperial Tarot">
+  [2452] pushcons 220 ........................... <"_tarot-1">
+  [2454] pusharglistnoret 6 ..................... <"Tarot-1", 1, 100, "tarot-1", "Imperial Tarot", "_tarot-1">
+  [2456] localcall 0 ............................ getData("Tarot-1", 1, 100, "tarot-1", "Imperial Tarot", "_tarot-1")
+  [2458] getglobal 327 .......................... <csTarot>
+  [2461] pushint8 1 ............................. <1>
+  [2463] getglobal 517 .......................... <dataCount>
+  [2466] pusharglistnoret 3 ..................... <csTarot, 1, dataCount>
+  [2468] objcall 35 ............................. csTarot[1] = dataCount
+  [2470] pushcons 221 ........................... <"Tarot-2">
+  [2472] pushint8 2 ............................. <2>
+  [2474] pushint8 100 ........................... <100>
+  [2476] pushcons 222 ........................... <"tarot-2">
+  [2478] pushcons 223 ........................... <"Cutthroat Tarot">
+  [2480] pushcons 224 ........................... <"_tarot-2">
+  [2482] pusharglistnoret 6 ..................... <"Tarot-2", 2, 100, "tarot-2", "Cutthroat Tarot", "_tarot-2">
+  [2484] localcall 0 ............................ getData("Tarot-2", 2, 100, "tarot-2", "Cutthroat Tarot", "_tarot-2")
+  [2486] getglobal 327 .......................... <csTarot>
+  [2489] pushint8 2 ............................. <2>
+  [2491] getglobal 517 .......................... <dataCount>
+  [2494] pusharglistnoret 3 ..................... <csTarot, 2, dataCount>
+  [2496] objcall 35 ............................. csTarot[2] = dataCount
+  [2498] pushcons 225 ........................... <"Tarot-3">
+  [2500] pushint8 3 ............................. <3>
+  [2502] pushint8 100 ........................... <100>
+  [2504] pushcons 226 ........................... <"tarot-3">
+  [2506] pushcons 227 ........................... <"Remedial Tarot">
+  [2508] pushcons 228 ........................... <"_tarot-3">
+  [2510] pusharglistnoret 6 ..................... <"Tarot-3", 3, 100, "tarot-3", "Remedial Tarot", "_tarot-3">
+  [2512] localcall 0 ............................ getData("Tarot-3", 3, 100, "tarot-3", "Remedial Tarot", "_tarot-3")
+  [2514] getglobal 327 .......................... <csTarot>
+  [2517] pushint8 3 ............................. <3>
+  [2519] getglobal 517 .......................... <dataCount>
+  [2522] pusharglistnoret 3 ..................... <csTarot, 3, dataCount>
+  [2524] objcall 35 ............................. csTarot[3] = dataCount
+  [2526] pushcons 229 ........................... <"Tarot-4">
+  [2528] pushint8 4 ............................. <4>
+  [2530] pushint8 100 ........................... <100>
+  [2532] pushcons 230 ........................... <"tarot-4">
+  [2534] pushcons 231 ........................... <"Drunken Tarot">
+  [2536] pushcons 232 ........................... <"_tarot-4">
+  [2538] pusharglistnoret 6 ..................... <"Tarot-4", 4, 100, "tarot-4", "Drunken Tarot", "_tarot-4">
+  [2540] localcall 0 ............................ getData("Tarot-4", 4, 100, "tarot-4", "Drunken Tarot", "_tarot-4")
+  [2542] getglobal 327 .......................... <csTarot>
+  [2545] pushint8 4 ............................. <4>
+  [2547] getglobal 517 .......................... <dataCount>
+  [2550] pusharglistnoret 3 ..................... <csTarot, 4, dataCount>
+  [2552] objcall 35 ............................. csTarot[4] = dataCount
+  [2554] pushcons 233 ........................... <"Tarot-5">
+  [2556] pushint8 5 ............................. <5>
+  [2558] pushint8 100 ........................... <100>
+  [2560] pushcons 234 ........................... <"tarot-5">
+  [2562] pushcons 235 ........................... <"Kingdom Tarot">
+  [2564] pushcons 236 ........................... <"_tarot-5">
+  [2566] pusharglistnoret 6 ..................... <"Tarot-5", 5, 100, "tarot-5", "Kingdom Tarot", "_tarot-5">
+  [2568] localcall 0 ............................ getData("Tarot-5", 5, 100, "tarot-5", "Kingdom Tarot", "_tarot-5")
+  [2570] getglobal 327 .......................... <csTarot>
+  [2573] pushint8 5 ............................. <5>
+  [2575] getglobal 517 .......................... <dataCount>
+  [2578] pusharglistnoret 3 ..................... <csTarot, 5, dataCount>
+  [2580] objcall 35 ............................. csTarot[5] = dataCount
+  [2582] pushcons 237 ........................... <"Moon's Map">
+  [2584] pushint8 1 ............................. <1>
+  [2586] pushint8 100 ........................... <100>
+  [2588] pushcons 238 ........................... <"map">
+  [2590] pushcons 239 ........................... <"The Moon's Map">
+  [2592] pushcons 240 ........................... <"_map">
+  [2594] pusharglistnoret 6 ..................... <"Moon's Map", 1, 100, "map", "The Moon's Map", "_map">
+  [2596] localcall 0 ............................ getData("Moon's Map", 1, 100, "map", "The Moon's Map", "_map")
+  [2598] pushcons 241 ........................... <"Moon's Map Solved">
+  [2600] pushint8 17 ............................ <17>
+  [2602] pushint8 100 ........................... <100>
+  [2604] pushcons 242 ........................... <"map-puzzles">
+  [2606] pushcons 239 ........................... <"The Moon's Map">
+  [2608] pushcons 243 ........................... <"_map-puzzles">
+  [2610] pusharglistnoret 6 ..................... <"Moon's Map Solved", 17, 100, "map-puzzles", "The Moon's Map", "_map-puzzles">
+  [2612] localcall 0 ............................ getData("Moon's Map Solved", 17, 100, "map-puzzles", "The Moon's Map", "_map-puzzles")
+  [2614] pushcons 244 ........................... <"Game Menus">
+  [2616] pushint8 1 ............................. <1>
+  [2618] pushint8 70 ............................ <70>
+  [2620] pushcons 245 ........................... <"game-menus">
+  [2622] pushcons 246 ........................... <"The Seventh House">
+  [2624] pushcons 247 ........................... <"_game-menu">
+  [2626] pusharglistnoret 6 ..................... <"Game Menus", 1, 70, "game-menus", "The Seventh House", "_game-menu">
+  [2628] localcall 0 ............................ getData("Game Menus", 1, 70, "game-menus", "The Seventh House", "_game-menu")
+  [2630] pushcons 248 ........................... <"Tokens">
+  [2632] pushint8 1 ............................. <1>
+  [2634] pushint8 75 ............................ <75>
+  [2636] pushcons 249 ........................... <"tokens">
+  [2638] pushcons 206 ........................... <"The Twelve Tokens">
+  [2640] pushcons 250 ........................... <"_tokens">
+  [2642] pusharglistnoret 6 ..................... <"Tokens", 1, 75, "tokens", "The Twelve Tokens", "_tokens">
+  [2644] localcall 0 ............................ getData("Tokens", 1, 75, "tokens", "The Twelve Tokens", "_tokens")
+  [2646] pushcons 181 ........................... <"Pierpont">
+  [2648] pushint8 1 ............................. <1>
+  [2650] pushint8 100 ........................... <100>
+  [2652] pushcons 251 ........................... <"DEL">
+  [2654] pushcons 252 ........................... <"The First Delivery">
+  [2656] pushcons 253 ........................... <"_DEL-stub">
+  [2658] pusharglistnoret 6 ..................... <"Pierpont", 1, 100, "DEL", "The First Delivery", "_DEL-stub">
+  [2660] localcall 0 ............................ getData("Pierpont", 1, 100, "DEL", "The First Delivery", "_DEL-stub")
+  [2662] getglobal 344 .......................... <csDEL>
+  [2665] pushint8 1 ............................. <1>
+  [2667] getglobal 517 .......................... <dataCount>
+  [2670] pusharglistnoret 3 ..................... <csDEL, 1, dataCount>
+  [2672] objcall 35 ............................. csDEL[1] = dataCount
+  [2674] pushcons 185 ........................... <"Ingraham">
+  [2676] pushint8 2 ............................. <2>
+  [2678] pushint8 100 ........................... <100>
+  [2680] pushcons 251 ........................... <"DEL">
+  [2682] pushcons 254 ........................... <"The Second Delivery">
+  [2684] pushcons 253 ........................... <"_DEL-stub">
+  [2686] pusharglistnoret 6 ..................... <"Ingraham", 2, 100, "DEL", "The Second Delivery", "_DEL-stub">
+  [2688] localcall 0 ............................ getData("Ingraham", 2, 100, "DEL", "The Second Delivery", "_DEL-stub")
+  [2690] getglobal 344 .......................... <csDEL>
+  [2693] pushint8 2 ............................. <2>
+  [2695] getglobal 517 .......................... <dataCount>
+  [2698] pusharglistnoret 3 ..................... <csDEL, 2, dataCount>
+  [2700] objcall 35 ............................. csDEL[2] = dataCount
+  [2702] pushcons 187 ........................... <"Rosencrans">
+  [2704] pushint8 3 ............................. <3>
+  [2706] pushint8 100 ........................... <100>
+  [2708] pushcons 251 ........................... <"DEL">
+  [2710] pushcons 255 ........................... <"The Third Delivery">
+  [2712] pushcons 253 ........................... <"_DEL-stub">
+  [2714] pusharglistnoret 6 ..................... <"Rosencrans", 3, 100, "DEL", "The Third Delivery", "_DEL-stub">
+  [2716] localcall 0 ............................ getData("Rosencrans", 3, 100, "DEL", "The Third Delivery", "_DEL-stub")
+  [2718] getglobal 344 .......................... <csDEL>
+  [2721] pushint8 3 ............................. <3>
+  [2723] getglobal 517 .......................... <dataCount>
+  [2726] pusharglistnoret 3 ..................... <csDEL, 3, dataCount>
+  [2728] objcall 35 ............................. csDEL[3] = dataCount
+  [2730] pushcons 189 ........................... <"Abercrombie">
+  [2732] pushint8 4 ............................. <4>
+  [2734] pushint8 100 ........................... <100>
+  [2736] pushcons 251 ........................... <"DEL">
+  [2738] pushcons 256 ........................... <"The Fourth Delivery">
+  [2741] pushcons 253 ........................... <"_DEL-stub">
+  [2743] pusharglistnoret 6 ..................... <"Abercrombie", 4, 100, "DEL", "The Fourth Delivery", "_DEL-stub">
+  [2745] localcall 0 ............................ getData("Abercrombie", 4, 100, "DEL", "The Fourth Delivery", "_DEL-stub")
+  [2747] getglobal 344 .......................... <csDEL>
+  [2750] pushint8 4 ............................. <4>
+  [2752] getglobal 517 .......................... <dataCount>
+  [2755] pusharglistnoret 3 ..................... <csDEL, 4, dataCount>
+  [2757] objcall 35 ............................. csDEL[4] = dataCount
+  [2759] pushcons 191 ........................... <"Tremaine">
+  [2761] pushint8 5 ............................. <5>
+  [2763] pushint8 100 ........................... <100>
+  [2765] pushcons 251 ........................... <"DEL">
+  [2767] pushcons 257 ........................... <"The Fifth Delivery">
+  [2770] pushcons 253 ........................... <"_DEL-stub">
+  [2772] pusharglistnoret 6 ..................... <"Tremaine", 5, 100, "DEL", "The Fifth Delivery", "_DEL-stub">
+  [2774] localcall 0 ............................ getData("Tremaine", 5, 100, "DEL", "The Fifth Delivery", "_DEL-stub")
+  [2776] getglobal 344 .......................... <csDEL>
+  [2779] pushint8 5 ............................. <5>
+  [2781] getglobal 517 .......................... <dataCount>
+  [2784] pusharglistnoret 3 ..................... <csDEL, 5, dataCount>
+  [2786] objcall 35 ............................. csDEL[5] = dataCount
+  [2788] pushcons 193 ........................... <"Ethelbert">
+  [2790] pushint8 6 ............................. <6>
+  [2792] pushint8 100 ........................... <100>
+  [2794] pushcons 251 ........................... <"DEL">
+  [2796] pushcons 258 ........................... <"The Sixth Delivery">
+  [2799] pushcons 253 ........................... <"_DEL-stub">
+  [2801] pusharglistnoret 6 ..................... <"Ethelbert", 6, 100, "DEL", "The Sixth Delivery", "_DEL-stub">
+  [2803] localcall 0 ............................ getData("Ethelbert", 6, 100, "DEL", "The Sixth Delivery", "_DEL-stub")
+  [2805] getglobal 344 .......................... <csDEL>
+  [2808] pushint8 6 ............................. <6>
+  [2810] getglobal 517 .......................... <dataCount>
+  [2813] pusharglistnoret 3 ..................... <csDEL, 6, dataCount>
+  [2815] objcall 35 ............................. csDEL[6] = dataCount
+  [2817] pushcons 195 ........................... <"Schermerhorn">
+  [2819] pushint8 7 ............................. <7>
+  [2821] pushint8 100 ........................... <100>
+  [2823] pushcons 251 ........................... <"DEL">
+  [2825] pushcons 259 ........................... <"The Seventh Delivery">
+  [2828] pushcons 253 ........................... <"_DEL-stub">
+  [2830] pusharglistnoret 6 ..................... <"Schermerhorn", 7, 100, "DEL", "The Seventh Delivery", "_DEL-stub">
+  [2832] localcall 0 ............................ getData("Schermerhorn", 7, 100, "DEL", "The Seventh Delivery", "_DEL-stub")
+  [2834] getglobal 344 .......................... <csDEL>
+  [2837] pushint8 7 ............................. <7>
+  [2839] getglobal 517 .......................... <dataCount>
+  [2842] pusharglistnoret 3 ..................... <csDEL, 7, dataCount>
+  [2844] objcall 35 ............................. csDEL[7] = dataCount
+  [2846] pushcons 181 ........................... <"Pierpont">
+  [2848] pushint8 1 ............................. <1>
+  [2850] pushint8 100 ........................... <100>
+  [2852] pushcons 260 ........................... <"HEX">
+  [2855] pushcons 261 ........................... <"The First Hex">
+  [2858] pushcons 262 ........................... <"_HEX-stub">
+  [2861] pusharglistnoret 6 ..................... <"Pierpont", 1, 100, "HEX", "The First Hex", "_HEX-stub">
+  [2863] localcall 0 ............................ getData("Pierpont", 1, 100, "HEX", "The First Hex", "_HEX-stub")
+  [2865] getglobal 345 .......................... <csHEX>
+  [2868] pushint8 1 ............................. <1>
+  [2870] getglobal 517 .......................... <dataCount>
+  [2873] pusharglistnoret 3 ..................... <csHEX, 1, dataCount>
+  [2875] objcall 35 ............................. csHEX[1] = dataCount
+  [2877] pushcons 185 ........................... <"Ingraham">
+  [2879] pushint8 2 ............................. <2>
+  [2881] pushint8 100 ........................... <100>
+  [2883] pushcons 260 ........................... <"HEX">
+  [2886] pushcons 263 ........................... <"The Second Hex">
+  [2889] pushcons 262 ........................... <"_HEX-stub">
+  [2892] pusharglistnoret 6 ..................... <"Ingraham", 2, 100, "HEX", "The Second Hex", "_HEX-stub">
+  [2894] localcall 0 ............................ getData("Ingraham", 2, 100, "HEX", "The Second Hex", "_HEX-stub")
+  [2896] getglobal 345 .......................... <csHEX>
+  [2899] pushint8 2 ............................. <2>
+  [2901] getglobal 517 .......................... <dataCount>
+  [2904] pusharglistnoret 3 ..................... <csHEX, 2, dataCount>
+  [2906] objcall 35 ............................. csHEX[2] = dataCount
+  [2908] pushcons 187 ........................... <"Rosencrans">
+  [2910] pushint8 3 ............................. <3>
+  [2912] pushint8 100 ........................... <100>
+  [2914] pushcons 260 ........................... <"HEX">
+  [2917] pushcons 264 ........................... <"The Third Hex">
+  [2920] pushcons 262 ........................... <"_HEX-stub">
+  [2923] pusharglistnoret 6 ..................... <"Rosencrans", 3, 100, "HEX", "The Third Hex", "_HEX-stub">
+  [2925] localcall 0 ............................ getData("Rosencrans", 3, 100, "HEX", "The Third Hex", "_HEX-stub")
+  [2927] getglobal 345 .......................... <csHEX>
+  [2930] pushint8 3 ............................. <3>
+  [2932] getglobal 517 .......................... <dataCount>
+  [2935] pusharglistnoret 3 ..................... <csHEX, 3, dataCount>
+  [2937] objcall 35 ............................. csHEX[3] = dataCount
+  [2939] pushcons 189 ........................... <"Abercrombie">
+  [2941] pushint8 4 ............................. <4>
+  [2943] pushint8 100 ........................... <100>
+  [2945] pushcons 260 ........................... <"HEX">
+  [2948] pushcons 265 ........................... <"The Fourth Hex">
+  [2951] pushcons 262 ........................... <"_HEX-stub">
+  [2954] pusharglistnoret 6 ..................... <"Abercrombie", 4, 100, "HEX", "The Fourth Hex", "_HEX-stub">
+  [2956] localcall 0 ............................ getData("Abercrombie", 4, 100, "HEX", "The Fourth Hex", "_HEX-stub")
+  [2958] getglobal 345 .......................... <csHEX>
+  [2961] pushint8 4 ............................. <4>
+  [2963] getglobal 517 .......................... <dataCount>
+  [2966] pusharglistnoret 3 ..................... <csHEX, 4, dataCount>
+  [2968] objcall 35 ............................. csHEX[4] = dataCount
+  [2970] pushcons 191 ........................... <"Tremaine">
+  [2972] pushint8 5 ............................. <5>
+  [2974] pushint8 100 ........................... <100>
+  [2976] pushcons 260 ........................... <"HEX">
+  [2979] pushcons 266 ........................... <"The Fifth Hex">
+  [2982] pushcons 262 ........................... <"_HEX-stub">
+  [2985] pusharglistnoret 6 ..................... <"Tremaine", 5, 100, "HEX", "The Fifth Hex", "_HEX-stub">
+  [2987] localcall 0 ............................ getData("Tremaine", 5, 100, "HEX", "The Fifth Hex", "_HEX-stub")
+  [2989] getglobal 345 .......................... <csHEX>
+  [2992] pushint8 5 ............................. <5>
+  [2994] getglobal 517 .......................... <dataCount>
+  [2997] pusharglistnoret 3 ..................... <csHEX, 5, dataCount>
+  [2999] objcall 35 ............................. csHEX[5] = dataCount
+  [3001] pushcons 193 ........................... <"Ethelbert">
+  [3003] pushint8 6 ............................. <6>
+  [3005] pushint8 100 ........................... <100>
+  [3007] pushcons 260 ........................... <"HEX">
+  [3010] pushcons 267 ........................... <"The Sixth Hex">
+  [3013] pushcons 262 ........................... <"_HEX-stub">
+  [3016] pusharglistnoret 6 ..................... <"Ethelbert", 6, 100, "HEX", "The Sixth Hex", "_HEX-stub">
+  [3018] localcall 0 ............................ getData("Ethelbert", 6, 100, "HEX", "The Sixth Hex", "_HEX-stub")
+  [3020] getglobal 345 .......................... <csHEX>
+  [3023] pushint8 6 ............................. <6>
+  [3025] getglobal 517 .......................... <dataCount>
+  [3028] pusharglistnoret 3 ..................... <csHEX, 6, dataCount>
+  [3030] objcall 35 ............................. csHEX[6] = dataCount
+  [3032] pushcons 195 ........................... <"Schermerhorn">
+  [3034] pushint8 7 ............................. <7>
+  [3036] pushint8 100 ........................... <100>
+  [3038] pushcons 260 ........................... <"HEX">
+  [3041] pushcons 268 ........................... <"The Seventh Hex">
+  [3044] pushcons 262 ........................... <"_HEX-stub">
+  [3047] pusharglistnoret 6 ..................... <"Schermerhorn", 7, 100, "HEX", "The Seventh Hex", "_HEX-stub">
+  [3049] localcall 0 ............................ getData("Schermerhorn", 7, 100, "HEX", "The Seventh Hex", "_HEX-stub")
+  [3051] getglobal 345 .......................... <csHEX>
+  [3054] pushint8 7 ............................. <7>
+  [3056] getglobal 517 .......................... <dataCount>
+  [3059] pusharglistnoret 3 ..................... <csHEX, 7, dataCount>
+  [3061] objcall 35 ............................. csHEX[7] = dataCount
+  [3063] pushcons 181 ........................... <"Pierpont">
+  [3065] pushint8 1 ............................. <1>
+  [3067] pushint8 100 ........................... <100>
+  [3069] pushcons 269 ........................... <"REM">
+  [3072] pushcons 270 ........................... <"The First Remainder">
+  [3075] pushcons 271 ........................... <"_REM-stub">
+  [3078] pusharglistnoret 6 ..................... <"Pierpont", 1, 100, "REM", "The First Remainder", "_REM-stub">
+  [3080] localcall 0 ............................ getData("Pierpont", 1, 100, "REM", "The First Remainder", "_REM-stub")
+  [3082] getglobal 346 .......................... <csREM>
+  [3085] pushint8 1 ............................. <1>
+  [3087] getglobal 517 .......................... <dataCount>
+  [3090] pusharglistnoret 3 ..................... <csREM, 1, dataCount>
+  [3092] objcall 35 ............................. csREM[1] = dataCount
+  [3094] pushcons 185 ........................... <"Ingraham">
+  [3096] pushint8 2 ............................. <2>
+  [3098] pushint8 100 ........................... <100>
+  [3100] pushcons 269 ........................... <"REM">
+  [3103] pushcons 272 ........................... <"The Second Remainder">
+  [3106] pushcons 271 ........................... <"_REM-stub">
+  [3109] pusharglistnoret 6 ..................... <"Ingraham", 2, 100, "REM", "The Second Remainder", "_REM-stub">
+  [3111] localcall 0 ............................ getData("Ingraham", 2, 100, "REM", "The Second Remainder", "_REM-stub")
+  [3113] getglobal 346 .......................... <csREM>
+  [3116] pushint8 2 ............................. <2>
+  [3118] getglobal 517 .......................... <dataCount>
+  [3121] pusharglistnoret 3 ..................... <csREM, 2, dataCount>
+  [3123] objcall 35 ............................. csREM[2] = dataCount
+  [3125] pushcons 187 ........................... <"Rosencrans">
+  [3127] pushint8 3 ............................. <3>
+  [3129] pushint8 100 ........................... <100>
+  [3131] pushcons 269 ........................... <"REM">
+  [3134] pushcons 273 ........................... <"The Third Remainder">
+  [3137] pushcons 271 ........................... <"_REM-stub">
+  [3140] pusharglistnoret 6 ..................... <"Rosencrans", 3, 100, "REM", "The Third Remainder", "_REM-stub">
+  [3142] localcall 0 ............................ getData("Rosencrans", 3, 100, "REM", "The Third Remainder", "_REM-stub")
+  [3144] getglobal 346 .......................... <csREM>
+  [3147] pushint8 3 ............................. <3>
+  [3149] getglobal 517 .......................... <dataCount>
+  [3152] pusharglistnoret 3 ..................... <csREM, 3, dataCount>
+  [3154] objcall 35 ............................. csREM[3] = dataCount
+  [3156] pushcons 189 ........................... <"Abercrombie">
+  [3158] pushint8 4 ............................. <4>
+  [3160] pushint8 100 ........................... <100>
+  [3162] pushcons 269 ........................... <"REM">
+  [3165] pushcons 274 ........................... <"The Fourth Remainder">
+  [3168] pushcons 271 ........................... <"_REM-stub">
+  [3171] pusharglistnoret 6 ..................... <"Abercrombie", 4, 100, "REM", "The Fourth Remainder", "_REM-stub">
+  [3173] localcall 0 ............................ getData("Abercrombie", 4, 100, "REM", "The Fourth Remainder", "_REM-stub")
+  [3175] getglobal 346 .......................... <csREM>
+  [3178] pushint8 4 ............................. <4>
+  [3180] getglobal 517 .......................... <dataCount>
+  [3183] pusharglistnoret 3 ..................... <csREM, 4, dataCount>
+  [3185] objcall 35 ............................. csREM[4] = dataCount
+  [3187] pushcons 191 ........................... <"Tremaine">
+  [3189] pushint8 5 ............................. <5>
+  [3191] pushint8 100 ........................... <100>
+  [3193] pushcons 269 ........................... <"REM">
+  [3196] pushcons 275 ........................... <"The Fifth Remainder">
+  [3199] pushcons 271 ........................... <"_REM-stub">
+  [3202] pusharglistnoret 6 ..................... <"Tremaine", 5, 100, "REM", "The Fifth Remainder", "_REM-stub">
+  [3204] localcall 0 ............................ getData("Tremaine", 5, 100, "REM", "The Fifth Remainder", "_REM-stub")
+  [3206] getglobal 346 .......................... <csREM>
+  [3209] pushint8 5 ............................. <5>
+  [3211] getglobal 517 .......................... <dataCount>
+  [3214] pusharglistnoret 3 ..................... <csREM, 5, dataCount>
+  [3216] objcall 35 ............................. csREM[5] = dataCount
+  [3218] pushcons 193 ........................... <"Ethelbert">
+  [3220] pushint8 6 ............................. <6>
+  [3222] pushint8 100 ........................... <100>
+  [3224] pushcons 269 ........................... <"REM">
+  [3227] pushcons 276 ........................... <"The Sixth Remainder">
+  [3230] pushcons 271 ........................... <"_REM-stub">
+  [3233] pusharglistnoret 6 ..................... <"Ethelbert", 6, 100, "REM", "The Sixth Remainder", "_REM-stub">
+  [3235] localcall 0 ............................ getData("Ethelbert", 6, 100, "REM", "The Sixth Remainder", "_REM-stub")
+  [3237] getglobal 346 .......................... <csREM>
+  [3240] pushint8 6 ............................. <6>
+  [3242] getglobal 517 .......................... <dataCount>
+  [3245] pusharglistnoret 3 ..................... <csREM, 6, dataCount>
+  [3247] objcall 35 ............................. csREM[6] = dataCount
+  [3249] pushcons 195 ........................... <"Schermerhorn">
+  [3251] pushint8 7 ............................. <7>
+  [3253] pushint8 100 ........................... <100>
+  [3255] pushcons 269 ........................... <"REM">
+  [3258] pushcons 277 ........................... <"The Seventh Remainder">
+  [3261] pushcons 271 ........................... <"_REM-stub">
+  [3264] pusharglistnoret 6 ..................... <"Schermerhorn", 7, 100, "REM", "The Seventh Remainder", "_REM-stub">
+  [3266] localcall 0 ............................ getData("Schermerhorn", 7, 100, "REM", "The Seventh Remainder", "_REM-stub")
+  [3268] getglobal 346 .......................... <csREM>
+  [3271] pushint8 7 ............................. <7>
+  [3273] getglobal 517 .......................... <dataCount>
+  [3276] pusharglistnoret 3 ..................... <csREM, 7, dataCount>
+  [3278] objcall 35 ............................. csREM[7] = dataCount
+  [3280] pushcons 181 ........................... <"Pierpont">
+  [3282] pushint8 1 ............................. <1>
+  [3284] pushint8 100 ........................... <100>
+  [3286] pushcons 278 ........................... <"CON">
+  [3289] pushcons 279 ........................... <"The First Connection">
+  [3292] pushcons 12 ............................ <"xxx">
+  [3294] pusharglistnoret 6 ..................... <"Pierpont", 1, 100, "CON", "The First Connection", "xxx">
+  [3296] localcall 0 ............................ getData("Pierpont", 1, 100, "CON", "The First Connection", "xxx")
+  [3298] getglobal 525 .......................... <csCON>
+  [3301] pushint8 1 ............................. <1>
+  [3303] getglobal 517 .......................... <dataCount>
+  [3306] pusharglistnoret 3 ..................... <csCON, 1, dataCount>
+  [3308] objcall 35 ............................. csCON[1] = dataCount
+  [3310] pushcons 185 ........................... <"Ingraham">
+  [3312] pushint8 2 ............................. <2>
+  [3314] pushint8 100 ........................... <100>
+  [3316] pushcons 278 ........................... <"CON">
+  [3319] pushcons 280 ........................... <"The Second Connection">
+  [3322] pushcons 12 ............................ <"xxx">
+  [3324] pusharglistnoret 6 ..................... <"Ingraham", 2, 100, "CON", "The Second Connection", "xxx">
+  [3326] localcall 0 ............................ getData("Ingraham", 2, 100, "CON", "The Second Connection", "xxx")
+  [3328] getglobal 525 .......................... <csCON>
+  [3331] pushint8 2 ............................. <2>
+  [3333] getglobal 517 .......................... <dataCount>
+  [3336] pusharglistnoret 3 ..................... <csCON, 2, dataCount>
+  [3338] objcall 35 ............................. csCON[2] = dataCount
+  [3340] pushcons 187 ........................... <"Rosencrans">
+  [3342] pushint8 3 ............................. <3>
+  [3344] pushint8 100 ........................... <100>
+  [3346] pushcons 278 ........................... <"CON">
+  [3349] pushcons 281 ........................... <"The Third Connection">
+  [3352] pushcons 12 ............................ <"xxx">
+  [3354] pusharglistnoret 6 ..................... <"Rosencrans", 3, 100, "CON", "The Third Connection", "xxx">
+  [3356] localcall 0 ............................ getData("Rosencrans", 3, 100, "CON", "The Third Connection", "xxx")
+  [3358] getglobal 525 .......................... <csCON>
+  [3361] pushint8 3 ............................. <3>
+  [3363] getglobal 517 .......................... <dataCount>
+  [3366] pusharglistnoret 3 ..................... <csCON, 3, dataCount>
+  [3368] objcall 35 ............................. csCON[3] = dataCount
+  [3370] pushcons 189 ........................... <"Abercrombie">
+  [3372] pushint8 4 ............................. <4>
+  [3374] pushint8 100 ........................... <100>
+  [3376] pushcons 278 ........................... <"CON">
+  [3379] pushcons 282 ........................... <"The Fourth Connection">
+  [3382] pushcons 12 ............................ <"xxx">
+  [3384] pusharglistnoret 6 ..................... <"Abercrombie", 4, 100, "CON", "The Fourth Connection", "xxx">
+  [3386] localcall 0 ............................ getData("Abercrombie", 4, 100, "CON", "The Fourth Connection", "xxx")
+  [3388] getglobal 525 .......................... <csCON>
+  [3391] pushint8 4 ............................. <4>
+  [3393] getglobal 517 .......................... <dataCount>
+  [3396] pusharglistnoret 3 ..................... <csCON, 4, dataCount>
+  [3398] objcall 35 ............................. csCON[4] = dataCount
+  [3400] pushcons 191 ........................... <"Tremaine">
+  [3402] pushint8 5 ............................. <5>
+  [3404] pushint8 100 ........................... <100>
+  [3406] pushcons 278 ........................... <"CON">
+  [3409] pushcons 283 ........................... <"The Fifth Connection">
+  [3412] pushcons 12 ............................ <"xxx">
+  [3414] pusharglistnoret 6 ..................... <"Tremaine", 5, 100, "CON", "The Fifth Connection", "xxx">
+  [3416] localcall 0 ............................ getData("Tremaine", 5, 100, "CON", "The Fifth Connection", "xxx")
+  [3418] getglobal 525 .......................... <csCON>
+  [3421] pushint8 5 ............................. <5>
+  [3423] getglobal 517 .......................... <dataCount>
+  [3426] pusharglistnoret 3 ..................... <csCON, 5, dataCount>
+  [3428] objcall 35 ............................. csCON[5] = dataCount
+  [3430] pushcons 193 ........................... <"Ethelbert">
+  [3432] pushint8 6 ............................. <6>
+  [3434] pushint8 100 ........................... <100>
+  [3436] pushcons 278 ........................... <"CON">
+  [3439] pushcons 284 ........................... <"The Sixth Connection">
+  [3442] pushcons 12 ............................ <"xxx">
+  [3444] pusharglistnoret 6 ..................... <"Ethelbert", 6, 100, "CON", "The Sixth Connection", "xxx">
+  [3446] localcall 0 ............................ getData("Ethelbert", 6, 100, "CON", "The Sixth Connection", "xxx")
+  [3448] getglobal 525 .......................... <csCON>
+  [3451] pushint8 6 ............................. <6>
+  [3453] getglobal 517 .......................... <dataCount>
+  [3456] pusharglistnoret 3 ..................... <csCON, 6, dataCount>
+  [3458] objcall 35 ............................. csCON[6] = dataCount
+  [3460] pushcons 195 ........................... <"Schermerhorn">
+  [3462] pushint8 7 ............................. <7>
+  [3464] pushint8 100 ........................... <100>
+  [3466] pushcons 285 ........................... <"CONs">
+  [3469] pushcons 286 ........................... <"The Seventh Connection">
+  [3472] pushcons 12 ............................ <"xxx">
+  [3474] pusharglistnoret 6 ..................... <"Schermerhorn", 7, 100, "CONs", "The Seventh Connection", "xxx">
+  [3476] localcall 0 ............................ getData("Schermerhorn", 7, 100, "CONs", "The Seventh Connection", "xxx")
+  [3478] getglobal 525 .......................... <csCON>
+  [3481] pushint8 7 ............................. <7>
+  [3483] getglobal 517 .......................... <dataCount>
+  [3486] pusharglistnoret 3 ..................... <csCON, 7, dataCount>
+  [3488] objcall 35 ............................. csCON[7] = dataCount
+  [3490] pushint8 1 ............................. <1>
+  [3492] setlocal 0
+  [3494] getlocal 0
+  [3496] pushint8 5 ............................. <5>
+  [3498] lteq
+  [3499] jmpifz [3527] .......................... repeat with x = 1 to 5
+  [3502] getglobal 204 .......................... <csWagerTarot>
+  [3504] getlocal 0 ............................. <x>
+  [3506] getglobal 217 .......................... <csWager>
+  [3508] getlocal 0 ............................. <x>
+  [3510] pusharglist 2 .......................... <csWager, x>
+  [3512] objcall 17 ............................. <csWager[x]>
+  [3514] pusharglistnoret 3 ..................... <csWagerTarot, x, csWager[x]>
+  [3516] objcall 35 ............................. csWagerTarot[x] = csWager[x]
+  [3518] pushint8 1
+  [3520] getlocal 0
+  [3522] add
+  [3523] setlocal 0
+  [3525] endrepeat [3494]
+  [3527] ret
+end
+
+on initWordStat63
+  [  0] getglobal 206 ........................... <pWordStat63>
+  [  2] pushint8 1 .............................. <1>
+  [  4] pushcons 287 ............................ <"000000000000001000000000000000010010001100010000100000000010100">
+  [  7] pusharglistnoret 3 ...................... <pWordStat63, 1, "000000000000001000000000000000010010001100010000100000000010100">
+  [  9] objcall 35 .............................. pWordStat63[1] = "000000000000001000000000000000010010001100010000100000000010100"
+  [ 11] getglobal 206 ........................... <pWordStat63>
+  [ 13] pushint8 2 .............................. <2>
+  [ 15] pushcons 288 ............................ <"000000001000010000001100000010000010100000000000000000000100000">
+  [ 18] pusharglistnoret 3 ...................... <pWordStat63, 2, "000000001000010000001100000010000010100000000000000000000100000">
+  [ 20] objcall 35 .............................. pWordStat63[2] = "000000001000010000001100000010000010100000000000000000000100000"
+  [ 22] getglobal 206 ........................... <pWordStat63>
+  [ 24] pushint8 3 .............................. <3>
+  [ 26] pushcons 289 ............................ <"000000000000000000001000000000000100100110010001100100001000000">
+  [ 29] pusharglistnoret 3 ...................... <pWordStat63, 3, "000000000000000000001000000000000100100110010001100100001000000">
+  [ 31] objcall 35 .............................. pWordStat63[3] = "000000000000000000001000000000000100100110010001100100001000000"
+  [ 33] getglobal 206 ........................... <pWordStat63>
+  [ 35] pushint8 4 .............................. <4>
+  [ 37] pushcons 290 ............................ <"000000000011000001010001100010000000000000101000000000101001001">
+  [ 40] pusharglistnoret 3 ...................... <pWordStat63, 4, "000000000011000001010001100010000000000000101000000000101001001">
+  [ 42] objcall 35 .............................. pWordStat63[4] = "000000000011000001010001100010000000000000101000000000101001001"
+  [ 44] ret
+end
+
+on grabWordStat63
+  [  0] pushcons 2 .............................. <"-">
+  [  2] setglobal 364 ........................... pSeven = "-"
+  [  5] pushint8 1 .............................. <1>
+  [  7] setlocal 0
+  [  9] getlocal 0
+  [ 11] pushint8 4 .............................. <4>
+  [ 13] lteq
+  [ 14] jmpifz [ 52] ............................ repeat with x = 1 to 4
+  [ 17] getglobal 24 ............................ <currPuzzle>
+  [ 19] getglobal 352 ........................... <csSeven>
+  [ 22] getlocal 0 .............................. <x>
+  [ 24] pusharglist 2 ........................... <csSeven, x>
+  [ 26] objcall 17 .............................. <csSeven[x]>
+  [ 28] eq ...................................... <currPuzzle = csSeven[x]>
+  [ 29] jmpifz [ 43] ............................ if currPuzzle = csSeven[x] then
+  [ 32] getglobal 206 ........................... <pWordStat63>
+  [ 34] getlocal 0 .............................. <x>
+  [ 36] pusharglist 2 ........................... <pWordStat63, x>
+  [ 38] objcall 17 .............................. <pWordStat63[x]>
+  [ 40] setglobal 364 ........................... pSeven = pWordStat63[x]
+  [ 43] pushint8 1
+  [ 45] getlocal 0
+  [ 47] add
+  [ 48] setlocal 0
+  [ 50] endrepeat [  9]
+  [ 52] pushint8 1 .............................. <1>
+  [ 54] setlocal 0
+  [ 56] getlocal 0
+  [ 58] pushint8 4 .............................. <4>
+  [ 60] lteq
+  [ 61] jmpifz [ 99] ............................ repeat with x = 1 to 4
+  [ 64] getglobal 24 ............................ <currPuzzle>
+  [ 66] getglobal 362 ........................... <csJumble>
+  [ 69] getlocal 0 .............................. <x>
+  [ 71] pusharglist 2 ........................... <csJumble, x>
+  [ 73] objcall 17 .............................. <csJumble[x]>
+  [ 75] eq ...................................... <currPuzzle = csJumble[x]>
+  [ 76] jmpifz [ 90] ............................ if currPuzzle = csJumble[x] then
+  [ 79] getglobal 206 ........................... <pWordStat63>
+  [ 81] getlocal 0 .............................. <x>
+  [ 83] pusharglist 2 ........................... <pWordStat63, x>
+  [ 85] objcall 17 .............................. <pWordStat63[x]>
+  [ 87] setglobal 364 ........................... pSeven = pWordStat63[x]
+  [ 90] pushint8 1
+  [ 92] getlocal 0
+  [ 94] add
+  [ 95] setlocal 0
+  [ 97] endrepeat [ 56]
+  [ 99] pushint8 1 .............................. <1>
+  [101] setlocal 0
+  [103] getlocal 0
+  [105] pushint8 3 .............................. <3>
+  [107] lteq
+  [108] jmpifz [146] ............................ repeat with x = 1 to 3
+  [111] getglobal 24 ............................ <currPuzzle>
+  [113] getglobal 356 ........................... <csMorphText>
+  [116] getlocal 0 .............................. <x>
+  [118] pusharglist 2 ........................... <csMorphText, x>
+  [120] objcall 17 .............................. <csMorphText[x]>
+  [122] eq ...................................... <currPuzzle = csMorphText[x]>
+  [123] jmpifz [137] ............................ if currPuzzle = csMorphText[x] then
+  [126] getglobal 206 ........................... <pWordStat63>
+  [128] pushint8 1 .............................. <1>
+  [130] pusharglist 2 ........................... <pWordStat63, 1>
+  [132] objcall 17 .............................. <pWordStat63[1]>
+  [134] setglobal 364 ........................... pSeven = pWordStat63[1]
+  [137] pushint8 1
+  [139] getlocal 0
+  [141] add
+  [142] setlocal 0
+  [144] endrepeat [103]
+  [146] getglobal 364 ........................... <pSeven>
+  [149] getobjprop 134 .......................... <pSeven.length>
+  [151] pushint8 63 ............................. <63>
+  [153] eq ...................................... <pSeven.length = 63>
+  [154] jmpifz [157] ............................ if pSeven.length = 63 then
+  [157] ret
+end
+
+on saveWordStat63
+  [  0] pushcons 291 ............................ <"pSeven">
+  [  3] pushzero ................................ <0>
+  [  4] pusharglist 2 ........................... <"pSeven", 0>
+  [  6] extcall 43 .............................. <misc_GetFlash("pSeven", 0)>
+  [  8] setlocal 0 .............................. chunk = misc_GetFlash("pSeven", 0)
+  [ 10] getlocal 0 .............................. <chunk>
+  [ 12] getobjprop 134 .......................... <chunk.length>
+  [ 14] pushint8 63 ............................. <63>
+  [ 16] eq ...................................... <chunk.length = 63>
+  [ 17] jmpifz [112] ............................ if chunk.length = 63 then
+  [ 20] pushint8 1 .............................. <1>
+  [ 22] setlocal 1
+  [ 24] getlocal 1
+  [ 26] pushint8 4 .............................. <4>
+  [ 28] lteq
+  [ 29] jmpifz [ 66] ............................ repeat with x = 1 to 4
+  [ 32] getglobal 24 ............................ <currPuzzle>
+  [ 34] getglobal 362 ........................... <csJumble>
+  [ 37] getlocal 1 .............................. <x>
+  [ 39] pusharglist 2 ........................... <csJumble, x>
+  [ 41] objcall 17 .............................. <csJumble[x]>
+  [ 43] eq ...................................... <currPuzzle = csJumble[x]>
+  [ 44] jmpifz [ 57] ............................ if currPuzzle = csJumble[x] then
+  [ 47] getglobal 206 ........................... <pWordStat63>
+  [ 49] getlocal 1 .............................. <x>
+  [ 51] getlocal 0 .............................. <chunk>
+  [ 53] pusharglistnoret 3 ...................... <pWordStat63, x, chunk>
+  [ 55] objcall 35 .............................. pWordStat63[x] = chunk
+  [ 57] pushint8 1
+  [ 59] getlocal 1
+  [ 61] add
+  [ 62] setlocal 1
+  [ 64] endrepeat [ 24]
+  [ 66] pushint8 1 .............................. <1>
+  [ 68] setlocal 1
+  [ 70] getlocal 1
+  [ 72] pushint8 3 .............................. <3>
+  [ 74] lteq
+  [ 75] jmpifz [112] ............................ repeat with x = 1 to 3
+  [ 78] getglobal 24 ............................ <currPuzzle>
+  [ 80] getglobal 356 ........................... <csMorphText>
+  [ 83] getlocal 1 .............................. <x>
+  [ 85] pusharglist 2 ........................... <csMorphText, x>
+  [ 87] objcall 17 .............................. <csMorphText[x]>
+  [ 89] eq ...................................... <currPuzzle = csMorphText[x]>
+  [ 90] jmpifz [103] ............................ if currPuzzle = csMorphText[x] then
+  [ 93] getglobal 206 ........................... <pWordStat63>
+  [ 95] pushint8 1 .............................. <1>
+  [ 97] getlocal 0 .............................. <chunk>
+  [ 99] pusharglistnoret 3 ...................... <pWordStat63, 1, chunk>
+  [101] objcall 35 .............................. pWordStat63[1] = chunk
+  [103] pushint8 1
+  [105] getlocal 1
+  [107] add
+  [108] setlocal 1
+  [110] endrepeat [ 70]
+  [112] ret
+end

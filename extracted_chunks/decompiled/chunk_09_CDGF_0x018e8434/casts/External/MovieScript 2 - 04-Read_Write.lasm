@@ -1,0 +1,2148 @@
+global theDirectorVersion, CR, createNewGameData, playMode, pmPlay, pmClick, pmSave, _Save_Stat, _Save_Type, pClickToContinue, cPuzzleTotal, cSavePuzzleTotal, cNewGameNum, cTarotTotal, cRevGameNum, cOpenGameNum, c_Interface_Mode, cFileTotal, cGameDirectory, cXtraDirectory, cSaveDirectoryCliff, cFileIO, cTestIO, prefNumber, cPreHP, cHighPriestess, cTarotCards, cScrollSN, cHelpSN, cTokens, cPreFinale, cHelpTokens, cPrologue, cFinale, tName, fName, fData, pStat, pData, pDone, pPage, pSwords, pWands, pCups, pPentacles, pWindowCode, pWordStat63, token1, token2, token3, currGame, currPuzzle, prefTotal, prefChunk, grab1, grab2, grab3, grab4, aaaa1, aaaa2, aaaa3, aaaa4, bbbb1, bbbb2, bbbb3, bbbb4, cccc1, cccc2, cccc3, cccc4, csWager, csWagerTarot
+
+on calc_File_Name_From_Path FN
+  [  0] pushcons 0 .............................. <EMPTY>
+  [  2] setlocal 0 .............................. S = EMPTY
+  [  4] getparam 0 .............................. <FN>
+  [  6] getobjprop 134 .......................... <FN.length>
+  [  8] setlocal 1 .............................. L = FN.length
+  [ 10] getlocal 1 .............................. <L>
+  [ 12] setlocal 2
+  [ 14] getlocal 2
+  [ 16] pushint8 1 .............................. <1>
+  [ 18] gteq
+  [ 19] jmpifz [ 68] ............................ repeat with x = L down to 1
+  [ 22] getparam 0 .............................. <FN>
+  [ 24] pushsymb 135 ............................ <#char>
+  [ 26] getlocal 2 .............................. <x>
+  [ 28] pusharglist 3 ........................... <FN, #char, x>
+  [ 30] objcall 136 ............................. <FN.char[x]>
+  [ 32] pushcons 1 .............................. <"\\">
+  [ 34] nteq .................................... <FN.char[x] <> "\\">
+  [ 35] jmpifz [ 56] ............................ if FN.char[x] <> "\\" then
+  [ 38] getparam 0 .............................. <FN>
+  [ 40] pushsymb 135 ............................ <#char>
+  [ 42] getlocal 2 .............................. <x>
+  [ 44] pusharglist 3 ........................... <FN, #char, x>
+  [ 46] objcall 136 ............................. <FN.char[x]>
+  [ 48] getlocal 0 .............................. <S>
+  [ 50] joinstr ................................. <FN.char[x] & S>
+  [ 51] setlocal 0 .............................. S = FN.char[x] & S
+  [ 53] jmp [ 59] ............................... next repeat
+  [ 56] jmp [ 68] ............................... exit repeat
+  [ 59] pushint8 -1
+  [ 61] getlocal 2
+  [ 63] add
+  [ 64] setlocal 2
+  [ 66] endrepeat [ 14]
+  [ 68] getlocal 0 .............................. <S>
+  [ 70] pusharglistnoret 1 ...................... <S>
+  [ 72] extcall 137 ............................. return S
+  [ 74] ret
+end
+
+on getFoolFile GN
+  [  0] getglobal 142 ........................... <cFileIO>
+  [  2] getglobal 143 ........................... <fName>
+  [  4] getparam 0 .............................. <GN>
+  [  6] pusharglist 2 ........................... <fName, GN>
+  [  8] objcall 17 .............................. <fName[GN]>
+  [ 10] pushzero ................................ <0>
+  [ 11] pusharglistnoret 3 ...................... <cFileIO, fName[GN], 0>
+  [ 13] extcall 141 ............................. openfile(cFileIO, fName[GN], 0)
+  [ 15] getglobal 142 ........................... <cFileIO>
+  [ 17] pusharglist 1 ........................... <cFileIO>
+  [ 19] extcall 144 ............................. <status(cFileIO)>
+  [ 21] pushzero ................................ <0>
+  [ 22] nteq .................................... <status(cFileIO) <> 0>
+  [ 23] jmpifz [ 38] ............................ if status(cFileIO) <> 0 then
+  [ 26] getglobal 142 ........................... <cFileIO>
+  [ 28] pusharglistnoret 1 ...................... <cFileIO>
+  [ 30] extcall 145 ............................. closeFile(cFileIO)
+  [ 32] pushcons 0 .............................. <EMPTY>
+  [ 34] pusharglistnoret 1 ...................... <EMPTY>
+  [ 36] extcall 137 ............................. return EMPTY
+  [ 38] getglobal 142 ........................... <cFileIO>
+  [ 40] pusharglist 1 ........................... <cFileIO>
+  [ 42] extcall 146 ............................. <getLength(cFileIO)>
+  [ 44] setlocal 0 .............................. L = getLength(cFileIO)
+  [ 46] getlocal 0 .............................. <L>
+  [ 48] pushint32 99999 ......................... <99999>
+  [ 53] gt ...................................... <L > 99999>
+  [ 54] jmpifz [ 69] ............................ if L > 99999 then
+  [ 57] getglobal 142 ........................... <cFileIO>
+  [ 59] pusharglistnoret 1 ...................... <cFileIO>
+  [ 61] extcall 145 ............................. closeFile(cFileIO)
+  [ 63] pushcons 0 .............................. <EMPTY>
+  [ 65] pusharglistnoret 1 ...................... <EMPTY>
+  [ 67] extcall 137 ............................. return EMPTY
+  [ 69] pusharglist 0 ........................... <>
+  [ 71] localcall 14 ............................ <errorReadFile()>
+  [ 73] setlocal 1 .............................. chunk = errorReadFile()
+  [ 75] getlocal 1 .............................. <chunk>
+  [ 77] pusharglist 1 ........................... <chunk>
+  [ 79] extcall 147 ............................. <zipTest(chunk)>
+  [ 81] pushzero ................................ <0>
+  [ 82] eq ...................................... <zipTest(chunk) = 0>
+  [ 83] jmpifz [ 96] ............................ if zipTest(chunk) = 0 then
+  [ 86] getglobal 142 ........................... <cFileIO>
+  [ 88] pusharglistnoret 1 ...................... <cFileIO>
+  [ 90] extcall 145 ............................. closeFile(cFileIO)
+  [ 92] pushcons 0 .............................. <EMPTY>
+  [ 94] setlocal 1 .............................. chunk = EMPTY
+  [ 96] getglobal 142 ........................... <cFileIO>
+  [ 98] pusharglistnoret 1 ...................... <cFileIO>
+  [100] extcall 145 ............................. closeFile(cFileIO)
+  [102] getlocal 1 .............................. <chunk>
+  [104] pusharglistnoret 1 ...................... <chunk>
+  [106] extcall 137 ............................. return chunk
+  [108] ret
+end
+
+on getOpenFile FP
+  [  0] getglobal 142 ........................... <cFileIO>
+  [  2] getparam 0 .............................. <FP>
+  [  4] pushzero ................................ <0>
+  [  5] pusharglistnoret 3 ...................... <cFileIO, FP, 0>
+  [  7] extcall 141 ............................. openfile(cFileIO, FP, 0)
+  [  9] getglobal 142 ........................... <cFileIO>
+  [ 11] pusharglist 1 ........................... <cFileIO>
+  [ 13] extcall 144 ............................. <status(cFileIO)>
+  [ 15] pushzero ................................ <0>
+  [ 16] nteq .................................... <status(cFileIO) <> 0>
+  [ 17] jmpifz [ 26] ............................ if status(cFileIO) <> 0 then
+  [ 20] pushcons 0 .............................. <EMPTY>
+  [ 22] pusharglistnoret 1 ...................... <EMPTY>
+  [ 24] extcall 137 ............................. return EMPTY
+  [ 26] getglobal 142 ........................... <cFileIO>
+  [ 28] pusharglist 1 ........................... <cFileIO>
+  [ 30] extcall 146 ............................. <getLength(cFileIO)>
+  [ 32] setlocal 0 .............................. L = getLength(cFileIO)
+  [ 34] getlocal 0 .............................. <L>
+  [ 36] pushint32 66666 ......................... <66666>
+  [ 41] gt ...................................... <L > 66666>
+  [ 42] jmpifz [ 57] ............................ if L > 66666 then
+  [ 45] getglobal 142 ........................... <cFileIO>
+  [ 47] pusharglistnoret 1 ...................... <cFileIO>
+  [ 49] extcall 145 ............................. closeFile(cFileIO)
+  [ 51] pushcons 0 .............................. <EMPTY>
+  [ 53] pusharglistnoret 1 ...................... <EMPTY>
+  [ 55] extcall 137 ............................. return EMPTY
+  [ 57] pusharglist 0 ........................... <>
+  [ 59] localcall 14 ............................ <errorReadFile()>
+  [ 61] setlocal 1 .............................. chunk = errorReadFile()
+  [ 63] getlocal 1 .............................. <chunk>
+  [ 65] pusharglist 1 ........................... <chunk>
+  [ 67] extcall 147 ............................. <zipTest(chunk)>
+  [ 69] pushzero ................................ <0>
+  [ 70] eq ...................................... <zipTest(chunk) = 0>
+  [ 71] jmpifz [ 86] ............................ if zipTest(chunk) = 0 then
+  [ 74] getglobal 142 ........................... <cFileIO>
+  [ 76] pusharglistnoret 1 ...................... <cFileIO>
+  [ 78] extcall 145 ............................. closeFile(cFileIO)
+  [ 80] pushcons 0 .............................. <EMPTY>
+  [ 82] pusharglistnoret 1 ...................... <EMPTY>
+  [ 84] extcall 137 ............................. return EMPTY
+  [ 86] getglobal 142 ........................... <cFileIO>
+  [ 88] pusharglistnoret 1 ...................... <cFileIO>
+  [ 90] extcall 145 ............................. closeFile(cFileIO)
+  [ 92] getlocal 1 .............................. <chunk>
+  [ 94] pusharglistnoret 1 ...................... <chunk>
+  [ 96] extcall 137 ............................. return chunk
+  [ 98] ret
+end
+
+on putFoolFile GN
+  [  0] getparam 0 .............................. <GN>
+  [  2] pusharglistnoret 1 ...................... <GN>
+  [  4] localcall 4 ............................. putFoolFileSavedGamesFolder(GN)
+  [  6] getparam 0 .............................. <GN>
+  [  8] pusharglistnoret 1 ...................... <GN>
+  [ 10] localcall 5 ............................. putFoolFileSavedCliff(GN)
+  [ 12] getparam 0 .............................. <GN>
+  [ 14] pusharglistnoret 1 ...................... <GN>
+  [ 16] localcall 10 ............................ putRevertFoolFile(GN)
+  [ 18] ret
+end
+
+on putFoolFileSavedGamesFolder GN
+  [  0] getglobal 143 ........................... <fName>
+  [  2] getparam 0 .............................. <GN>
+  [  4] pusharglist 2 ........................... <fName, GN>
+  [  6] objcall 17 .............................. <fName[GN]>
+  [  8] setlocal 0 .............................. S = fName[GN]
+  [ 10] getglobal 151 ........................... <cTestIO>
+  [ 12] getlocal 0 .............................. <S>
+  [ 14] pushzero ................................ <0>
+  [ 15] pusharglistnoret 3 ...................... <cTestIO, S, 0>
+  [ 17] objcall 141 ............................. cTestIO.openfile(S, 0)
+  [ 19] getglobal 151 ........................... <cTestIO>
+  [ 21] pusharglistnoret 1 ...................... <cTestIO>
+  [ 23] objcall 152 ............................. delete cTestIO
+  [ 25] getglobal 151 ........................... <cTestIO>
+  [ 27] getlocal 0 .............................. <S>
+  [ 29] pusharglistnoret 2 ...................... <cTestIO, S>
+  [ 31] extcall 153 ............................. createFile(cTestIO, S)
+  [ 33] getglobal 151 ........................... <cTestIO>
+  [ 35] getlocal 0 .............................. <S>
+  [ 37] pushzero ................................ <0>
+  [ 38] pusharglistnoret 3 ...................... <cTestIO, S, 0>
+  [ 40] objcall 141 ............................. cTestIO.openfile(S, 0)
+  [ 42] getglobal 151 ........................... <cTestIO>
+  [ 44] pushzero ................................ <0>
+  [ 45] pusharglistnoret 2 ...................... <cTestIO, 0>
+  [ 47] extcall 154 ............................. setPosition(cTestIO, 0)
+  [ 49] getglobal 151 ........................... <cTestIO>
+  [ 51] getglobal 155 ........................... <fData>
+  [ 53] getparam 0 .............................. <GN>
+  [ 55] pusharglist 2 ........................... <fData, GN>
+  [ 57] objcall 17 .............................. <fData[GN]>
+  [ 59] pusharglistnoret 2 ...................... <cTestIO, fData[GN]>
+  [ 61] objcall 156 ............................. cTestIO.writeString(fData[GN])
+  [ 63] getglobal 151 ........................... <cTestIO>
+  [ 65] pusharglistnoret 1 ...................... <cTestIO>
+  [ 67] objcall 145 ............................. cTestIO.closeFile()
+  [ 69] ret
+end
+
+on putFoolFileSavedCliff GN
+  [  0] getglobal 157 ........................... <prefChunk>
+  [  2] getparam 0 .............................. <GN>
+  [  4] pusharglist 2 ........................... <prefChunk, GN>
+  [  6] objcall 17 .............................. <prefChunk[GN]>
+  [  8] getglobal 158 ........................... <prefNumber>
+  [ 10] getparam 0 .............................. <GN>
+  [ 12] pusharglist 2 ........................... <prefNumber, GN>
+  [ 14] objcall 17 .............................. <prefNumber[GN]>
+  [ 16] nteq .................................... <prefChunk[GN] <> prefNumber[GN]>
+  [ 17] jmpifz [ 92] ............................ if prefChunk[GN] <> prefNumber[GN] then
+  [ 20] getglobal 159 ........................... <cSaveDirectoryCliff>
+  [ 22] getglobal 157 ........................... <prefChunk>
+  [ 24] getparam 0 .............................. <GN>
+  [ 26] pusharglist 2 ........................... <prefChunk, GN>
+  [ 28] objcall 17 .............................. <prefChunk[GN]>
+  [ 30] joinstr ................................. <cSaveDirectoryCliff & prefChunk[GN]>
+  [ 31] setlocal 0 .............................. S = cSaveDirectoryCliff & prefChunk[GN]
+  [ 33] getglobal 151 ........................... <cTestIO>
+  [ 35] getlocal 0 .............................. <S>
+  [ 37] pushzero ................................ <0>
+  [ 38] pusharglistnoret 3 ...................... <cTestIO, S, 0>
+  [ 40] objcall 141 ............................. cTestIO.openfile(S, 0)
+  [ 42] getglobal 151 ........................... <cTestIO>
+  [ 44] pusharglistnoret 1 ...................... <cTestIO>
+  [ 46] objcall 152 ............................. delete cTestIO
+  [ 48] getglobal 151 ........................... <cTestIO>
+  [ 50] getlocal 0 .............................. <S>
+  [ 52] pusharglistnoret 2 ...................... <cTestIO, S>
+  [ 54] extcall 153 ............................. createFile(cTestIO, S)
+  [ 56] getglobal 151 ........................... <cTestIO>
+  [ 58] getlocal 0 .............................. <S>
+  [ 60] pushzero ................................ <0>
+  [ 61] pusharglistnoret 3 ...................... <cTestIO, S, 0>
+  [ 63] objcall 141 ............................. cTestIO.openfile(S, 0)
+  [ 65] getglobal 151 ........................... <cTestIO>
+  [ 67] pushzero ................................ <0>
+  [ 68] pusharglistnoret 2 ...................... <cTestIO, 0>
+  [ 70] extcall 154 ............................. setPosition(cTestIO, 0)
+  [ 72] getglobal 151 ........................... <cTestIO>
+  [ 74] getglobal 155 ........................... <fData>
+  [ 76] getparam 0 .............................. <GN>
+  [ 78] pusharglist 2 ........................... <fData, GN>
+  [ 80] objcall 17 .............................. <fData[GN]>
+  [ 82] pusharglistnoret 2 ...................... <cTestIO, fData[GN]>
+  [ 84] objcall 156 ............................. cTestIO.writeString(fData[GN])
+  [ 86] getglobal 151 ........................... <cTestIO>
+  [ 88] pusharglistnoret 1 ...................... <cTestIO>
+  [ 90] objcall 145 ............................. cTestIO.closeFile()
+  [ 92] ret
+end
+
+on openFoolFileCliff GN
+  [  0] getglobal 160 ........................... <theDirectorVersion>
+  [  2] pushint8 10 ............................. <10>
+  [  4] eq ...................................... <theDirectorVersion = 10>
+  [  5] jmpifz [184] ............................ if theDirectorVersion = 10 then
+  [  8] getglobal 143 ........................... <fName>
+  [ 10] getglobal 161 ........................... <cOpenGameNum>
+  [ 12] pushcons 0 .............................. <EMPTY>
+  [ 14] pusharglistnoret 3 ...................... <fName, cOpenGameNum, EMPTY>
+  [ 16] objcall 35 .............................. fName[cOpenGameNum] = EMPTY
+  [ 18] getglobal 155 ........................... <fData>
+  [ 20] getglobal 161 ........................... <cOpenGameNum>
+  [ 22] pushcons 0 .............................. <EMPTY>
+  [ 24] pusharglistnoret 3 ...................... <fData, cOpenGameNum, EMPTY>
+  [ 26] objcall 35 .............................. fData[cOpenGameNum] = EMPTY
+  [ 28] getglobal 142 ........................... <cFileIO>
+  [ 30] pushcons 2 .............................. <"TEXT ttxt">
+  [ 32] pusharglistnoret 2 ...................... <cFileIO, "TEXT ttxt">
+  [ 34] extcall 162 ............................. setFilterMask(cFileIO, "TEXT ttxt")
+  [ 36] getglobal 142 ........................... <cFileIO>
+  [ 38] pusharglist 1 ........................... <cFileIO>
+  [ 40] objcall 163 ............................. <cFileIO.displayOpen()>
+  [ 42] setlocal 0 .............................. theFilePath = cFileIO.displayOpen()
+  [ 44] getlocal 0 .............................. <theFilePath>
+  [ 46] pushcons 0 .............................. <EMPTY>
+  [ 48] eq ...................................... <theFilePath = EMPTY>
+  [ 49] jmpifz [ 61] ............................ if theFilePath = EMPTY then
+  [ 52] pushcons 3 .............................. <"openWaitCount">
+  [ 54] pushint8 2 .............................. <2>
+  [ 56] pusharglistnoret 2 ...................... <"openWaitCount", 2>
+  [ 58] extcall 51 .............................. misc_SetFlash("openWaitCount", 2)
+  [ 60] ret ..................................... exit
+  [ 61] getlocal 0 .............................. <theFilePath>
+  [ 63] pusharglist 1 ........................... <theFilePath>
+  [ 65] localcall 0 ............................. <calc_File_Name_From_Path(theFilePath)>
+  [ 67] setlocal 1 .............................. theFileName = calc_File_Name_From_Path(theFilePath)
+  [ 69] getlocal 1 .............................. <theFileName>
+  [ 71] getobjprop 134 .......................... <theFileName.length>
+  [ 73] setlocal 2 .............................. L = theFileName.length
+  [ 75] getlocal 1 .............................. <theFileName>
+  [ 77] pushsymb 135 ............................ <#char>
+  [ 79] getlocal 2 .............................. <L>
+  [ 81] pushint8 3 .............................. <3>
+  [ 83] sub ..................................... <L - 3>
+  [ 84] getlocal 2 .............................. <L>
+  [ 86] pusharglist 4 ........................... <theFileName, #char, L - 3, L>
+  [ 88] objcall 136 ............................. <theFileName.char[L - 3..L]>
+  [ 90] pushcons 4 .............................. <".txt">
+  [ 92] nteq .................................... <theFileName.char[L - 3..L] <> ".txt">
+  [ 93] jmpifz [100] ............................ if theFileName.char[L - 3..L] <> ".txt" then
+  [ 96] pushcons 0 .............................. <EMPTY>
+  [ 98] setlocal 1 .............................. theFileName = EMPTY
+  [100] getlocal 1 .............................. <theFileName>
+  [102] pushcons 0 .............................. <EMPTY>
+  [104] eq ...................................... <theFileName = EMPTY>
+  [105] jmpifz [109] ............................ if theFileName = EMPTY then
+  [108] ret ..................................... exit
+  [109] getlocal 0 .............................. <theFilePath>
+  [111] pusharglist 1 ........................... <theFilePath>
+  [113] localcall 2 ............................. <getOpenFile(theFilePath)>
+  [115] setlocal 3 .............................. theFileData = getOpenFile(theFilePath)
+  [117] getlocal 3 .............................. <theFileData>
+  [119] pushcons 0 .............................. <EMPTY>
+  [121] eq ...................................... <theFileData = EMPTY>
+  [122] jmpifz [126] ............................ if theFileData = EMPTY then
+  [125] ret ..................................... exit
+  [126] getlocal 3 .............................. <theFileData>
+  [128] pusharglist 1 ........................... <theFileData>
+  [130] extcall 147 ............................. <zipTest(theFileData)>
+  [132] pushzero ................................ <0>
+  [133] eq ...................................... <zipTest(theFileData) = 0>
+  [134] jmpifz [138] ............................ if zipTest(theFileData) = 0 then
+  [137] ret ..................................... exit
+  [138] getglobal 143 ........................... <fName>
+  [140] getglobal 161 ........................... <cOpenGameNum>
+  [142] getlocal 1 .............................. <theFileName>
+  [144] pusharglistnoret 3 ...................... <fName, cOpenGameNum, theFileName>
+  [146] objcall 35 .............................. fName[cOpenGameNum] = theFileName
+  [148] getglobal 155 ........................... <fData>
+  [150] getglobal 161 ........................... <cOpenGameNum>
+  [152] getlocal 3 .............................. <theFileData>
+  [154] pusharglistnoret 3 ...................... <fData, cOpenGameNum, theFileData>
+  [156] objcall 35 .............................. fData[cOpenGameNum] = theFileData
+  [158] getglobal 143 ........................... <fName>
+  [160] getglobal 161 ........................... <cOpenGameNum>
+  [162] pusharglist 2 ........................... <fName, cOpenGameNum>
+  [164] objcall 17 .............................. <fName[cOpenGameNum]>
+  [166] pushcons 0 .............................. <EMPTY>
+  [168] nteq .................................... <fName[cOpenGameNum] <> EMPTY>
+  [169] jmpifz [184] ............................ if fName[cOpenGameNum] <> EMPTY then
+  [172] gettoplevelprop 14 ...................... <_movie>
+  [174] pushint8 4 .............................. <4>
+  [176] pusharglistnoret 2 ...................... <_movie, 4>
+  [178] objcall 18 .............................. _movie.go(4)
+  [180] pusharglistnoret 0 ...................... <>
+  [182] localcall 7 ............................. xferFoolFileCliff()
+  [184] ret
+end
+
+on xferFoolFileCliff
+  [  0] getglobal 168 ........................... <currGame>
+  [  2] getglobal 143 ........................... <fName>
+  [  4] getglobal 161 ........................... <cOpenGameNum>
+  [  6] pusharglist 2 ........................... <fName, cOpenGameNum>
+  [  8] objcall 17 .............................. <fName[cOpenGameNum]>
+  [ 10] pusharglistnoret 2 ...................... <currGame, fName[cOpenGameNum]>
+  [ 12] extcall 167 ............................. putAltGamePref(currGame, fName[cOpenGameNum])
+  [ 14] getglobal 155 ........................... <fData>
+  [ 16] getglobal 168 ........................... <currGame>
+  [ 18] getglobal 155 ........................... <fData>
+  [ 20] getglobal 161 ........................... <cOpenGameNum>
+  [ 22] pusharglist 2 ........................... <fData, cOpenGameNum>
+  [ 24] objcall 17 .............................. <fData[cOpenGameNum]>
+  [ 26] pusharglistnoret 3 ...................... <fData, currGame, fData[cOpenGameNum]>
+  [ 28] objcall 35 .............................. fData[currGame] = fData[cOpenGameNum]
+  [ 30] getglobal 143 ........................... <fName>
+  [ 32] getglobal 161 ........................... <cOpenGameNum>
+  [ 34] pushcons 0 .............................. <EMPTY>
+  [ 36] pusharglistnoret 3 ...................... <fName, cOpenGameNum, EMPTY>
+  [ 38] objcall 35 .............................. fName[cOpenGameNum] = EMPTY
+  [ 40] getglobal 155 ........................... <fData>
+  [ 42] getglobal 161 ........................... <cOpenGameNum>
+  [ 44] pushcons 0 .............................. <EMPTY>
+  [ 46] pusharglistnoret 3 ...................... <fData, cOpenGameNum, EMPTY>
+  [ 48] objcall 35 .............................. fData[cOpenGameNum] = EMPTY
+  [ 50] getglobal 168 ........................... <currGame>
+  [ 52] pusharglistnoret 1 ...................... <currGame>
+  [ 54] localcall 3 ............................. putFoolFile(currGame)
+  [ 56] getglobal 168 ........................... <currGame>
+  [ 58] pushint8 1 .............................. <1>
+  [ 60] pusharglistnoret 2 ...................... <currGame, 1>
+  [ 62] extcall 169 ............................. launchGame(currGame, 1)
+  [ 64] ret
+end
+
+on saveAsFoolFileCliff GN
+  [  0] getglobal 160 ........................... <theDirectorVersion>
+  [  2] pushint8 10 ............................. <10>
+  [  4] eq ...................................... <theDirectorVersion = 10>
+  [  5] jmpifz [ 99] ............................ if theDirectorVersion = 10 then
+  [  8] getglobal 142 ........................... <cFileIO>
+  [ 10] pushcons 2 .............................. <"TEXT ttxt">
+  [ 12] pusharglistnoret 2 ...................... <cFileIO, "TEXT ttxt">
+  [ 14] extcall 162 ............................. setFilterMask(cFileIO, "TEXT ttxt")
+  [ 16] getglobal 157 ........................... <prefChunk>
+  [ 18] getparam 0 .............................. <GN>
+  [ 20] pusharglist 2 ........................... <prefChunk, GN>
+  [ 22] objcall 17 .............................. <prefChunk[GN]>
+  [ 24] setlocal 0 .............................. FN = prefChunk[GN]
+  [ 26] getglobal 142 ........................... <cFileIO>
+  [ 28] getlocal 0 .............................. <FN>
+  [ 30] getglobal 159 ........................... <cSaveDirectoryCliff>
+  [ 32] getlocal 0 .............................. <FN>
+  [ 34] joinstr ................................. <cSaveDirectoryCliff & FN>
+  [ 35] pusharglist 3 ........................... <cFileIO, FN, cSaveDirectoryCliff & FN>
+  [ 37] objcall 170 ............................. <cFileIO.displaySave(FN, cSaveDirectoryCliff & FN)>
+  [ 39] setlocal 1 .............................. theFilePath = cFileIO.displaySave(FN, cSaveDirectoryCliff & FN)
+  [ 41] getlocal 1 .............................. <theFilePath>
+  [ 43] pushcons 0 .............................. <EMPTY>
+  [ 45] eq ...................................... <theFilePath = EMPTY>
+  [ 46] jmpifz [ 54] ............................ if theFilePath = EMPTY then
+  [ 49] pushzero ................................ <0>
+  [ 50] pusharglistnoret 1 ...................... <0>
+  [ 52] extcall 137 ............................. return 0
+  [ 54] getlocal 1 .............................. <theFilePath>
+  [ 56] pusharglist 1 ........................... <theFilePath>
+  [ 58] localcall 0 ............................. <calc_File_Name_From_Path(theFilePath)>
+  [ 60] setlocal 2 .............................. theFileName = calc_File_Name_From_Path(theFilePath)
+  [ 62] getlocal 1 .............................. <theFilePath>
+  [ 64] pushcons 0 .............................. <EMPTY>
+  [ 66] eq ...................................... <theFilePath = EMPTY>
+  [ 67] jmpifz [ 75] ............................ if theFilePath = EMPTY then
+  [ 70] pushzero ................................ <0>
+  [ 71] pusharglistnoret 1 ...................... <0>
+  [ 73] extcall 137 ............................. return 0
+  [ 75] getparam 0 .............................. <GN>
+  [ 77] setglobal 168 ........................... currGame = GN
+  [ 79] getglobal 168 ........................... <currGame>
+  [ 81] getlocal 2 .............................. <theFileName>
+  [ 83] pusharglistnoret 2 ...................... <currGame, theFileName>
+  [ 85] extcall 167 ............................. putAltGamePref(currGame, theFileName)
+  [ 87] getparam 0 .............................. <GN>
+  [ 89] pusharglistnoret 1 ...................... <GN>
+  [ 91] localcall 3 ............................. putFoolFile(GN)
+  [ 93] pushint8 1 .............................. <1>
+  [ 95] pusharglistnoret 1 ...................... <1>
+  [ 97] extcall 137 ............................. return 1
+  [ 99] pushzero ................................ <0>
+  [100] pusharglistnoret 1 ...................... <0>
+  [102] extcall 137 ............................. return 0
+  [104] ret
+end
+
+on getRevertFoolFile GN
+  [  0] getglobal 155 ........................... <fData>
+  [  2] getparam 0 .............................. <GN>
+  [  4] getglobal 155 ........................... <fData>
+  [  6] getglobal 171 ........................... <cRevGameNum>
+  [  8] pusharglist 2 ........................... <fData, cRevGameNum>
+  [ 10] objcall 17 .............................. <fData[cRevGameNum]>
+  [ 12] pusharglistnoret 3 ...................... <fData, GN, fData[cRevGameNum]>
+  [ 14] objcall 35 .............................. fData[GN] = fData[cRevGameNum]
+  [ 16] getparam 0 .............................. <GN>
+  [ 18] getglobal 171 ........................... <cRevGameNum>
+  [ 20] pusharglistnoret 2 ...................... <GN, cRevGameNum>
+  [ 22] extcall 172 ............................. copyTokens(GN, cRevGameNum)
+  [ 24] getparam 0 .............................. <GN>
+  [ 26] pusharglistnoret 1 ...................... <GN>
+  [ 28] extcall 173 ............................. readGameFile(GN)
+  [ 30] getglobal 24 ............................ <currPuzzle>
+  [ 32] pushzero ................................ <0>
+  [ 33] pusharglistnoret 2 ...................... <currPuzzle, 0>
+  [ 35] extcall 20 .............................. initLaunch(currPuzzle, 0)
+  [ 37] ret
+end
+
+on putRevertFoolFile GN
+  [  0] getglobal 155 ........................... <fData>
+  [  2] getglobal 171 ........................... <cRevGameNum>
+  [  4] getglobal 155 ........................... <fData>
+  [  6] getparam 0 .............................. <GN>
+  [  8] pusharglist 2 ........................... <fData, GN>
+  [ 10] objcall 17 .............................. <fData[GN]>
+  [ 12] pusharglistnoret 3 ...................... <fData, cRevGameNum, fData[GN]>
+  [ 14] objcall 35 .............................. fData[cRevGameNum] = fData[GN]
+  [ 16] getglobal 171 ........................... <cRevGameNum>
+  [ 18] pusharglistnoret 1 ...................... <cRevGameNum>
+  [ 20] localcall 22 ............................ parseTokenDescriptions(cRevGameNum)
+  [ 22] ret
+end
+
+on errorFoolFile e, S
+  [  0] getparam 0 .............................. <e>
+  [  2] pushzero ................................ <0>
+  [  3] nteq .................................... <e <> 0>
+  [  4] jmpifz [ 19] ............................ if e <> 0 then
+  [  7] getparam 1 .............................. <S>
+  [  9] pushcons 5 .............................. <"ERROR">
+  [ 11] joinpadstr .............................. <S && "ERROR">
+  [ 12] getparam 0 .............................. <e>
+  [ 14] joinpadstr .............................. <S && "ERROR" && e>
+  [ 15] pusharglistnoret 1 ...................... <S && "ERROR" && e>
+  [ 17] extcall 174 ............................. _PUT(S && "ERROR" && e)
+  [ 19] ret
+end
+
+on errorCreateFile GN
+  [  0] getglobal 142 ........................... <cFileIO>
+  [  2] getglobal 143 ........................... <fName>
+  [  4] getparam 0 .............................. <GN>
+  [  6] pusharglist 2 ........................... <fName, GN>
+  [  8] objcall 17 .............................. <fName[GN]>
+  [ 10] pusharglistnoret 2 ...................... <cFileIO, fName[GN]>
+  [ 12] extcall 153 ............................. createFile(cFileIO, fName[GN])
+  [ 14] getglobal 142 ........................... <cFileIO>
+  [ 16] pusharglist 1 ........................... <cFileIO>
+  [ 18] extcall 144 ............................. <status(cFileIO)>
+  [ 20] pushcons 6 .............................. <"CREATE">
+  [ 22] pusharglistnoret 2 ...................... <status(cFileIO), "CREATE">
+  [ 24] localcall 11 ............................ errorFoolFile(status(cFileIO), "CREATE")
+  [ 26] ret
+end
+
+on errorOpenFile GN
+  [  0] getglobal 142 ........................... <cFileIO>
+  [  2] getglobal 143 ........................... <fName>
+  [  4] getparam 0 .............................. <GN>
+  [  6] pusharglist 2 ........................... <fName, GN>
+  [  8] objcall 17 .............................. <fName[GN]>
+  [ 10] pushzero ................................ <0>
+  [ 11] pusharglistnoret 3 ...................... <cFileIO, fName[GN], 0>
+  [ 13] extcall 141 ............................. openfile(cFileIO, fName[GN], 0)
+  [ 15] getglobal 142 ........................... <cFileIO>
+  [ 17] pusharglist 1 ........................... <cFileIO>
+  [ 19] extcall 144 ............................. <status(cFileIO)>
+  [ 21] pushcons 7 .............................. <"OPEN">
+  [ 23] pusharglistnoret 2 ...................... <status(cFileIO), "OPEN">
+  [ 25] localcall 11 ............................ errorFoolFile(status(cFileIO), "OPEN")
+  [ 27] ret
+end
+
+on errorReadFile
+  [  0] getglobal 142 ........................... <cFileIO>
+  [  2] pushzero ................................ <0>
+  [  3] pusharglistnoret 2 ...................... <cFileIO, 0>
+  [  5] extcall 154 ............................. setPosition(cFileIO, 0)
+  [  7] getglobal 142 ........................... <cFileIO>
+  [  9] pusharglist 1 ........................... <cFileIO>
+  [ 11] extcall 176 ............................. <readFile(cFileIO)>
+  [ 13] setlocal 0 .............................. chunk = readFile(cFileIO)
+  [ 15] getglobal 142 ........................... <cFileIO>
+  [ 17] pusharglist 1 ........................... <cFileIO>
+  [ 19] extcall 144 ............................. <status(cFileIO)>
+  [ 21] pushcons 8 .............................. <"READ">
+  [ 23] pusharglistnoret 2 ...................... <status(cFileIO), "READ">
+  [ 25] localcall 11 ............................ errorFoolFile(status(cFileIO), "READ")
+  [ 27] getlocal 0 .............................. <chunk>
+  [ 29] pusharglistnoret 1 ...................... <chunk>
+  [ 31] extcall 137 ............................. return chunk
+  [ 33] ret
+end
+
+on errorWriteFile chunk
+  [  0] getglobal 142 ........................... <cFileIO>
+  [  2] pushzero ................................ <0>
+  [  3] pusharglistnoret 2 ...................... <cFileIO, 0>
+  [  5] extcall 154 ............................. setPosition(cFileIO, 0)
+  [  7] getglobal 142 ........................... <cFileIO>
+  [  9] pushcons 2 .............................. <"TEXT ttxt">
+  [ 11] pusharglistnoret 2 ...................... <cFileIO, "TEXT ttxt">
+  [ 13] extcall 177 ............................. setFinderInfo(cFileIO, "TEXT ttxt")
+  [ 15] getglobal 142 ........................... <cFileIO>
+  [ 17] getparam 0 .............................. <chunk>
+  [ 19] pusharglistnoret 2 ...................... <cFileIO, chunk>
+  [ 21] extcall 156 ............................. writeString(cFileIO, chunk)
+  [ 23] getglobal 142 ........................... <cFileIO>
+  [ 25] pusharglist 1 ........................... <cFileIO>
+  [ 27] extcall 144 ............................. <status(cFileIO)>
+  [ 29] pushcons 9 .............................. <"WRITE">
+  [ 31] pusharglistnoret 2 ...................... <status(cFileIO), "WRITE">
+  [ 33] localcall 11 ............................ errorFoolFile(status(cFileIO), "WRITE")
+  [ 35] ret
+end
+
+on eraseFoolFile GN
+  [  0] getglobal 143 ........................... <fName>
+  [  2] getparam 0 .............................. <GN>
+  [  4] getglobal 178 ........................... <tName>
+  [  6] getparam 0 .............................. <GN>
+  [  8] pusharglist 2 ........................... <tName, GN>
+  [ 10] objcall 17 .............................. <tName[GN]>
+  [ 12] pusharglistnoret 3 ...................... <fName, GN, tName[GN]>
+  [ 14] objcall 35 .............................. fName[GN] = tName[GN]
+  [ 16] getparam 0 .............................. <GN>
+  [ 18] getglobal 158 ........................... <prefNumber>
+  [ 20] getparam 0 .............................. <GN>
+  [ 22] pusharglist 2 ........................... <prefNumber, GN>
+  [ 24] objcall 17 .............................. <prefNumber[GN]>
+  [ 26] pusharglistnoret 2 ...................... <GN, prefNumber[GN]>
+  [ 28] extcall 167 ............................. putAltGamePref(GN, prefNumber[GN])
+  [ 30] getglobal 155 ........................... <fData>
+  [ 32] getparam 0 .............................. <GN>
+  [ 34] getglobal 155 ........................... <fData>
+  [ 36] getglobal 179 ........................... <cNewGameNum>
+  [ 38] pusharglist 2 ........................... <fData, cNewGameNum>
+  [ 40] objcall 17 .............................. <fData[cNewGameNum]>
+  [ 42] pusharglistnoret 3 ...................... <fData, GN, fData[cNewGameNum]>
+  [ 44] objcall 35 .............................. fData[GN] = fData[cNewGameNum]
+  [ 46] getparam 0 .............................. <GN>
+  [ 48] pusharglistnoret 1 ...................... <GN>
+  [ 50] localcall 4 ............................. putFoolFileSavedGamesFolder(GN)
+  [ 52] getparam 0 .............................. <GN>
+  [ 54] getglobal 179 ........................... <cNewGameNum>
+  [ 56] pusharglistnoret 2 ...................... <GN, cNewGameNum>
+  [ 58] extcall 172 ............................. copyTokens(GN, cNewGameNum)
+  [ 60] pushzero ................................ <0>
+  [ 61] pusharglistnoret 1 ...................... <0>
+  [ 63] extcall 180 ............................. putLastGamePref(0)
+  [ 65] ret
+end
+
+on eraseAllFoolFiles
+  [  0] pushint8 1 .............................. <1>
+  [  2] setlocal 0
+  [  4] getlocal 0
+  [  6] getglobal 181 ........................... <cTarotTotal>
+  [  8] lteq
+  [  9] jmpifz [ 27] ............................ repeat with x = 1 to cTarotTotal
+  [ 12] getlocal 0 .............................. <x>
+  [ 14] pusharglistnoret 1 ...................... <x>
+  [ 16] localcall 16 ............................ eraseFoolFile(x)
+  [ 18] pushint8 1
+  [ 20] getlocal 0
+  [ 22] add
+  [ 23] setlocal 0
+  [ 25] endrepeat [  4]
+  [ 27] ret
+end
+
+on saveCurrentPuzzle
+  [  0] getglobal 24 ............................ <currPuzzle>
+  [  2] pushint8 1 .............................. <1>
+  [  4] gteq .................................... <currPuzzle >= 1>
+  [  5] getglobal 24 ............................ <currPuzzle>
+  [  7] pushint8 100 ............................ <100>
+  [  9] lteq .................................... <currPuzzle <= 100>
+  [ 10] and ..................................... <(currPuzzle >= 1) and (currPuzzle <= 100)>
+  [ 11] jmpifz [256] ............................ if (currPuzzle >= 1) and (currPuzzle <= 100) then
+  [ 14] pusharglistnoret 0 ...................... <>
+  [ 16] extcall 182 ............................. getMenuStatsFromFlash()
+  [ 18] getglobal 183 ........................... <pSwords>
+  [ 20] getglobal 24 ............................ <currPuzzle>
+  [ 22] pushcons 10 ............................. <"gSwords">
+  [ 24] pushint8 1 .............................. <1>
+  [ 26] pusharglist 2 ........................... <"gSwords", 1>
+  [ 28] extcall 43 .............................. <misc_GetFlash("gSwords", 1)>
+  [ 30] pusharglistnoret 3 ...................... <pSwords, currPuzzle, misc_GetFlash("gSwords", 1)>
+  [ 32] objcall 35 .............................. pSwords[currPuzzle] = misc_GetFlash("gSwords", 1)
+  [ 34] getglobal 184 ........................... <pWands>
+  [ 36] getglobal 24 ............................ <currPuzzle>
+  [ 38] pushcons 11 ............................. <"gWands">
+  [ 40] pushint8 1 .............................. <1>
+  [ 42] pusharglist 2 ........................... <"gWands", 1>
+  [ 44] extcall 43 .............................. <misc_GetFlash("gWands", 1)>
+  [ 46] pusharglistnoret 3 ...................... <pWands, currPuzzle, misc_GetFlash("gWands", 1)>
+  [ 48] objcall 35 .............................. pWands[currPuzzle] = misc_GetFlash("gWands", 1)
+  [ 50] getglobal 185 ........................... <pCups>
+  [ 52] getglobal 24 ............................ <currPuzzle>
+  [ 54] pushcons 12 ............................. <"gCups">
+  [ 56] pushint8 1 .............................. <1>
+  [ 58] pusharglist 2 ........................... <"gCups", 1>
+  [ 60] extcall 43 .............................. <misc_GetFlash("gCups", 1)>
+  [ 62] pusharglistnoret 3 ...................... <pCups, currPuzzle, misc_GetFlash("gCups", 1)>
+  [ 64] objcall 35 .............................. pCups[currPuzzle] = misc_GetFlash("gCups", 1)
+  [ 66] getglobal 186 ........................... <pPentacles>
+  [ 68] getglobal 24 ............................ <currPuzzle>
+  [ 70] pushcons 13 ............................. <"gPentacles">
+  [ 72] pushint8 1 .............................. <1>
+  [ 74] pusharglist 2 ........................... <"gPentacles", 1>
+  [ 76] extcall 43 .............................. <misc_GetFlash("gPentacles", 1)>
+  [ 78] pusharglistnoret 3 ...................... <pPentacles, currPuzzle, misc_GetFlash("gPentacles", 1)>
+  [ 80] objcall 35 .............................. pPentacles[currPuzzle] = misc_GetFlash("gPentacles", 1)
+  [ 82] getglobal 183 ........................... <pSwords>
+  [ 84] getglobal 24 ............................ <currPuzzle>
+  [ 86] pusharglist 2 ........................... <pSwords, currPuzzle>
+  [ 88] objcall 17 .............................. <pSwords[currPuzzle]>
+  [ 90] pusharglist 0 ........................... <>
+  [ 92] extcall 187 ............................. <VOID>
+  [ 94] eq ...................................... <pSwords[currPuzzle] = VOID>
+  [ 95] jmpifz [107] ............................ if pSwords[currPuzzle] = VOID then
+  [ 98] getglobal 183 ........................... <pSwords>
+  [100] getglobal 24 ............................ <currPuzzle>
+  [102] pushzero ................................ <0>
+  [103] pusharglistnoret 3 ...................... <pSwords, currPuzzle, 0>
+  [105] objcall 35 .............................. pSwords[currPuzzle] = 0
+  [107] getglobal 184 ........................... <pWands>
+  [109] getglobal 24 ............................ <currPuzzle>
+  [111] pusharglist 2 ........................... <pWands, currPuzzle>
+  [113] objcall 17 .............................. <pWands[currPuzzle]>
+  [115] pusharglist 0 ........................... <>
+  [117] extcall 187 ............................. <VOID>
+  [119] eq ...................................... <pWands[currPuzzle] = VOID>
+  [120] jmpifz [132] ............................ if pWands[currPuzzle] = VOID then
+  [123] getglobal 184 ........................... <pWands>
+  [125] getglobal 24 ............................ <currPuzzle>
+  [127] pushzero ................................ <0>
+  [128] pusharglistnoret 3 ...................... <pWands, currPuzzle, 0>
+  [130] objcall 35 .............................. pWands[currPuzzle] = 0
+  [132] getglobal 185 ........................... <pCups>
+  [134] getglobal 24 ............................ <currPuzzle>
+  [136] pusharglist 2 ........................... <pCups, currPuzzle>
+  [138] objcall 17 .............................. <pCups[currPuzzle]>
+  [140] pusharglist 0 ........................... <>
+  [142] extcall 187 ............................. <VOID>
+  [144] eq ...................................... <pCups[currPuzzle] = VOID>
+  [145] jmpifz [157] ............................ if pCups[currPuzzle] = VOID then
+  [148] getglobal 185 ........................... <pCups>
+  [150] getglobal 24 ............................ <currPuzzle>
+  [152] pushzero ................................ <0>
+  [153] pusharglistnoret 3 ...................... <pCups, currPuzzle, 0>
+  [155] objcall 35 .............................. pCups[currPuzzle] = 0
+  [157] getglobal 186 ........................... <pPentacles>
+  [159] getglobal 24 ............................ <currPuzzle>
+  [161] pusharglist 2 ........................... <pPentacles, currPuzzle>
+  [163] objcall 17 .............................. <pPentacles[currPuzzle]>
+  [165] pusharglist 0 ........................... <>
+  [167] extcall 187 ............................. <VOID>
+  [169] eq ...................................... <pPentacles[currPuzzle] = VOID>
+  [170] jmpifz [182] ............................ if pPentacles[currPuzzle] = VOID then
+  [173] getglobal 186 ........................... <pPentacles>
+  [175] getglobal 24 ............................ <currPuzzle>
+  [177] pushzero ................................ <0>
+  [178] pusharglistnoret 3 ...................... <pPentacles, currPuzzle, 0>
+  [180] objcall 35 .............................. pPentacles[currPuzzle] = 0
+  [182] getglobal 93 ............................ <pStat>
+  [184] getglobal 24 ............................ <currPuzzle>
+  [186] pushcons 14 ............................. <"gStat">
+  [188] pushint8 1 .............................. <1>
+  [190] pusharglist 2 ........................... <"gStat", 1>
+  [192] extcall 43 .............................. <misc_GetFlash("gStat", 1)>
+  [194] pusharglistnoret 3 ...................... <pStat, currPuzzle, misc_GetFlash("gStat", 1)>
+  [196] objcall 35 .............................. pStat[currPuzzle] = misc_GetFlash("gStat", 1)
+  [198] getglobal 188 ........................... <pData>
+  [200] getglobal 24 ............................ <currPuzzle>
+  [202] pushcons 15 ............................. <"gData">
+  [204] pushzero ................................ <0>
+  [205] pusharglist 2 ........................... <"gData", 0>
+  [207] extcall 43 .............................. <misc_GetFlash("gData", 0)>
+  [209] pusharglistnoret 3 ...................... <pData, currPuzzle, misc_GetFlash("gData", 0)>
+  [211] objcall 35 .............................. pData[currPuzzle] = misc_GetFlash("gData", 0)
+  [213] getglobal 189 ........................... <pDone>
+  [215] getglobal 24 ............................ <currPuzzle>
+  [217] pushcons 16 ............................. <"gDone">
+  [219] pushzero ................................ <0>
+  [220] pusharglist 2 ........................... <"gDone", 0>
+  [222] extcall 43 .............................. <misc_GetFlash("gDone", 0)>
+  [224] pusharglistnoret 3 ...................... <pDone, currPuzzle, misc_GetFlash("gDone", 0)>
+  [226] objcall 35 .............................. pDone[currPuzzle] = misc_GetFlash("gDone", 0)
+  [228] getglobal 189 ........................... <pDone>
+  [230] getglobal 24 ............................ <currPuzzle>
+  [232] pusharglist 2 ........................... <pDone, currPuzzle>
+  [234] objcall 17 .............................. <pDone[currPuzzle]>
+  [236] pushcons 0 .............................. <EMPTY>
+  [238] eq ...................................... <pDone[currPuzzle] = EMPTY>
+  [239] jmpifz [252] ............................ if pDone[currPuzzle] = EMPTY then
+  [242] getglobal 189 ........................... <pDone>
+  [244] getglobal 24 ............................ <currPuzzle>
+  [246] pushcons 17 ............................. <"-">
+  [248] pusharglistnoret 3 ...................... <pDone, currPuzzle, "-">
+  [250] objcall 35 .............................. pDone[currPuzzle] = "-"
+  [252] pusharglistnoret 0 ...................... <>
+  [254] extcall 190 ............................. saveWordStat63()
+  [256] ret
+end
+
+on saveCurrentGame
+  [  0] getglobal 168 ........................... <currGame>
+  [  2] pushzero ................................ <0>
+  [  3] gt ...................................... <currGame > 0>
+  [  4] jmpifz [ 69] ............................ if currGame > 0 then
+  [  7] getglobal 191 ........................... <createNewGameData>
+  [  9] pushint8 1 .............................. <1>
+  [ 11] eq ...................................... <createNewGameData = 1>
+  [ 12] jmpifz [ 19] ............................ if createNewGameData = 1 then
+  [ 15] pusharglistnoret 0 ...................... <>
+  [ 17] extcall 192 ............................. initWordStat63()
+  [ 19] getglobal 155 ........................... <fData>
+  [ 21] getglobal 168 ........................... <currGame>
+  [ 23] getglobal 168 ........................... <currGame>
+  [ 25] pusharglist 1 ........................... <currGame>
+  [ 27] localcall 20 ............................ <createGameChunk(currGame)>
+  [ 29] pusharglist 1 ........................... <createGameChunk(currGame)>
+  [ 31] extcall 193 ............................. <encodeZip(createGameChunk(currGame))>
+  [ 33] pusharglistnoret 3 ...................... <fData, currGame, encodeZip(createGameChunk(currGame))>
+  [ 35] objcall 35 .............................. fData[currGame] = encodeZip(createGameChunk(currGame))
+  [ 37] getglobal 168 ........................... <currGame>
+  [ 39] pusharglistnoret 1 ...................... <currGame>
+  [ 41] extcall 180 ............................. putLastGamePref(currGame)
+  [ 43] getglobal 168 ........................... <currGame>
+  [ 45] pusharglistnoret 1 ...................... <currGame>
+  [ 47] localcall 3 ............................. putFoolFile(currGame)
+  [ 49] getglobal 191 ........................... <createNewGameData>
+  [ 51] pushint8 1 .............................. <1>
+  [ 53] eq ...................................... <createNewGameData = 1>
+  [ 54] jmpifz [ 69] ............................ if createNewGameData = 1 then
+  [ 57] getglobal 155 ........................... <fData>
+  [ 59] getglobal 168 ........................... <currGame>
+  [ 61] pusharglist 2 ........................... <fData, currGame>
+  [ 63] objcall 17 .............................. <fData[currGame]>
+  [ 65] pusharglistnoret 1 ...................... <fData[currGame]>
+  [ 67] extcall 194 ............................. init_NewGameData(fData[currGame])
+  [ 69] ret
+end
+
+on createGameChunk GN
+  [  0] getparam 0 .............................. <GN>
+  [  2] pushint8 1 .............................. <1>
+  [  4] gteq .................................... <GN >= 1>
+  [  5] getparam 0 .............................. <GN>
+  [  7] getglobal 195 ........................... <cFileTotal>
+  [  9] lteq .................................... <GN <= cFileTotal>
+  [ 10] and ..................................... <(GN >= 1) and (GN <= cFileTotal)>
+  [ 11] jmpifz [322] ............................ if (GN >= 1) and (GN <= cFileTotal) then / else
+  [ 14] getparam 0 .............................. <GN>
+  [ 16] pusharglistnoret 1 ...................... <GN>
+  [ 18] extcall 196 ............................. updateGameStats(GN)
+  [ 20] getglobal 24 ............................ <currPuzzle>
+  [ 22] pushint8 1 .............................. <1>
+  [ 24] pusharglist 2 ........................... <currPuzzle, 1>
+  [ 26] extcall 197 ............................. <exceptionPuzzleLaunch(currPuzzle, 1)>
+  [ 28] setlocal 0 .............................. CP = exceptionPuzzleLaunch(currPuzzle, 1)
+  [ 30] pusharglist 0 ........................... <>
+  [ 32] extcall 198 ............................. <getFileKeyWord()>
+  [ 34] pushcons 18 ............................. <"*">
+  [ 36] joinstr ................................. <getFileKeyWord() & "*">
+  [ 37] setlocal 1 .............................. S = getFileKeyWord() & "*"
+  [ 39] getlocal 1 .............................. <S>
+  [ 41] getlocal 0 .............................. <CP>
+  [ 43] joinstr ................................. <S & CP>
+  [ 44] pushcons 18 ............................. <"*">
+  [ 46] joinstr ................................. <S & CP & "*">
+  [ 47] getglobal 199 ........................... <token1>
+  [ 49] getparam 0 .............................. <GN>
+  [ 51] pusharglist 2 ........................... <token1, GN>
+  [ 53] objcall 17 .............................. <token1[GN]>
+  [ 55] joinstr ................................. <S & CP & "*" & token1[GN]>
+  [ 56] pushcons 18 ............................. <"*">
+  [ 58] joinstr ................................. <S & CP & "*" & token1[GN] & "*">
+  [ 59] getglobal 200 ........................... <token2>
+  [ 61] getparam 0 .............................. <GN>
+  [ 63] pusharglist 2 ........................... <token2, GN>
+  [ 65] objcall 17 .............................. <token2[GN]>
+  [ 67] joinstr ................................. <S & CP & "*" & token1[GN] & "*" & token2[GN]>
+  [ 68] pushcons 18 ............................. <"*">
+  [ 70] joinstr ................................. <S & CP & "*" & token1[GN] & "*" & token2[GN] & "*">
+  [ 71] getglobal 201 ........................... <token3>
+  [ 73] getparam 0 .............................. <GN>
+  [ 75] pusharglist 2 ........................... <token3, GN>
+  [ 77] objcall 17 .............................. <token3[GN]>
+  [ 79] joinstr ................................. <S & CP & "*" & token1[GN] & "*" & token2[GN] & "*" & token3[GN]>
+  [ 80] pushcons 18 ............................. <"*">
+  [ 82] joinstr ................................. <S & CP & "*" & token1[GN] & "*" & token2[GN] & "*" & token3[GN] & "*">
+  [ 83] setlocal 1 .............................. S = S & CP & "*" & token1[GN] & "*" & token2[GN] & "*" & token3[GN] & "*"
+  [ 85] getglobal 93 ............................ <pStat>
+  [ 87] getglobal 202 ........................... <cTokens>
+  [ 89] pushzero ................................ <0>
+  [ 90] pusharglistnoret 3 ...................... <pStat, cTokens, 0>
+  [ 92] objcall 35 .............................. pStat[cTokens] = 0
+  [ 94] getglobal 188 ........................... <pData>
+  [ 96] getglobal 202 ........................... <cTokens>
+  [ 98] pushcons 19 ............................. <"empty">
+  [100] pusharglistnoret 3 ...................... <pData, cTokens, "empty">
+  [102] objcall 35 .............................. pData[cTokens] = "empty"
+  [104] pushint8 1 .............................. <1>
+  [106] setlocal 2
+  [108] getlocal 2
+  [110] getglobal 203 ........................... <cSavePuzzleTotal>
+  [112] lteq
+  [113] jmpifz [229] ............................ repeat with x = 1 to cSavePuzzleTotal
+  [116] getlocal 1 .............................. <S>
+  [118] getglobal 100 ........................... <pPage>
+  [120] getlocal 2 .............................. <x>
+  [122] pusharglist 2 ........................... <pPage, x>
+  [124] objcall 17 .............................. <pPage[x]>
+  [126] joinstr ................................. <S & pPage[x]>
+  [127] pushcons 18 ............................. <"*">
+  [129] joinstr ................................. <S & pPage[x] & "*">
+  [130] getglobal 93 ............................ <pStat>
+  [132] getlocal 2 .............................. <x>
+  [134] pusharglist 2 ........................... <pStat, x>
+  [136] objcall 17 .............................. <pStat[x]>
+  [138] joinstr ................................. <S & pPage[x] & "*" & pStat[x]>
+  [139] pushcons 18 ............................. <"*">
+  [141] joinstr ................................. <S & pPage[x] & "*" & pStat[x] & "*">
+  [142] getglobal 188 ........................... <pData>
+  [144] getlocal 2 .............................. <x>
+  [146] pusharglist 2 ........................... <pData, x>
+  [148] objcall 17 .............................. <pData[x]>
+  [150] joinstr ................................. <S & pPage[x] & "*" & pStat[x] & "*" & pData[x]>
+  [151] pushcons 18 ............................. <"*">
+  [153] joinstr ................................. <S & pPage[x] & "*" & pStat[x] & "*" & pData[x] & "*">
+  [154] getglobal 189 ........................... <pDone>
+  [156] getlocal 2 .............................. <x>
+  [158] pusharglist 2 ........................... <pDone, x>
+  [160] objcall 17 .............................. <pDone[x]>
+  [162] joinstr ................................. <S & pPage[x] & "*" & pStat[x] & "*" & pData[x] & "*" & pDone[x]>
+  [163] pushcons 18 ............................. <"*">
+  [165] joinstr ................................. <S & pPage[x] & "*" & pStat[x] & "*" & pData[x] & "*" & pDone[x] & "*">
+  [166] setlocal 1 .............................. S = S & pPage[x] & "*" & pStat[x] & "*" & pData[x] & "*" & pDone[x] & "*"
+  [168] getlocal 1 .............................. <S>
+  [170] getglobal 183 ........................... <pSwords>
+  [172] getlocal 2 .............................. <x>
+  [174] pusharglist 2 ........................... <pSwords, x>
+  [176] objcall 17 .............................. <pSwords[x]>
+  [178] joinstr ................................. <S & pSwords[x]>
+  [179] pushcons 18 ............................. <"*">
+  [181] joinstr ................................. <S & pSwords[x] & "*">
+  [182] getglobal 184 ........................... <pWands>
+  [184] getlocal 2 .............................. <x>
+  [186] pusharglist 2 ........................... <pWands, x>
+  [188] objcall 17 .............................. <pWands[x]>
+  [190] joinstr ................................. <S & pSwords[x] & "*" & pWands[x]>
+  [191] pushcons 18 ............................. <"*">
+  [193] joinstr ................................. <S & pSwords[x] & "*" & pWands[x] & "*">
+  [194] getglobal 185 ........................... <pCups>
+  [196] getlocal 2 .............................. <x>
+  [198] pusharglist 2 ........................... <pCups, x>
+  [200] objcall 17 .............................. <pCups[x]>
+  [202] joinstr ................................. <S & pSwords[x] & "*" & pWands[x] & "*" & pCups[x]>
+  [203] pushcons 18 ............................. <"*">
+  [205] joinstr ................................. <S & pSwords[x] & "*" & pWands[x] & "*" & pCups[x] & "*">
+  [206] getglobal 186 ........................... <pPentacles>
+  [208] getlocal 2 .............................. <x>
+  [210] pusharglist 2 ........................... <pPentacles, x>
+  [212] objcall 17 .............................. <pPentacles[x]>
+  [214] joinstr ................................. <S & pSwords[x] & "*" & pWands[x] & "*" & pCups[x] & "*" & pPentacles[x]>
+  [215] pushcons 18 ............................. <"*">
+  [217] joinstr ................................. <S & pSwords[x] & "*" & pWands[x] & "*" & pCups[x] & "*" & pPentacles[x] & "*">
+  [218] setlocal 1 .............................. S = S & pSwords[x] & "*" & pWands[x] & "*" & pCups[x] & "*" & pPentacles[x] & "*"
+  [220] pushint8 1
+  [222] getlocal 2
+  [224] add
+  [225] setlocal 2
+  [227] endrepeat [108]
+  [229] pushint8 1 .............................. <1>
+  [231] setlocal 2
+  [233] getlocal 2
+  [235] pushint8 5 .............................. <5>
+  [237] lteq
+  [238] jmpifz [266] ............................ repeat with x = 1 to 5
+  [241] getlocal 1 .............................. <S>
+  [243] getglobal 204 ........................... <csWagerTarot>
+  [245] getlocal 2 .............................. <x>
+  [247] pusharglist 2 ........................... <csWagerTarot, x>
+  [249] objcall 17 .............................. <csWagerTarot[x]>
+  [251] joinstr ................................. <S & csWagerTarot[x]>
+  [252] pushcons 18 ............................. <"*">
+  [254] joinstr ................................. <S & csWagerTarot[x] & "*">
+  [255] setlocal 1 .............................. S = S & csWagerTarot[x] & "*"
+  [257] pushint8 1
+  [259] getlocal 2
+  [261] add
+  [262] setlocal 2
+  [264] endrepeat [233]
+  [266] getlocal 1 .............................. <S>
+  [268] getglobal 205 ........................... <pWindowCode>
+  [270] joinstr ................................. <S & pWindowCode>
+  [271] pushcons 18 ............................. <"*">
+  [273] joinstr ................................. <S & pWindowCode & "*">
+  [274] setlocal 1 .............................. S = S & pWindowCode & "*"
+  [276] pushint8 1 .............................. <1>
+  [278] setlocal 2
+  [280] getlocal 2
+  [282] pushint8 4 .............................. <4>
+  [284] lteq
+  [285] jmpifz [313] ............................ repeat with x = 1 to 4
+  [288] getlocal 1 .............................. <S>
+  [290] getglobal 206 ........................... <pWordStat63>
+  [292] getlocal 2 .............................. <x>
+  [294] pusharglist 2 ........................... <pWordStat63, x>
+  [296] objcall 17 .............................. <pWordStat63[x]>
+  [298] joinstr ................................. <S & pWordStat63[x]>
+  [299] pushcons 18 ............................. <"*">
+  [301] joinstr ................................. <S & pWordStat63[x] & "*">
+  [302] setlocal 1 .............................. S = S & pWordStat63[x] & "*"
+  [304] pushint8 1
+  [306] getlocal 2
+  [308] add
+  [309] setlocal 2
+  [311] endrepeat [280]
+  [313] getlocal 1 .............................. <S>
+  [315] pusharglistnoret 1 ...................... <S>
+  [317] extcall 137 ............................. return S
+  [319] jmp [338]
+  [322] pushint8 1 .............................. <1>
+  [324] getparam 0 .............................. <GN>
+  [326] pushcons 20 ............................. <"is out of range 1-">
+  [328] joinpadstr .............................. <GN && "is out of range 1-">
+  [329] getglobal 195 ........................... <cFileTotal>
+  [331] joinstr ................................. <GN && "is out of range 1-" & cFileTotal>
+  [332] pushcons 21 ............................. <"createGameChunk(GN)">
+  [334] pusharglistnoret 3 ...................... <1, GN && "is out of range 1-" & cFileTotal, "createGameChunk(GN)">
+  [336] extcall 207 ............................. showAlert(1, GN && "is out of range 1-" & cFileTotal, "createGameChunk(GN)")
+  [338] ret
+end
+
+on grab b
+  [  0] getglobal 210 ........................... <grab2>
+  [  2] pushint8 2 .............................. <2>
+  [  4] add ..................................... <grab2 + 2>
+  [  5] setglobal 209 ........................... grab1 = grab2 + 2
+  [  7] getglobal 209 ........................... <grab1>
+  [  9] pushcons 18 ............................. <"*">
+  [ 11] getglobal 212 ........................... <grab3>
+  [ 13] pushsymb 135 ............................ <#char>
+  [ 15] getglobal 209 ........................... <grab1>
+  [ 17] getglobal 213 ........................... <grab4>
+  [ 19] pusharglist 4 ........................... <grab3, #char, grab1, grab4>
+  [ 21] objcall 136 ............................. <grab3.char[grab1..grab4]>
+  [ 23] pusharglist 2 ........................... <"*", grab3.char[grab1..grab4]>
+  [ 25] extcall 211 ............................. <offset("*", grab3.char[grab1..grab4])>
+  [ 27] add ..................................... <grab1 + offset("*", grab3.char[grab1..grab4])>
+  [ 28] pushint8 2 .............................. <2>
+  [ 30] sub ..................................... <grab1 + offset("*", grab3.char[grab1..grab4]) - 2>
+  [ 31] setglobal 210 ........................... grab2 = grab1 + offset("*", grab3.char[grab1..grab4]) - 2
+  [ 33] getparam 0 .............................. <b>
+  [ 35] pushzero ................................ <0>
+  [ 36] eq ...................................... <b = 0>
+  [ 37] jmpifz [ 59] ............................ if b = 0 then / else
+  [ 40] getglobal 212 ........................... <grab3>
+  [ 42] pushsymb 135 ............................ <#char>
+  [ 44] getglobal 209 ........................... <grab1>
+  [ 46] getglobal 210 ........................... <grab2>
+  [ 48] pusharglist 4 ........................... <grab3, #char, grab1, grab2>
+  [ 50] objcall 136 ............................. <grab3.char[grab1..grab2]>
+  [ 52] pusharglistnoret 1 ...................... <grab3.char[grab1..grab2]>
+  [ 54] extcall 137 ............................. return grab3.char[grab1..grab2]
+  [ 56] jmp [ 79]
+  [ 59] getglobal 212 ........................... <grab3>
+  [ 61] pushsymb 135 ............................ <#char>
+  [ 63] getglobal 209 ........................... <grab1>
+  [ 65] getglobal 210 ........................... <grab2>
+  [ 67] pusharglist 4 ........................... <grab3, #char, grab1, grab2>
+  [ 69] objcall 136 ............................. <grab3.char[grab1..grab2]>
+  [ 71] pusharglist 1 ........................... <grab3.char[grab1..grab2]>
+  [ 73] extcall 42 .............................. <integer(grab3.char[grab1..grab2])>
+  [ 75] pusharglistnoret 1 ...................... <integer(grab3.char[grab1..grab2])>
+  [ 77] extcall 137 ............................. return integer(grab3.char[grab1..grab2])
+  [ 79] ret
+end
+
+on parseTokenDescriptions GN
+  [  0] getglobal 155 ........................... <fData>
+  [  2] getparam 0 .............................. <GN>
+  [  4] pusharglist 2 ........................... <fData, GN>
+  [  6] objcall 17 .............................. <fData[GN]>
+  [  8] pushsymb 135 ............................ <#char>
+  [ 10] pushint8 1 .............................. <1>
+  [ 12] pushint16 222 ........................... <222>
+  [ 15] pusharglist 4 ........................... <fData[GN], #char, 1, 222>
+  [ 17] objcall 136 ............................. <fData[GN].char[1..222]>
+  [ 19] pusharglist 1 ........................... <fData[GN].char[1..222]>
+  [ 21] extcall 215 ............................. <decodeZip(fData[GN].char[1..222])>
+  [ 23] setlocal 0 .............................. S = decodeZip(fData[GN].char[1..222])
+  [ 25] pushint8 1 .............................. <1>
+  [ 27] inv ..................................... <-1>
+  [ 28] setglobal 209 ........................... grab1 = -1
+  [ 30] pushint8 1 .............................. <1>
+  [ 32] inv ..................................... <-1>
+  [ 33] setglobal 210 ........................... grab2 = -1
+  [ 35] getlocal 0 .............................. <S>
+  [ 37] setglobal 212 ........................... grab3 = S
+  [ 39] getglobal 212 ........................... <grab3>
+  [ 41] getobjprop 134 .......................... <grab3.length>
+  [ 43] setglobal 213 ........................... grab4 = grab3.length
+  [ 45] pushzero ................................ <0>
+  [ 46] pusharglist 1 ........................... <0>
+  [ 48] localcall 21 ............................ <grab(0)>
+  [ 50] setlocal 1 .............................. junk = grab(0)
+  [ 52] pushzero ................................ <0>
+  [ 53] pusharglist 1 ........................... <0>
+  [ 55] localcall 21 ............................ <grab(0)>
+  [ 57] setlocal 1 .............................. junk = grab(0)
+  [ 59] getglobal 199 ........................... <token1>
+  [ 61] getparam 0 .............................. <GN>
+  [ 63] pushzero ................................ <0>
+  [ 64] pusharglist 1 ........................... <0>
+  [ 66] localcall 21 ............................ <grab(0)>
+  [ 68] pusharglistnoret 3 ...................... <token1, GN, grab(0)>
+  [ 70] objcall 35 .............................. token1[GN] = grab(0)
+  [ 72] getglobal 200 ........................... <token2>
+  [ 74] getparam 0 .............................. <GN>
+  [ 76] pushzero ................................ <0>
+  [ 77] pusharglist 1 ........................... <0>
+  [ 79] localcall 21 ............................ <grab(0)>
+  [ 81] pusharglistnoret 3 ...................... <token2, GN, grab(0)>
+  [ 83] objcall 35 .............................. token2[GN] = grab(0)
+  [ 85] getglobal 201 ........................... <token3>
+  [ 87] getparam 0 .............................. <GN>
+  [ 89] pushint8 1 .............................. <1>
+  [ 91] pusharglist 1 ........................... <1>
+  [ 93] localcall 21 ............................ <grab(1)>
+  [ 95] pusharglistnoret 3 ...................... <token3, GN, grab(1)>
+  [ 97] objcall 35 .............................. token3[GN] = grab(1)
+  [ 99] ret
+end
+
+on parseGameFile GN
+  [  0] pushint8 1 .............................. <1>
+  [  2] inv ..................................... <-1>
+  [  3] setglobal 209 ........................... grab1 = -1
+  [  5] pushint8 1 .............................. <1>
+  [  7] inv ..................................... <-1>
+  [  8] setglobal 210 ........................... grab2 = -1
+  [ 10] getglobal 155 ........................... <fData>
+  [ 12] getparam 0 .............................. <GN>
+  [ 14] pusharglist 2 ........................... <fData, GN>
+  [ 16] objcall 17 .............................. <fData[GN]>
+  [ 18] pusharglist 1 ........................... <fData[GN]>
+  [ 20] extcall 215 ............................. <decodeZip(fData[GN])>
+  [ 22] setglobal 212 ........................... grab3 = decodeZip(fData[GN])
+  [ 24] getglobal 212 ........................... <grab3>
+  [ 26] getobjprop 134 .......................... <grab3.length>
+  [ 28] setglobal 213 ........................... grab4 = grab3.length
+  [ 30] pushzero ................................ <0>
+  [ 31] pusharglist 1 ........................... <0>
+  [ 33] localcall 21 ............................ <grab(0)>
+  [ 35] setlocal 0 .............................. junk = grab(0)
+  [ 37] pushint8 1 .............................. <1>
+  [ 39] pusharglist 1 ........................... <1>
+  [ 41] localcall 21 ............................ <grab(1)>
+  [ 43] setglobal 24 ............................ currPuzzle = grab(1)
+  [ 45] getglobal 199 ........................... <token1>
+  [ 47] getparam 0 .............................. <GN>
+  [ 49] pushzero ................................ <0>
+  [ 50] pusharglist 1 ........................... <0>
+  [ 52] localcall 21 ............................ <grab(0)>
+  [ 54] pusharglistnoret 3 ...................... <token1, GN, grab(0)>
+  [ 56] objcall 35 .............................. token1[GN] = grab(0)
+  [ 58] getglobal 200 ........................... <token2>
+  [ 60] getparam 0 .............................. <GN>
+  [ 62] pushzero ................................ <0>
+  [ 63] pusharglist 1 ........................... <0>
+  [ 65] localcall 21 ............................ <grab(0)>
+  [ 67] pusharglistnoret 3 ...................... <token2, GN, grab(0)>
+  [ 69] objcall 35 .............................. token2[GN] = grab(0)
+  [ 71] getglobal 201 ........................... <token3>
+  [ 73] getparam 0 .............................. <GN>
+  [ 75] pushint8 1 .............................. <1>
+  [ 77] pusharglist 1 ........................... <1>
+  [ 79] localcall 21 ............................ <grab(1)>
+  [ 81] pusharglistnoret 3 ...................... <token3, GN, grab(1)>
+  [ 83] objcall 35 .............................. token3[GN] = grab(1)
+  [ 85] pushint8 1 .............................. <1>
+  [ 87] setlocal 1
+  [ 89] getlocal 1
+  [ 91] getglobal 203 ........................... <cSavePuzzleTotal>
+  [ 93] lteq
+  [ 94] jmpifz [216] ............................ repeat with x = 1 to cSavePuzzleTotal
+  [ 97] getglobal 100 ........................... <pPage>
+  [ 99] getlocal 1 .............................. <x>
+  [101] pushint8 1 .............................. <1>
+  [103] pusharglist 1 ........................... <1>
+  [105] localcall 21 ............................ <grab(1)>
+  [107] pusharglistnoret 3 ...................... <pPage, x, grab(1)>
+  [109] objcall 35 .............................. pPage[x] = grab(1)
+  [111] getglobal 93 ............................ <pStat>
+  [113] getlocal 1 .............................. <x>
+  [115] pushint8 1 .............................. <1>
+  [117] pusharglist 1 ........................... <1>
+  [119] localcall 21 ............................ <grab(1)>
+  [121] pusharglistnoret 3 ...................... <pStat, x, grab(1)>
+  [123] objcall 35 .............................. pStat[x] = grab(1)
+  [125] getglobal 188 ........................... <pData>
+  [127] getlocal 1 .............................. <x>
+  [129] pushzero ................................ <0>
+  [130] pusharglist 1 ........................... <0>
+  [132] localcall 21 ............................ <grab(0)>
+  [134] pusharglistnoret 3 ...................... <pData, x, grab(0)>
+  [136] objcall 35 .............................. pData[x] = grab(0)
+  [138] getglobal 189 ........................... <pDone>
+  [140] getlocal 1 .............................. <x>
+  [142] pushzero ................................ <0>
+  [143] pusharglist 1 ........................... <0>
+  [145] localcall 21 ............................ <grab(0)>
+  [147] pusharglistnoret 3 ...................... <pDone, x, grab(0)>
+  [149] objcall 35 .............................. pDone[x] = grab(0)
+  [151] getglobal 183 ........................... <pSwords>
+  [153] getlocal 1 .............................. <x>
+  [155] pushint8 1 .............................. <1>
+  [157] pusharglist 1 ........................... <1>
+  [159] localcall 21 ............................ <grab(1)>
+  [161] pusharglistnoret 3 ...................... <pSwords, x, grab(1)>
+  [163] objcall 35 .............................. pSwords[x] = grab(1)
+  [165] getglobal 184 ........................... <pWands>
+  [167] getlocal 1 .............................. <x>
+  [169] pushint8 1 .............................. <1>
+  [171] pusharglist 1 ........................... <1>
+  [173] localcall 21 ............................ <grab(1)>
+  [175] pusharglistnoret 3 ...................... <pWands, x, grab(1)>
+  [177] objcall 35 .............................. pWands[x] = grab(1)
+  [179] getglobal 185 ........................... <pCups>
+  [181] getlocal 1 .............................. <x>
+  [183] pushint8 1 .............................. <1>
+  [185] pusharglist 1 ........................... <1>
+  [187] localcall 21 ............................ <grab(1)>
+  [189] pusharglistnoret 3 ...................... <pCups, x, grab(1)>
+  [191] objcall 35 .............................. pCups[x] = grab(1)
+  [193] getglobal 186 ........................... <pPentacles>
+  [195] getlocal 1 .............................. <x>
+  [197] pushint8 1 .............................. <1>
+  [199] pusharglist 1 ........................... <1>
+  [201] localcall 21 ............................ <grab(1)>
+  [203] pusharglistnoret 3 ...................... <pPentacles, x, grab(1)>
+  [205] objcall 35 .............................. pPentacles[x] = grab(1)
+  [207] pushint8 1
+  [209] getlocal 1
+  [211] add
+  [212] setlocal 1
+  [214] endrepeat [ 89]
+  [216] pushint8 1 .............................. <1>
+  [218] setlocal 1
+  [220] getlocal 1
+  [222] pushint8 5 .............................. <5>
+  [224] lteq
+  [225] jmpifz [251] ............................ repeat with x = 1 to 5
+  [228] getglobal 204 ........................... <csWagerTarot>
+  [230] getlocal 1 .............................. <x>
+  [232] pushint8 1 .............................. <1>
+  [234] pusharglist 1 ........................... <1>
+  [236] localcall 21 ............................ <grab(1)>
+  [238] pusharglistnoret 3 ...................... <csWagerTarot, x, grab(1)>
+  [240] objcall 35 .............................. csWagerTarot[x] = grab(1)
+  [242] pushint8 1
+  [244] getlocal 1
+  [246] add
+  [247] setlocal 1
+  [249] endrepeat [220]
+  [251] getglobal 204 ........................... <csWagerTarot>
+  [253] pushint8 1 .............................. <1>
+  [255] pusharglist 2 ........................... <csWagerTarot, 1>
+  [257] objcall 17 .............................. <csWagerTarot[1]>
+  [259] pushzero ................................ <0>
+  [260] eq ...................................... <csWagerTarot[1] = 0>
+  [261] jmpifz [301] ............................ if csWagerTarot[1] = 0 then
+  [264] pushint8 1 .............................. <1>
+  [266] setlocal 1
+  [268] getlocal 1
+  [270] pushint8 5 .............................. <5>
+  [272] lteq
+  [273] jmpifz [301] ............................ repeat with x = 1 to 5
+  [276] getglobal 204 ........................... <csWagerTarot>
+  [278] getlocal 1 .............................. <x>
+  [280] getglobal 217 ........................... <csWager>
+  [282] getlocal 1 .............................. <x>
+  [284] pusharglist 2 ........................... <csWager, x>
+  [286] objcall 17 .............................. <csWager[x]>
+  [288] pusharglistnoret 3 ...................... <csWagerTarot, x, csWager[x]>
+  [290] objcall 35 .............................. csWagerTarot[x] = csWager[x]
+  [292] pushint8 1
+  [294] getlocal 1
+  [296] add
+  [297] setlocal 1
+  [299] endrepeat [268]
+  [301] pushzero ................................ <0>
+  [302] pusharglist 1 ........................... <0>
+  [304] localcall 21 ............................ <grab(0)>
+  [306] setglobal 205 ........................... pWindowCode = grab(0)
+  [308] pushint8 1 .............................. <1>
+  [310] setlocal 1
+  [312] getlocal 1
+  [314] pushint8 4 .............................. <4>
+  [316] lteq
+  [317] jmpifz [342] ............................ repeat with x = 1 to 4
+  [320] getglobal 206 ........................... <pWordStat63>
+  [322] getlocal 1 .............................. <x>
+  [324] pushzero ................................ <0>
+  [325] pusharglist 1 ........................... <0>
+  [327] localcall 21 ............................ <grab(0)>
+  [329] pusharglistnoret 3 ...................... <pWordStat63, x, grab(0)>
+  [331] objcall 35 .............................. pWordStat63[x] = grab(0)
+  [333] pushint8 1
+  [335] getlocal 1
+  [337] add
+  [338] setlocal 1
+  [340] endrepeat [312]
+  [342] ret
+end
+
+on grabA b
+  [  0] getglobal 219 ........................... <aaaa2>
+  [  2] pushint8 2 .............................. <2>
+  [  4] add ..................................... <aaaa2 + 2>
+  [  5] setglobal 218 ........................... aaaa1 = aaaa2 + 2
+  [  7] getglobal 218 ........................... <aaaa1>
+  [  9] pushcons 18 ............................. <"*">
+  [ 11] getglobal 220 ........................... <aaaa3>
+  [ 13] pushsymb 135 ............................ <#char>
+  [ 15] getglobal 218 ........................... <aaaa1>
+  [ 17] getglobal 221 ........................... <aaaa4>
+  [ 19] pusharglist 4 ........................... <aaaa3, #char, aaaa1, aaaa4>
+  [ 21] objcall 136 ............................. <aaaa3.char[aaaa1..aaaa4]>
+  [ 23] pusharglist 2 ........................... <"*", aaaa3.char[aaaa1..aaaa4]>
+  [ 25] extcall 211 ............................. <offset("*", aaaa3.char[aaaa1..aaaa4])>
+  [ 27] add ..................................... <aaaa1 + offset("*", aaaa3.char[aaaa1..aaaa4])>
+  [ 28] pushint8 2 .............................. <2>
+  [ 30] sub ..................................... <aaaa1 + offset("*", aaaa3.char[aaaa1..aaaa4]) - 2>
+  [ 31] setglobal 219 ........................... aaaa2 = aaaa1 + offset("*", aaaa3.char[aaaa1..aaaa4]) - 2
+  [ 33] getparam 0 .............................. <b>
+  [ 35] pushzero ................................ <0>
+  [ 36] eq ...................................... <b = 0>
+  [ 37] jmpifz [ 59] ............................ if b = 0 then / else
+  [ 40] getglobal 220 ........................... <aaaa3>
+  [ 42] pushsymb 135 ............................ <#char>
+  [ 44] getglobal 218 ........................... <aaaa1>
+  [ 46] getglobal 219 ........................... <aaaa2>
+  [ 48] pusharglist 4 ........................... <aaaa3, #char, aaaa1, aaaa2>
+  [ 50] objcall 136 ............................. <aaaa3.char[aaaa1..aaaa2]>
+  [ 52] pusharglistnoret 1 ...................... <aaaa3.char[aaaa1..aaaa2]>
+  [ 54] extcall 137 ............................. return aaaa3.char[aaaa1..aaaa2]
+  [ 56] jmp [ 79]
+  [ 59] getglobal 220 ........................... <aaaa3>
+  [ 61] pushsymb 135 ............................ <#char>
+  [ 63] getglobal 218 ........................... <aaaa1>
+  [ 65] getglobal 219 ........................... <aaaa2>
+  [ 67] pusharglist 4 ........................... <aaaa3, #char, aaaa1, aaaa2>
+  [ 69] objcall 136 ............................. <aaaa3.char[aaaa1..aaaa2]>
+  [ 71] pusharglist 1 ........................... <aaaa3.char[aaaa1..aaaa2]>
+  [ 73] extcall 42 .............................. <integer(aaaa3.char[aaaa1..aaaa2])>
+  [ 75] pusharglistnoret 1 ...................... <integer(aaaa3.char[aaaa1..aaaa2])>
+  [ 77] extcall 137 ............................. return integer(aaaa3.char[aaaa1..aaaa2])
+  [ 79] ret
+end
+
+on grabB b
+  [  0] getglobal 223 ........................... <bbbb2>
+  [  2] pushint8 2 .............................. <2>
+  [  4] add ..................................... <bbbb2 + 2>
+  [  5] setglobal 222 ........................... bbbb1 = bbbb2 + 2
+  [  7] getglobal 222 ........................... <bbbb1>
+  [  9] pushcons 18 ............................. <"*">
+  [ 11] getglobal 224 ........................... <bbbb3>
+  [ 13] pushsymb 135 ............................ <#char>
+  [ 15] getglobal 222 ........................... <bbbb1>
+  [ 17] getglobal 225 ........................... <bbbb4>
+  [ 19] pusharglist 4 ........................... <bbbb3, #char, bbbb1, bbbb4>
+  [ 21] objcall 136 ............................. <bbbb3.char[bbbb1..bbbb4]>
+  [ 23] pusharglist 2 ........................... <"*", bbbb3.char[bbbb1..bbbb4]>
+  [ 25] extcall 211 ............................. <offset("*", bbbb3.char[bbbb1..bbbb4])>
+  [ 27] add ..................................... <bbbb1 + offset("*", bbbb3.char[bbbb1..bbbb4])>
+  [ 28] pushint8 2 .............................. <2>
+  [ 30] sub ..................................... <bbbb1 + offset("*", bbbb3.char[bbbb1..bbbb4]) - 2>
+  [ 31] setglobal 223 ........................... bbbb2 = bbbb1 + offset("*", bbbb3.char[bbbb1..bbbb4]) - 2
+  [ 33] getparam 0 .............................. <b>
+  [ 35] pushzero ................................ <0>
+  [ 36] eq ...................................... <b = 0>
+  [ 37] jmpifz [ 59] ............................ if b = 0 then / else
+  [ 40] getglobal 224 ........................... <bbbb3>
+  [ 42] pushsymb 135 ............................ <#char>
+  [ 44] getglobal 222 ........................... <bbbb1>
+  [ 46] getglobal 223 ........................... <bbbb2>
+  [ 48] pusharglist 4 ........................... <bbbb3, #char, bbbb1, bbbb2>
+  [ 50] objcall 136 ............................. <bbbb3.char[bbbb1..bbbb2]>
+  [ 52] pusharglistnoret 1 ...................... <bbbb3.char[bbbb1..bbbb2]>
+  [ 54] extcall 137 ............................. return bbbb3.char[bbbb1..bbbb2]
+  [ 56] jmp [ 79]
+  [ 59] getglobal 224 ........................... <bbbb3>
+  [ 61] pushsymb 135 ............................ <#char>
+  [ 63] getglobal 222 ........................... <bbbb1>
+  [ 65] getglobal 223 ........................... <bbbb2>
+  [ 67] pusharglist 4 ........................... <bbbb3, #char, bbbb1, bbbb2>
+  [ 69] objcall 136 ............................. <bbbb3.char[bbbb1..bbbb2]>
+  [ 71] pusharglist 1 ........................... <bbbb3.char[bbbb1..bbbb2]>
+  [ 73] extcall 42 .............................. <integer(bbbb3.char[bbbb1..bbbb2])>
+  [ 75] pusharglistnoret 1 ...................... <integer(bbbb3.char[bbbb1..bbbb2])>
+  [ 77] extcall 137 ............................. return integer(bbbb3.char[bbbb1..bbbb2])
+  [ 79] ret
+end
+
+on grabC b
+  [  0] getglobal 227 ........................... <cccc2>
+  [  2] pushint8 2 .............................. <2>
+  [  4] add ..................................... <cccc2 + 2>
+  [  5] setglobal 226 ........................... cccc1 = cccc2 + 2
+  [  7] getglobal 226 ........................... <cccc1>
+  [  9] pushcons 22 ............................. <"_">
+  [ 11] getglobal 228 ........................... <cccc3>
+  [ 13] pushsymb 135 ............................ <#char>
+  [ 15] getglobal 226 ........................... <cccc1>
+  [ 17] getglobal 229 ........................... <cccc4>
+  [ 19] pusharglist 4 ........................... <cccc3, #char, cccc1, cccc4>
+  [ 21] objcall 136 ............................. <cccc3.char[cccc1..cccc4]>
+  [ 23] pusharglist 2 ........................... <"_", cccc3.char[cccc1..cccc4]>
+  [ 25] extcall 211 ............................. <offset("_", cccc3.char[cccc1..cccc4])>
+  [ 27] add ..................................... <cccc1 + offset("_", cccc3.char[cccc1..cccc4])>
+  [ 28] pushint8 2 .............................. <2>
+  [ 30] sub ..................................... <cccc1 + offset("_", cccc3.char[cccc1..cccc4]) - 2>
+  [ 31] setglobal 227 ........................... cccc2 = cccc1 + offset("_", cccc3.char[cccc1..cccc4]) - 2
+  [ 33] getparam 0 .............................. <b>
+  [ 35] pushzero ................................ <0>
+  [ 36] eq ...................................... <b = 0>
+  [ 37] jmpifz [ 59] ............................ if b = 0 then / else
+  [ 40] getglobal 228 ........................... <cccc3>
+  [ 42] pushsymb 135 ............................ <#char>
+  [ 44] getglobal 226 ........................... <cccc1>
+  [ 46] getglobal 227 ........................... <cccc2>
+  [ 48] pusharglist 4 ........................... <cccc3, #char, cccc1, cccc2>
+  [ 50] objcall 136 ............................. <cccc3.char[cccc1..cccc2]>
+  [ 52] pusharglistnoret 1 ...................... <cccc3.char[cccc1..cccc2]>
+  [ 54] extcall 137 ............................. return cccc3.char[cccc1..cccc2]
+  [ 56] jmp [ 79]
+  [ 59] getglobal 228 ........................... <cccc3>
+  [ 61] pushsymb 135 ............................ <#char>
+  [ 63] getglobal 226 ........................... <cccc1>
+  [ 65] getglobal 227 ........................... <cccc2>
+  [ 67] pusharglist 4 ........................... <cccc3, #char, cccc1, cccc2>
+  [ 69] objcall 136 ............................. <cccc3.char[cccc1..cccc2]>
+  [ 71] pusharglist 1 ........................... <cccc3.char[cccc1..cccc2]>
+  [ 73] extcall 42 .............................. <integer(cccc3.char[cccc1..cccc2])>
+  [ 75] pusharglistnoret 1 ...................... <integer(cccc3.char[cccc1..cccc2])>
+  [ 77] extcall 137 ............................. return integer(cccc3.char[cccc1..cccc2])
+  [ 79] ret
+end
+
+on analyzeC S
+  [  0] getparam 0 .............................. <S>
+  [  2] setglobal 228 ........................... cccc3 = S
+  [  4] getglobal 228 ........................... <cccc3>
+  [  6] pushcons 19 ............................. <"empty">
+  [  8] nteq .................................... <cccc3 <> "empty">
+  [  9] jmpifz [ 84] ............................ if cccc3 <> "empty" then
+  [ 12] pushint8 1 .............................. <1>
+  [ 14] inv ..................................... <-1>
+  [ 15] setglobal 226 ........................... cccc1 = -1
+  [ 17] pushint8 1 .............................. <1>
+  [ 19] inv ..................................... <-1>
+  [ 20] setglobal 227 ........................... cccc2 = -1
+  [ 22] getglobal 228 ........................... <cccc3>
+  [ 24] getobjprop 134 .......................... <cccc3.length>
+  [ 26] setglobal 229 ........................... cccc4 = cccc3.length
+  [ 28] pushint8 1 .............................. <1>
+  [ 30] pusharglist 1 ........................... <1>
+  [ 32] localcall 26 ............................ <grabC(1)>
+  [ 34] setlocal 0 .............................. total = grabC(1)
+  [ 36] pushint8 1 .............................. <1>
+  [ 38] setlocal 1
+  [ 40] getlocal 1
+  [ 42] getlocal 0 .............................. <total>
+  [ 44] lteq
+  [ 45] jmpifz [ 65] ............................ repeat with x = 1 to total
+  [ 48] pushint8 1 .............................. <1>
+  [ 50] pusharglist 1 ........................... <1>
+  [ 52] localcall 26 ............................ <grabC(1)>
+  [ 54] setlocal 2 .............................. num = grabC(1)
+  [ 56] pushint8 1
+  [ 58] getlocal 1
+  [ 60] add
+  [ 61] setlocal 1
+  [ 63] endrepeat [ 40]
+  [ 65] getglobal 228 ........................... <cccc3>
+  [ 67] pushsymb 135 ............................ <#char>
+  [ 69] getglobal 227 ........................... <cccc2>
+  [ 71] pushint8 2 .............................. <2>
+  [ 73] add ..................................... <cccc2 + 2>
+  [ 74] getglobal 229 ........................... <cccc4>
+  [ 76] pusharglist 4 ........................... <cccc3, #char, cccc2 + 2, cccc4>
+  [ 78] objcall 136 ............................. <cccc3.char[cccc2 + 2..cccc4]>
+  [ 80] pusharglistnoret 1 ...................... <cccc3.char[cccc2 + 2..cccc4]>
+  [ 82] extcall 137 ............................. return cccc3.char[cccc2 + 2..cccc4]
+  [ 84] getglobal 228 ........................... <cccc3>
+  [ 86] pusharglistnoret 1 ...................... <cccc3>
+  [ 88] extcall 137 ............................. return cccc3
+  [ 90] ret
+end
+
+on compareLastSavedGameData
+  [  0] getglobal 155 ........................... <fData>
+  [  2] getglobal 171 ........................... <cRevGameNum>
+  [  4] pusharglist 2 ........................... <fData, cRevGameNum>
+  [  6] objcall 17 .............................. <fData[cRevGameNum]>
+  [  8] pusharglist 1 ........................... <fData[cRevGameNum]>
+  [ 10] extcall 215 ............................. <decodeZip(fData[cRevGameNum])>
+  [ 12] setglobal 220 ........................... aaaa3 = decodeZip(fData[cRevGameNum])
+  [ 14] getglobal 168 ........................... <currGame>
+  [ 16] pusharglist 1 ........................... <currGame>
+  [ 18] localcall 20 ............................ <createGameChunk(currGame)>
+  [ 20] setglobal 224 ........................... bbbb3 = createGameChunk(currGame)
+  [ 22] pushzero ................................ <0>
+  [ 23] setlocal 0 .............................. p = 0
+  [ 25] pushint8 1 .............................. <1>
+  [ 27] setlocal 1 .............................. identical = 1
+  [ 29] pushint8 1 .............................. <1>
+  [ 31] inv ..................................... <-1>
+  [ 32] setglobal 218 ........................... aaaa1 = -1
+  [ 34] pushint8 1 .............................. <1>
+  [ 36] inv ..................................... <-1>
+  [ 37] setglobal 219 ........................... aaaa2 = -1
+  [ 39] getglobal 220 ........................... <aaaa3>
+  [ 41] getobjprop 134 .......................... <aaaa3.length>
+  [ 43] setglobal 221 ........................... aaaa4 = aaaa3.length
+  [ 45] pushint8 1 .............................. <1>
+  [ 47] inv ..................................... <-1>
+  [ 48] setglobal 222 ........................... bbbb1 = -1
+  [ 50] pushint8 1 .............................. <1>
+  [ 52] inv ..................................... <-1>
+  [ 53] setglobal 223 ........................... bbbb2 = -1
+  [ 55] getglobal 224 ........................... <bbbb3>
+  [ 57] getobjprop 134 .......................... <bbbb3.length>
+  [ 59] setglobal 225 ........................... bbbb4 = bbbb3.length
+  [ 61] getlocal 0 .............................. <p>
+  [ 63] pushint8 1 .............................. <1>
+  [ 65] eq ...................................... <p = 1>
+  [ 66] jmpifz [ 75] ............................ if p = 1 then
+  [ 69] pushcons 23 ............................. <"---compareLastSavedGameData()">
+  [ 71] pusharglistnoret 1 ...................... <"---compareLastSavedGameData()">
+  [ 73] extcall 174 ............................. _PUT("---compareLastSavedGameData()")
+  [ 75] getglobal 221 ........................... <aaaa4>
+  [ 77] getglobal 225 ........................... <bbbb4>
+  [ 79] nteq .................................... <aaaa4 <> bbbb4>
+  [ 80] jmpifz [112] ............................ if aaaa4 <> bbbb4 then
+  [ 83] pushzero ................................ <0>
+  [ 84] setlocal 1 .............................. identical = 0
+  [ 86] getlocal 0 .............................. <p>
+  [ 88] pushint8 1 .............................. <1>
+  [ 90] eq ...................................... <p = 1>
+  [ 91] jmpifz [112] ............................ if p = 1 then
+  [ 94] pushcons 24 ............................. <"length---">
+  [ 96] getglobal 221 ........................... <aaaa4>
+  [ 98] joinstr ................................. <"length---" & aaaa4>
+  [ 99] pushcons 25 ............................. <"---">
+  [101] joinstr ................................. <"length---" & aaaa4 & "---">
+  [102] getglobal 225 ........................... <bbbb4>
+  [104] joinstr ................................. <"length---" & aaaa4 & "---" & bbbb4>
+  [105] pushcons 25 ............................. <"---">
+  [107] joinstr ................................. <"length---" & aaaa4 & "---" & bbbb4 & "---">
+  [108] pusharglistnoret 1 ...................... <"length---" & aaaa4 & "---" & bbbb4 & "---">
+  [110] extcall 174 ............................. _PUT("length---" & aaaa4 & "---" & bbbb4 & "---")
+  [112] pushzero ................................ <0>
+  [113] pusharglist 1 ........................... <0>
+  [115] localcall 24 ............................ <grabA(0)>
+  [117] setlocal 2 .............................. S1 = grabA(0)
+  [119] pushzero ................................ <0>
+  [120] pusharglist 1 ........................... <0>
+  [122] localcall 25 ............................ <grabB(0)>
+  [124] setlocal 3 .............................. s2 = grabB(0)
+  [126] getlocal 2 .............................. <S1>
+  [128] getlocal 3 .............................. <s2>
+  [130] nteq .................................... <S1 <> s2>
+  [131] jmpifz [163] ............................ if S1 <> s2 then
+  [134] pushzero ................................ <0>
+  [135] setlocal 1 .............................. identical = 0
+  [137] getlocal 0 .............................. <p>
+  [139] pushint8 1 .............................. <1>
+  [141] eq ...................................... <p = 1>
+  [142] jmpifz [163] ............................ if p = 1 then
+  [145] pushcons 26 ............................. <"password---">
+  [147] getlocal 2 .............................. <S1>
+  [149] joinstr ................................. <"password---" & S1>
+  [150] pushcons 25 ............................. <"---">
+  [152] joinstr ................................. <"password---" & S1 & "---">
+  [153] getlocal 3 .............................. <s2>
+  [155] joinstr ................................. <"password---" & S1 & "---" & s2>
+  [156] pushcons 25 ............................. <"---">
+  [158] joinstr ................................. <"password---" & S1 & "---" & s2 & "---">
+  [159] pusharglistnoret 1 ...................... <"password---" & S1 & "---" & s2 & "---">
+  [161] extcall 174 ............................. _PUT("password---" & S1 & "---" & s2 & "---")
+  [163] pushint8 1 .............................. <1>
+  [165] pusharglist 1 ........................... <1>
+  [167] localcall 24 ............................ <grabA(1)>
+  [169] setlocal 2 .............................. S1 = grabA(1)
+  [171] pushint8 1 .............................. <1>
+  [173] pusharglist 1 ........................... <1>
+  [175] localcall 25 ............................ <grabB(1)>
+  [177] setlocal 3 .............................. s2 = grabB(1)
+  [179] getlocal 2 .............................. <S1>
+  [181] getlocal 3 .............................. <s2>
+  [183] nteq .................................... <S1 <> s2>
+  [184] jmpifz [216] ............................ if S1 <> s2 then
+  [187] pushzero ................................ <0>
+  [188] setlocal 1 .............................. identical = 0
+  [190] getlocal 0 .............................. <p>
+  [192] pushint8 1 .............................. <1>
+  [194] eq ...................................... <p = 1>
+  [195] jmpifz [216] ............................ if p = 1 then
+  [198] pushcons 27 ............................. <"currPuzzle---">
+  [200] getlocal 2 .............................. <S1>
+  [202] joinstr ................................. <"currPuzzle---" & S1>
+  [203] pushcons 25 ............................. <"---">
+  [205] joinstr ................................. <"currPuzzle---" & S1 & "---">
+  [206] getlocal 3 .............................. <s2>
+  [208] joinstr ................................. <"currPuzzle---" & S1 & "---" & s2>
+  [209] pushcons 25 ............................. <"---">
+  [211] joinstr ................................. <"currPuzzle---" & S1 & "---" & s2 & "---">
+  [212] pusharglistnoret 1 ...................... <"currPuzzle---" & S1 & "---" & s2 & "---">
+  [214] extcall 174 ............................. _PUT("currPuzzle---" & S1 & "---" & s2 & "---")
+  [216] pushzero ................................ <0>
+  [217] pusharglist 1 ........................... <0>
+  [219] localcall 24 ............................ <grabA(0)>
+  [221] setlocal 2 .............................. S1 = grabA(0)
+  [223] pushzero ................................ <0>
+  [224] pusharglist 1 ........................... <0>
+  [226] localcall 25 ............................ <grabB(0)>
+  [228] setlocal 3 .............................. s2 = grabB(0)
+  [230] getlocal 2 .............................. <S1>
+  [232] getlocal 3 .............................. <s2>
+  [234] nteq .................................... <S1 <> s2>
+  [235] jmpifz [267] ............................ if S1 <> s2 then
+  [238] pushzero ................................ <0>
+  [239] setlocal 1 .............................. identical = 0
+  [241] getlocal 0 .............................. <p>
+  [243] pushint8 1 .............................. <1>
+  [245] eq ...................................... <p = 1>
+  [246] jmpifz [267] ............................ if p = 1 then
+  [249] pushcons 28 ............................. <"token1[]---">
+  [251] getlocal 2 .............................. <S1>
+  [253] joinstr ................................. <"token1[]---" & S1>
+  [254] pushcons 25 ............................. <"---">
+  [256] joinstr ................................. <"token1[]---" & S1 & "---">
+  [257] getlocal 3 .............................. <s2>
+  [259] joinstr ................................. <"token1[]---" & S1 & "---" & s2>
+  [260] pushcons 25 ............................. <"---">
+  [262] joinstr ................................. <"token1[]---" & S1 & "---" & s2 & "---">
+  [263] pusharglistnoret 1 ...................... <"token1[]---" & S1 & "---" & s2 & "---">
+  [265] extcall 174 ............................. _PUT("token1[]---" & S1 & "---" & s2 & "---")
+  [267] pushzero ................................ <0>
+  [268] pusharglist 1 ........................... <0>
+  [270] localcall 24 ............................ <grabA(0)>
+  [272] setlocal 2 .............................. S1 = grabA(0)
+  [274] pushzero ................................ <0>
+  [275] pusharglist 1 ........................... <0>
+  [277] localcall 25 ............................ <grabB(0)>
+  [279] setlocal 3 .............................. s2 = grabB(0)
+  [281] getlocal 2 .............................. <S1>
+  [283] getlocal 3 .............................. <s2>
+  [285] nteq .................................... <S1 <> s2>
+  [286] jmpifz [318] ............................ if S1 <> s2 then
+  [289] pushzero ................................ <0>
+  [290] setlocal 1 .............................. identical = 0
+  [292] getlocal 0 .............................. <p>
+  [294] pushint8 1 .............................. <1>
+  [296] eq ...................................... <p = 1>
+  [297] jmpifz [318] ............................ if p = 1 then
+  [300] pushcons 29 ............................. <"token2[]---">
+  [302] getlocal 2 .............................. <S1>
+  [304] joinstr ................................. <"token2[]---" & S1>
+  [305] pushcons 25 ............................. <"---">
+  [307] joinstr ................................. <"token2[]---" & S1 & "---">
+  [308] getlocal 3 .............................. <s2>
+  [310] joinstr ................................. <"token2[]---" & S1 & "---" & s2>
+  [311] pushcons 25 ............................. <"---">
+  [313] joinstr ................................. <"token2[]---" & S1 & "---" & s2 & "---">
+  [314] pusharglistnoret 1 ...................... <"token2[]---" & S1 & "---" & s2 & "---">
+  [316] extcall 174 ............................. _PUT("token2[]---" & S1 & "---" & s2 & "---")
+  [318] pushint8 1 .............................. <1>
+  [320] pusharglist 1 ........................... <1>
+  [322] localcall 24 ............................ <grabA(1)>
+  [324] setlocal 2 .............................. S1 = grabA(1)
+  [326] pushint8 1 .............................. <1>
+  [328] pusharglist 1 ........................... <1>
+  [330] localcall 25 ............................ <grabB(1)>
+  [332] setlocal 3 .............................. s2 = grabB(1)
+  [334] getlocal 2 .............................. <S1>
+  [336] getlocal 3 .............................. <s2>
+  [338] nteq .................................... <S1 <> s2>
+  [339] jmpifz [371] ............................ if S1 <> s2 then
+  [342] pushzero ................................ <0>
+  [343] setlocal 1 .............................. identical = 0
+  [345] getlocal 0 .............................. <p>
+  [347] pushint8 1 .............................. <1>
+  [349] eq ...................................... <p = 1>
+  [350] jmpifz [371] ............................ if p = 1 then
+  [353] pushcons 30 ............................. <"token3[]---">
+  [355] getlocal 2 .............................. <S1>
+  [357] joinstr ................................. <"token3[]---" & S1>
+  [358] pushcons 25 ............................. <"---">
+  [360] joinstr ................................. <"token3[]---" & S1 & "---">
+  [361] getlocal 3 .............................. <s2>
+  [363] joinstr ................................. <"token3[]---" & S1 & "---" & s2>
+  [364] pushcons 25 ............................. <"---">
+  [366] joinstr ................................. <"token3[]---" & S1 & "---" & s2 & "---">
+  [367] pusharglistnoret 1 ...................... <"token3[]---" & S1 & "---" & s2 & "---">
+  [369] extcall 174 ............................. _PUT("token3[]---" & S1 & "---" & s2 & "---")
+  [371] pushint8 1 .............................. <1>
+  [373] setlocal 4
+  [375] getlocal 4
+  [377] getglobal 203 ........................... <cSavePuzzleTotal>
+  [379] lteq
+  [380] jmpifz [716] ............................ repeat with x = 1 to cSavePuzzleTotal
+  [383] getlocal 4 .............................. <x>
+  [385] pushcons 31 ............................. <"page/stat">
+  [387] joinpadstr .............................. <x && "page/stat">
+  [388] pushint8 1 .............................. <1>
+  [390] pusharglist 1 ........................... <1>
+  [392] localcall 24 ............................ <grabA(1)>
+  [394] joinpadstr .............................. <x && "page/stat" && grabA(1)>
+  [395] pushcons 18 ............................. <"*">
+  [397] joinstr ................................. <x && "page/stat" && grabA(1) & "*">
+  [398] pushint8 1 .............................. <1>
+  [400] pusharglist 1 ........................... <1>
+  [402] localcall 24 ............................ <grabA(1)>
+  [404] joinstr ................................. <x && "page/stat" && grabA(1) & "*" & grabA(1)>
+  [405] setlocal 2 .............................. S1 = x && "page/stat" && grabA(1) & "*" & grabA(1)
+  [407] getlocal 4 .............................. <x>
+  [409] pushcons 31 ............................. <"page/stat">
+  [411] joinpadstr .............................. <x && "page/stat">
+  [412] pushint8 1 .............................. <1>
+  [414] pusharglist 1 ........................... <1>
+  [416] localcall 25 ............................ <grabB(1)>
+  [418] joinpadstr .............................. <x && "page/stat" && grabB(1)>
+  [419] pushcons 18 ............................. <"*">
+  [421] joinstr ................................. <x && "page/stat" && grabB(1) & "*">
+  [422] pushint8 1 .............................. <1>
+  [424] pusharglist 1 ........................... <1>
+  [426] localcall 25 ............................ <grabB(1)>
+  [428] joinstr ................................. <x && "page/stat" && grabB(1) & "*" & grabB(1)>
+  [429] setlocal 3 .............................. s2 = x && "page/stat" && grabB(1) & "*" & grabB(1)
+  [431] getlocal 2 .............................. <S1>
+  [433] getlocal 3 .............................. <s2>
+  [435] nteq .................................... <S1 <> s2>
+  [436] jmpifz [462] ............................ if S1 <> s2 then
+  [439] pushzero ................................ <0>
+  [440] setlocal 1 .............................. identical = 0
+  [442] getlocal 0 .............................. <p>
+  [444] pushint8 1 .............................. <1>
+  [446] eq ...................................... <p = 1>
+  [447] jmpifz [462] ............................ if p = 1 then
+  [450] getlocal 2 .............................. <S1>
+  [452] pusharglistnoret 1 ...................... <S1>
+  [454] extcall 174 ............................. _PUT(S1)
+  [456] getlocal 3 .............................. <s2>
+  [458] pusharglistnoret 1 ...................... <s2>
+  [460] extcall 174 ............................. _PUT(s2)
+  [462] pushzero ................................ <0>
+  [463] pusharglist 1 ........................... <0>
+  [465] localcall 24 ............................ <grabA(0)>
+  [467] setlocal 5 .............................. data_A = grabA(0)
+  [469] pushzero ................................ <0>
+  [470] pusharglist 1 ........................... <0>
+  [472] localcall 24 ............................ <grabA(0)>
+  [474] setlocal 6 .............................. done_A = grabA(0)
+  [476] pushzero ................................ <0>
+  [477] pusharglist 1 ........................... <0>
+  [479] localcall 25 ............................ <grabB(0)>
+  [481] setlocal 7 .............................. data_B = grabB(0)
+  [483] pushzero ................................ <0>
+  [484] pusharglist 1 ........................... <0>
+  [486] localcall 25 ............................ <grabB(0)>
+  [488] setlocal 8 .............................. done_B = grabB(0)
+  [490] getlocal 5 .............................. <data_A>
+  [492] getlocal 7 .............................. <data_B>
+  [494] nteq .................................... <data_A <> data_B>
+  [495] getlocal 6 .............................. <done_A>
+  [497] getlocal 8 .............................. <done_B>
+  [499] nteq .................................... <done_A <> done_B>
+  [500] or ...................................... <(data_A <> data_B) or (done_A <> done_B)>
+  [501] jmpifz [581] ............................ if (data_A <> data_B) or (done_A <> done_B) then
+  [504] getlocal 4 .............................. <x>
+  [506] pushcons 32 ............................. <"data/done">
+  [508] joinpadstr .............................. <x && "data/done">
+  [509] getlocal 5 .............................. <data_A>
+  [511] pusharglist 1 ........................... <data_A>
+  [513] localcall 27 ............................ <analyzeC(data_A)>
+  [515] joinpadstr .............................. <x && "data/done" && analyzeC(data_A)>
+  [516] pushcons 18 ............................. <"*">
+  [518] joinstr ................................. <x && "data/done" && analyzeC(data_A) & "*">
+  [519] getlocal 6 .............................. <done_A>
+  [521] joinstr ................................. <x && "data/done" && analyzeC(data_A) & "*" & done_A>
+  [522] pushcons 18 ............................. <"*">
+  [524] joinstr ................................. <x && "data/done" && analyzeC(data_A) & "*" & done_A & "*">
+  [525] setlocal 2 .............................. S1 = x && "data/done" && analyzeC(data_A) & "*" & done_A & "*"
+  [527] getlocal 4 .............................. <x>
+  [529] pushcons 32 ............................. <"data/done">
+  [531] joinpadstr .............................. <x && "data/done">
+  [532] getlocal 7 .............................. <data_B>
+  [534] pusharglist 1 ........................... <data_B>
+  [536] localcall 27 ............................ <analyzeC(data_B)>
+  [538] joinpadstr .............................. <x && "data/done" && analyzeC(data_B)>
+  [539] pushcons 18 ............................. <"*">
+  [541] joinstr ................................. <x && "data/done" && analyzeC(data_B) & "*">
+  [542] getlocal 8 .............................. <done_B>
+  [544] joinstr ................................. <x && "data/done" && analyzeC(data_B) & "*" & done_B>
+  [545] pushcons 18 ............................. <"*">
+  [547] joinstr ................................. <x && "data/done" && analyzeC(data_B) & "*" & done_B & "*">
+  [548] setlocal 3 .............................. s2 = x && "data/done" && analyzeC(data_B) & "*" & done_B & "*"
+  [550] getlocal 2 .............................. <S1>
+  [552] getlocal 3 .............................. <s2>
+  [554] nteq .................................... <S1 <> s2>
+  [555] jmpifz [581] ............................ if S1 <> s2 then
+  [558] pushzero ................................ <0>
+  [559] setlocal 1 .............................. identical = 0
+  [561] getlocal 0 .............................. <p>
+  [563] pushint8 1 .............................. <1>
+  [565] eq ...................................... <p = 1>
+  [566] jmpifz [581] ............................ if p = 1 then
+  [569] getlocal 2 .............................. <S1>
+  [571] pusharglistnoret 1 ...................... <S1>
+  [573] extcall 174 ............................. _PUT(S1)
+  [575] getlocal 3 .............................. <s2>
+  [577] pusharglistnoret 1 ...................... <s2>
+  [579] extcall 174 ............................. _PUT(s2)
+  [581] getlocal 4 .............................. <x>
+  [583] pushcons 33 ............................. <"S/W/C/P">
+  [585] joinpadstr .............................. <x && "S/W/C/P">
+  [586] pushint8 1 .............................. <1>
+  [588] pusharglist 1 ........................... <1>
+  [590] localcall 24 ............................ <grabA(1)>
+  [592] joinpadstr .............................. <x && "S/W/C/P" && grabA(1)>
+  [593] pushcons 18 ............................. <"*">
+  [595] joinstr ................................. <x && "S/W/C/P" && grabA(1) & "*">
+  [596] pushint8 1 .............................. <1>
+  [598] pusharglist 1 ........................... <1>
+  [600] localcall 24 ............................ <grabA(1)>
+  [602] joinstr ................................. <x && "S/W/C/P" && grabA(1) & "*" & grabA(1)>
+  [603] pushcons 18 ............................. <"*">
+  [605] joinstr ................................. <x && "S/W/C/P" && grabA(1) & "*" & grabA(1) & "*">
+  [606] pushint8 1 .............................. <1>
+  [608] pusharglist 1 ........................... <1>
+  [610] localcall 24 ............................ <grabA(1)>
+  [612] joinstr ................................. <x && "S/W/C/P" && grabA(1) & "*" & grabA(1) & "*" & grabA(1)>
+  [613] pushcons 18 ............................. <"*">
+  [615] joinstr ................................. <x && "S/W/C/P" && grabA(1) & "*" & grabA(1) & "*" & grabA(1) & "*">
+  [616] pushint8 1 .............................. <1>
+  [618] pusharglist 1 ........................... <1>
+  [620] localcall 24 ............................ <grabA(1)>
+  [622] joinstr ................................. <x && "S/W/C/P" && grabA(1) & "*" & grabA(1) & "*" & grabA(1) & "*" & grabA(1)>
+  [623] pushcons 18 ............................. <"*">
+  [625] joinstr ................................. <x && "S/W/C/P" && grabA(1) & "*" & grabA(1) & "*" & grabA(1) & "*" & grabA(1) & "*">
+  [626] setlocal 2 .............................. S1 = x && "S/W/C/P" && grabA(1) & "*" & grabA(1) & "*" & grabA(1) & "*" & grabA(1) & "*"
+  [628] getlocal 4 .............................. <x>
+  [630] pushcons 33 ............................. <"S/W/C/P">
+  [632] joinpadstr .............................. <x && "S/W/C/P">
+  [633] pushint8 1 .............................. <1>
+  [635] pusharglist 1 ........................... <1>
+  [637] localcall 25 ............................ <grabB(1)>
+  [639] joinpadstr .............................. <x && "S/W/C/P" && grabB(1)>
+  [640] pushcons 18 ............................. <"*">
+  [642] joinstr ................................. <x && "S/W/C/P" && grabB(1) & "*">
+  [643] pushint8 1 .............................. <1>
+  [645] pusharglist 1 ........................... <1>
+  [647] localcall 25 ............................ <grabB(1)>
+  [649] joinstr ................................. <x && "S/W/C/P" && grabB(1) & "*" & grabB(1)>
+  [650] pushcons 18 ............................. <"*">
+  [652] joinstr ................................. <x && "S/W/C/P" && grabB(1) & "*" & grabB(1) & "*">
+  [653] pushint8 1 .............................. <1>
+  [655] pusharglist 1 ........................... <1>
+  [657] localcall 25 ............................ <grabB(1)>
+  [659] joinstr ................................. <x && "S/W/C/P" && grabB(1) & "*" & grabB(1) & "*" & grabB(1)>
+  [660] pushcons 18 ............................. <"*">
+  [662] joinstr ................................. <x && "S/W/C/P" && grabB(1) & "*" & grabB(1) & "*" & grabB(1) & "*">
+  [663] pushint8 1 .............................. <1>
+  [665] pusharglist 1 ........................... <1>
+  [667] localcall 25 ............................ <grabB(1)>
+  [669] joinstr ................................. <x && "S/W/C/P" && grabB(1) & "*" & grabB(1) & "*" & grabB(1) & "*" & grabB(1)>
+  [670] pushcons 18 ............................. <"*">
+  [672] joinstr ................................. <x && "S/W/C/P" && grabB(1) & "*" & grabB(1) & "*" & grabB(1) & "*" & grabB(1) & "*">
+  [673] setlocal 3 .............................. s2 = x && "S/W/C/P" && grabB(1) & "*" & grabB(1) & "*" & grabB(1) & "*" & grabB(1) & "*"
+  [675] getlocal 2 .............................. <S1>
+  [677] getlocal 3 .............................. <s2>
+  [679] nteq .................................... <S1 <> s2>
+  [680] jmpifz [706] ............................ if S1 <> s2 then
+  [683] pushzero ................................ <0>
+  [684] setlocal 1 .............................. identical = 0
+  [686] getlocal 0 .............................. <p>
+  [688] pushint8 1 .............................. <1>
+  [690] eq ...................................... <p = 1>
+  [691] jmpifz [706] ............................ if p = 1 then
+  [694] getlocal 2 .............................. <S1>
+  [696] pusharglistnoret 1 ...................... <S1>
+  [698] extcall 174 ............................. _PUT(S1)
+  [700] getlocal 3 .............................. <s2>
+  [702] pusharglistnoret 1 ...................... <s2>
+  [704] extcall 174 ............................. _PUT(s2)
+  [706] pushint8 1
+  [708] getlocal 4
+  [710] add
+  [711] setlocal 4
+  [713] endrepeat [375]
+  [716] pushzero ................................ <0>
+  [717] pusharglist 1 ........................... <0>
+  [719] localcall 24 ............................ <grabA(0)>
+  [721] setlocal 2 .............................. S1 = grabA(0)
+  [723] pushzero ................................ <0>
+  [724] pusharglist 1 ........................... <0>
+  [726] localcall 25 ............................ <grabB(0)>
+  [728] setlocal 3 .............................. s2 = grabB(0)
+  [730] getlocal 2 .............................. <S1>
+  [732] getlocal 3 .............................. <s2>
+  [734] nteq .................................... <S1 <> s2>
+  [735] jmpifz [767] ............................ if S1 <> s2 then
+  [738] pushzero ................................ <0>
+  [739] setlocal 1 .............................. identical = 0
+  [741] getlocal 0 .............................. <p>
+  [743] pushint8 1 .............................. <1>
+  [745] eq ...................................... <p = 1>
+  [746] jmpifz [767] ............................ if p = 1 then
+  [749] pushcons 34 ............................. <"pWindowCode">
+  [751] pusharglistnoret 1 ...................... <"pWindowCode">
+  [753] extcall 174 ............................. _PUT("pWindowCode")
+  [755] getlocal 2 .............................. <S1>
+  [757] pusharglistnoret 1 ...................... <S1>
+  [759] extcall 174 ............................. _PUT(S1)
+  [761] getlocal 3 .............................. <s2>
+  [763] pusharglistnoret 1 ...................... <s2>
+  [765] extcall 174 ............................. _PUT(s2)
+  [767] getlocal 0 .............................. <p>
+  [769] pushint8 1 .............................. <1>
+  [771] eq ...................................... <p = 1>
+  [772] jmpifz [781] ............................ if p = 1 then
+  [775] pushcons 23 ............................. <"---compareLastSavedGameData()">
+  [777] pusharglistnoret 1 ...................... <"---compareLastSavedGameData()">
+  [779] extcall 174 ............................. _PUT("---compareLastSavedGameData()")
+  [781] getlocal 1 .............................. <identical>
+  [783] pusharglistnoret 1 ...................... <identical>
+  [785] extcall 137 ............................. return identical
+  [787] ret
+end
+
+on _Set_Save_Mode ST, countDown
+  [  0] getglobal 72 ............................ <pmSave>
+  [  2] setglobal 45 ............................ playMode = pmSave
+  [  4] pushzero ................................ <0>
+  [  5] setglobal 240 ........................... _Save_Stat = 0
+  [  7] getparam 0 .............................. <ST>
+  [  9] setglobal 241 ........................... _Save_Type = ST
+  [ 11] getglobal 241 ........................... <_Save_Type>
+  [ 13] pushint8 2 .............................. <2>
+  [ 15] eq ...................................... <_Save_Type = 2>
+  [ 16] jmpifz [ 25] ............................ if _Save_Type = 2 then
+  [ 19] pushint8 1 .............................. <1>
+  [ 21] pusharglistnoret 1 ...................... <1>
+  [ 23] extcall 242 ............................. menu_SavingGame(1)
+  [ 25] getparam 1 .............................. <countDown>
+  [ 27] pushint8 1 .............................. <1>
+  [ 29] eq ...................................... <countDown = 1>
+  [ 30] jmpifz [ 43] ............................ if countDown = 1 then
+  [ 33] pushint8 4 .............................. <4>
+  [ 35] pusharglistnoret 1 ...................... <4>
+  [ 37] extcall 243 ............................. menu_Display(4)
+  [ 39] pushint8 10 ............................. <10>
+  [ 41] setlocal 0 .............................. menu_HiliteCountDown = 10
+  [ 43] ret
+end
+
+on _Zero_Save_Mode
+  [  0] pushzero ................................ <0>
+  [  1] setglobal 240 ........................... _Save_Stat = 0
+  [  3] pushzero ................................ <0>
+  [  4] setglobal 241 ........................... _Save_Type = 0
+  [  6] ret
+end
+
+on _valid_Save_Progress
+  [  0] getglobal 241 ........................... <_Save_Type>
+  [  2] pushzero ................................ <0>
+  [  3] gt ...................................... <_Save_Type > 0>
+  [  4] jmpifz [ 11] ............................ if _Save_Type > 0 then
+  [  7] pusharglistnoret 0 ...................... <>
+  [  9] localcall 32 ............................ pollSaveStageStatus()
+  [ 11] ret
+end
+
+on pollSaveStageStatus
+  [  0] getglobal 241 ........................... <_Save_Type>
+  [  2] peek 0 .................................. case _Save_Type of
+  [  4] pushzero ................................ <0>
+  [  5] eq
+  [  6] jmpifz [ 17] ............................ (case) 0:
+  [  9] pusharglistnoret 0 ...................... <>
+  [ 11] localcall 30 ............................ _Zero_Save_Mode()
+  [ 13] ret ..................................... exit
+  [ 14] jmp [ 89]
+  [ 17] peek 0
+  [ 19] pushint8 1 .............................. <1>
+  [ 21] nteq
+  [ 22] jmpifz [ 33] ............................ (case) 1, ...
+  [ 25] peek 0
+  [ 27] pushint8 3 .............................. <3>
+  [ 29] eq
+  [ 30] jmpifz [ 89] ............................ (case) ..., 3:
+  [ 33] getglobal 24 ............................ <currPuzzle>
+  [ 35] getglobal 202 ........................... <cTokens>
+  [ 37] eq ...................................... <currPuzzle = cTokens>
+  [ 38] getglobal 24 ............................ <currPuzzle>
+  [ 40] getglobal 247 ........................... <cHelpTokens>
+  [ 42] eq ...................................... <currPuzzle = cHelpTokens>
+  [ 43] or ...................................... <(currPuzzle = cTokens) or (currPuzzle = cHelpTokens)>
+  [ 44] getglobal 24 ............................ <currPuzzle>
+  [ 46] getglobal 248 ........................... <cPrologue>
+  [ 48] eq ...................................... <currPuzzle = cPrologue>
+  [ 49] or ...................................... <(currPuzzle = cTokens) or (currPuzzle = cHelpTokens) or (currPuzzle = cPrologue)>
+  [ 50] jmpifz [ 89] ............................ if (currPuzzle = cTokens) or (currPuzzle = cHelpTokens) or (currPuzzle = cPrologue) then
+  [ 53] getglobal 241 ........................... <_Save_Type>
+  [ 55] peek 0 .................................. case _Save_Type of
+  [ 57] pushint8 1 .............................. <1>
+  [ 59] eq
+  [ 60] jmpifz [ 70] ............................ (case) 1:
+  [ 63] getglobal 46 ............................ <pmPlay>
+  [ 65] setglobal 45 ............................ playMode = pmPlay
+  [ 67] jmp [ 82]
+  [ 70] peek 0
+  [ 72] pushint8 3 .............................. <3>
+  [ 74] eq
+  [ 75] jmpifz [ 82] ............................ (case) 3:
+  [ 78] pusharglistnoret 0 ...................... <>
+  [ 80] extcall 249 ............................. check_Save_Before_Quit()
+  [ 82] pop 1 ................................... end case
+  [ 84] pusharglistnoret 0 ...................... <>
+  [ 86] localcall 30 ............................ _Zero_Save_Mode()
+  [ 88] ret ..................................... exit
+  [ 89] pop 1 ................................... end case
+  [ 91] getglobal 240 ........................... <_Save_Stat>
+  [ 93] peek 0 .................................. case _Save_Stat of
+  [ 95] pushzero ................................ <0>
+  [ 96] eq
+  [ 97] jmpifz [120] ............................ (case) 0:
+  [100] pushcons 35 ............................. <"gFlashCommand">
+  [102] pushint8 4 .............................. <4>
+  [104] pusharglistnoret 2 ...................... <"gFlashCommand", 4>
+  [106] extcall 51 .............................. misc_SetFlash("gFlashCommand", 4)
+  [108] pushzero ................................ <0>
+  [109] pusharglistnoret 1 ...................... <0>
+  [111] extcall 250 ............................. _Set_Ticks(0)
+  [113] pushint8 1 .............................. <1>
+  [115] setglobal 240 ........................... _Save_Stat = 1
+  [117] jmp [355]
+  [120] peek 0
+  [122] pushint8 1 .............................. <1>
+  [124] eq
+  [125] jmpifz [158] ............................ (case) 1:
+  [128] pushcons 36 ............................. <"gSaveStages">
+  [130] pushzero ................................ <0>
+  [131] pusharglist 2 ........................... <"gSaveStages", 0>
+  [133] extcall 43 .............................. <misc_GetFlash("gSaveStages", 0)>
+  [135] setlocal 0 .............................. Q = misc_GetFlash("gSaveStages", 0)
+  [137] getlocal 0 .............................. <Q>
+  [139] pushcons 0 .............................. <EMPTY>
+  [141] eq ...................................... <Q = EMPTY>
+  [142] getlocal 0 .............................. <Q>
+  [144] pushcons 37 ............................. <"4">
+  [146] eq ...................................... <Q = "4">
+  [147] or ...................................... <(Q = EMPTY) or (Q = "4")>
+  [148] jmpifz [155] ............................ if (Q = EMPTY) or (Q = "4") then
+  [151] pushint8 2 .............................. <2>
+  [153] setglobal 240 ........................... _Save_Stat = 2
+  [155] jmp [355]
+  [158] peek 0
+  [160] pushint8 2 .............................. <2>
+  [162] eq
+  [163] jmpifz [242] ............................ (case) 2:
+  [166] pusharglistnoret 0 ...................... <>
+  [168] extcall 251 ............................. noInterface()
+  [170] pushcons 36 ............................. <"gSaveStages">
+  [172] pushzero ................................ <0>
+  [173] pusharglistnoret 2 ...................... <"gSaveStages", 0>
+  [175] extcall 51 .............................. misc_SetFlash("gSaveStages", 0)
+  [177] pushcons 35 ............................. <"gFlashCommand">
+  [179] pushzero ................................ <0>
+  [180] pusharglistnoret 2 ...................... <"gFlashCommand", 0>
+  [182] extcall 51 .............................. misc_SetFlash("gFlashCommand", 0)
+  [184] pusharglistnoret 0 ...................... <>
+  [186] localcall 18 ............................ saveCurrentPuzzle()
+  [188] getglobal 241 ........................... <_Save_Type>
+  [190] peek 0 .................................. case _Save_Type of
+  [192] pushint8 1 .............................. <1>
+  [194] eq
+  [195] jmpifz [210] ............................ (case) 1:
+  [198] pusharglistnoret 0 ...................... <>
+  [200] localcall 30 ............................ _Zero_Save_Mode()
+  [202] pusharglistnoret 0 ...................... <>
+  [204] extcall 252 ............................. executeLaunch()
+  [206] ret ..................................... exit
+  [207] jmp [237]
+  [210] peek 0
+  [212] pushint8 3 .............................. <3>
+  [214] eq
+  [215] jmpifz [233] ............................ (case) 3:
+  [218] pusharglistnoret 0 ...................... <>
+  [220] localcall 30 ............................ _Zero_Save_Mode()
+  [222] pushzero ................................ <0>
+  [223] setlocal 1 .............................. nextPuzzle = 0
+  [225] pusharglistnoret 0 ...................... <>
+  [227] extcall 249 ............................. check_Save_Before_Quit()
+  [229] ret ..................................... exit
+  [230] jmp [237] ............................... (case) otherwise:
+  [233] pushint8 3 .............................. <3>
+  [235] setglobal 240 ........................... _Save_Stat = 3
+  [237] pop 1 ................................... end case
+  [239] jmp [355]
+  [242] peek 0
+  [244] pushint8 3 .............................. <3>
+  [246] eq
+  [247] jmpifz [261] ............................ (case) 3:
+  [250] pusharglistnoret 0 ...................... <>
+  [252] localcall 19 ............................ saveCurrentGame()
+  [254] pushint8 4 .............................. <4>
+  [256] setglobal 240 ........................... _Save_Stat = 4
+  [258] jmp [355]
+  [261] peek 0
+  [263] pushint8 4 .............................. <4>
+  [265] eq
+  [266] jmpifz [308] ............................ (case) 4:
+  [269] getglobal 142 ........................... <cFileIO>
+  [271] pusharglistnoret 1 ...................... <cFileIO>
+  [273] objcall 253 ............................. cFileIO.readChar()
+  [275] getglobal 151 ........................... <cTestIO>
+  [277] pusharglistnoret 1 ...................... <cTestIO>
+  [279] objcall 253 ............................. cTestIO.readChar()
+  [281] getglobal 142 ........................... <cFileIO>
+  [283] pusharglist 1 ........................... <cFileIO>
+  [285] extcall 144 ............................. <status(cFileIO)>
+  [287] pushzero ................................ <0>
+  [288] nteq .................................... <status(cFileIO) <> 0>
+  [289] getglobal 151 ........................... <cTestIO>
+  [291] pusharglist 1 ........................... <cTestIO>
+  [293] extcall 144 ............................. <status(cTestIO)>
+  [295] pushzero ................................ <0>
+  [296] nteq .................................... <status(cTestIO) <> 0>
+  [297] and ..................................... <(status(cFileIO) <> 0) and (status(cTestIO) <> 0)>
+  [298] jmpifz [305] ............................ if (status(cFileIO) <> 0) and (status(cTestIO) <> 0) then
+  [301] pushint8 5 .............................. <5>
+  [303] setglobal 240 ........................... _Save_Stat = 5
+  [305] jmp [355]
+  [308] peek 0
+  [310] pushint8 5 .............................. <5>
+  [312] eq
+  [313] jmpifz [355] ............................ (case) 5:
+  [316] pushzero ................................ <0>
+  [317] pusharglistnoret 1 ...................... <0>
+  [319] extcall 242 ............................. menu_SavingGame(0)
+  [321] pusharglistnoret 0 ...................... <>
+  [323] localcall 30 ............................ _Zero_Save_Mode()
+  [325] getglobal 254 ........................... <pClickToContinue>
+  [327] pushzero ................................ <0>
+  [328] eq ...................................... <pClickToContinue = 0>
+  [329] jmpifz [347] ............................ if pClickToContinue = 0 then / else
+  [332] getglobal 45 ............................ <playMode>
+  [334] getglobal 72 ............................ <pmSave>
+  [336] eq ...................................... <playMode = pmSave>
+  [337] jmpifz [344] ............................ if playMode = pmSave then
+  [340] getglobal 46 ............................ <pmPlay>
+  [342] setglobal 45 ............................ playMode = pmPlay
+  [344] jmp [355]
+  [347] pusharglistnoret 0 ...................... <>
+  [349] extcall 255 ............................. menu_SetFlashProperty_ClickToContinue()
+  [351] getglobal 69 ............................ <pmClick>
+  [353] setglobal 45 ............................ playMode = pmClick
+  [355] pop 1 ................................... end case
+  [357] ret
+end

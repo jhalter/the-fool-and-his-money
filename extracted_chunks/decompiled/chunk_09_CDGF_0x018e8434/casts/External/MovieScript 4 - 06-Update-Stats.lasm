@@ -1,0 +1,2576 @@
+global cSwords1, cSwords2, cWands1, cWands2, cCups1, cCups2, cPentacles1, cPentacles2, cMansion1, cMansion2, cPrologue, cPuzzleTotal, cMenuPuzzles, cHighPriestess, cSevenCups, cPreHP, cMoonMorph, cMoonsMap, cMoonsPuzzles, cGameMenus, cTokens, cPreFinale, cFinale, cHelpTokens, pNum, pStat, pData, pFrame, pVolume, pDone, chunkMenuStat, pMiscellaneous, pWindowCode, pInfo, pSeven, pWordStat63, pSwords, pWands, pCups, pPentacles, pTotalSwords, pTotalWands, pTotalCups, pTotalPentacles, token1, token2, token3, menuStat, currGame, currPuzzle, lastPuzzle, CR, theDataStatus, csGrid, csJumble, csClickCode, csPhrase, csConcat, csLetterSlide, csPatchPirate, csPatchStamp, csMorphText, csHerb, csTracer, csInventory, csSeven, csAuction, csWager, csTarot, csWagerTarot, csPentacle, csFillin, csPreFinale, thePuzzlesSolved, _Read_Only_Mansion, csDEL, csHEX, csREM, pPage
+
+on updateGameStats GN
+  [  0] getglobal 745 ........................... <theDataStatus>
+  [  3] pushint8 1 .............................. <1>
+  [  5] eq ...................................... <theDataStatus = 1>
+  [  6] jmpifz [  9] ............................ if theDataStatus = 1 then
+  [  9] getglobal 24 ............................ <currPuzzle>
+  [ 11] getglobal 21 ............................ <cGameMenus>
+  [ 13] lt ...................................... <currPuzzle < cGameMenus>
+  [ 14] jmpifz [ 41] ............................ if currPuzzle < cGameMenus then
+  [ 17] getglobal 93 ............................ <pStat>
+  [ 19] getglobal 24 ............................ <currPuzzle>
+  [ 21] pusharglist 2 ........................... <pStat, currPuzzle>
+  [ 23] objcall 17 .............................. <pStat[currPuzzle]>
+  [ 25] pushint8 2 .............................. <2>
+  [ 27] lt ...................................... <pStat[currPuzzle] < 2>
+  [ 28] jmpifz [ 41] ............................ if pStat[currPuzzle] < 2 then
+  [ 31] getglobal 93 ............................ <pStat>
+  [ 33] getglobal 24 ............................ <currPuzzle>
+  [ 35] pushint8 2 .............................. <2>
+  [ 37] pusharglistnoret 3 ...................... <pStat, currPuzzle, 2>
+  [ 39] objcall 35 .............................. pStat[currPuzzle] = 2
+  [ 41] getglobal 745 ........................... <theDataStatus>
+  [ 44] pushzero ................................ <0>
+  [ 45] eq ...................................... <theDataStatus = 0>
+  [ 46] jmpifz [ 76] ............................ if theDataStatus = 0 then / else
+  [ 49] getglobal 205 ........................... <pWindowCode>
+  [ 51] pushcons 0 .............................. <EMPTY>
+  [ 53] eq ...................................... <pWindowCode = EMPTY>
+  [ 54] jmpifz [ 73] ............................ if pWindowCode = EMPTY then
+  [ 57] pushint8 3 .............................. <3>
+  [ 59] pusharglist 1 ........................... <3>
+  [ 61] localcall 12 ............................ <calcMapPiecesRemaining(3)>
+  [ 63] pushint8 4 .............................. <4>
+  [ 65] gt ...................................... <calcMapPiecesRemaining(3) > 4>
+  [ 66] jmpifz [ 73] ............................ if calcMapPiecesRemaining(3) > 4 then
+  [ 69] pusharglistnoret 0 ...................... <>
+  [ 71] localcall 1 ............................. makeWindowCode()
+  [ 73] jmp [214]
+  [ 76] pushcons 1 .............................. <"12345671111111">
+  [ 78] setglobal 205 ........................... pWindowCode = "12345671111111"
+  [ 80] getglobal 24 ............................ <currPuzzle>
+  [ 82] getglobal 21 ............................ <cGameMenus>
+  [ 84] eq ...................................... <currPuzzle = cGameMenus>
+  [ 85] getglobal 93 ............................ <pStat>
+  [ 87] getglobal 21 ............................ <cGameMenus>
+  [ 89] pusharglist 2 ........................... <pStat, cGameMenus>
+  [ 91] objcall 17 .............................. <pStat[cGameMenus]>
+  [ 93] pushint8 20 ............................. <20>
+  [ 95] eq ...................................... <pStat[cGameMenus] = 20>
+  [ 96] and ..................................... <(currPuzzle = cGameMenus) and (pStat[cGameMenus] = 20)>
+  [ 97] jmpifz [214] ............................ if (currPuzzle = cGameMenus) and (pStat[cGameMenus] = 20) then
+  [100] getglobal 205 ........................... <pWindowCode>
+  [102] pushsymb 135 ............................ <#char>
+  [104] pushint8 1 .............................. <1>
+  [106] pusharglist 3 ........................... <pWindowCode, #char, 1>
+  [108] objcall 136 ............................. <pWindowCode.char[1]>
+  [110] setlocal 0 .............................. S = pWindowCode.char[1]
+  [112] pushint8 2 .............................. <2>
+  [114] setlocal 1
+  [116] getlocal 1
+  [118] pushint8 7 .............................. <7>
+  [120] lteq
+  [121] jmpifz [151] ............................ repeat with x = 2 to 7
+  [124] getlocal 0 .............................. <S>
+  [126] pushcons 2 .............................. <"-">
+  [128] joinstr ................................. <S & "-">
+  [129] getglobal 205 ........................... <pWindowCode>
+  [131] pushsymb 135 ............................ <#char>
+  [133] getlocal 1 .............................. <x>
+  [135] pusharglist 3 ........................... <pWindowCode, #char, x>
+  [137] objcall 136 ............................. <pWindowCode.char[x]>
+  [139] joinstr ................................. <S & "-" & pWindowCode.char[x]>
+  [140] setlocal 0 .............................. S = S & "-" & pWindowCode.char[x]
+  [142] pushint8 1
+  [144] getlocal 1
+  [146] add
+  [147] setlocal 1
+  [149] endrepeat [116]
+  [151] getlocal 0 .............................. <S>
+  [153] pusharglistnoret 1 ...................... <S>
+  [155] extcall 174 ............................. _PUT(S)
+  [157] getglobal 205 ........................... <pWindowCode>
+  [159] pushsymb 135 ............................ <#char>
+  [161] pushint8 8 .............................. <8>
+  [163] pusharglist 3 ........................... <pWindowCode, #char, 8>
+  [165] objcall 136 ............................. <pWindowCode.char[8]>
+  [167] setlocal 0 .............................. S = pWindowCode.char[8]
+  [169] pushint8 9 .............................. <9>
+  [171] setlocal 1
+  [173] getlocal 1
+  [175] pushint8 14 ............................. <14>
+  [177] lteq
+  [178] jmpifz [208] ............................ repeat with x = 9 to 14
+  [181] getlocal 0 .............................. <S>
+  [183] pushcons 2 .............................. <"-">
+  [185] joinstr ................................. <S & "-">
+  [186] getglobal 205 ........................... <pWindowCode>
+  [188] pushsymb 135 ............................ <#char>
+  [190] getlocal 1 .............................. <x>
+  [192] pusharglist 3 ........................... <pWindowCode, #char, x>
+  [194] objcall 136 ............................. <pWindowCode.char[x]>
+  [196] joinstr ................................. <S & "-" & pWindowCode.char[x]>
+  [197] setlocal 0 .............................. S = S & "-" & pWindowCode.char[x]
+  [199] pushint8 1
+  [201] getlocal 1
+  [203] add
+  [204] setlocal 1
+  [206] endrepeat [173]
+  [208] getlocal 0 .............................. <S>
+  [210] pusharglistnoret 1 ...................... <S>
+  [212] extcall 174 ............................. _PUT(S)
+  [214] pushzero ................................ <0>
+  [215] setlocal 2 .............................. puzzAvail = 0
+  [217] pushzero ................................ <0>
+  [218] setglobal 281 ........................... thePuzzlesSolved = 0
+  [221] getglobal 282 ........................... <cSwords1>
+  [224] setlocal 1
+  [226] getlocal 1
+  [228] getglobal 283 ........................... <cPentacles2>
+  [231] lteq
+  [232] jmpifz [287] ............................ repeat with x = cSwords1 to cPentacles2
+  [235] getglobal 93 ............................ <pStat>
+  [237] getlocal 1 .............................. <x>
+  [239] pusharglist 2 ........................... <pStat, x>
+  [241] objcall 17 .............................. <pStat[x]>
+  [243] pushzero ................................ <0>
+  [244] gt ...................................... <pStat[x] > 0>
+  [245] jmpifz [255] ............................ if pStat[x] > 0 then
+  [248] getlocal 2 .............................. <puzzAvail>
+  [250] pushint8 1 .............................. <1>
+  [252] add ..................................... <puzzAvail + 1>
+  [253] setlocal 2 .............................. puzzAvail = puzzAvail + 1
+  [255] getglobal 93 ............................ <pStat>
+  [257] getlocal 1 .............................. <x>
+  [259] pusharglist 2 ........................... <pStat, x>
+  [261] objcall 17 .............................. <pStat[x]>
+  [263] pushint8 100 ............................ <100>
+  [265] gteq .................................... <pStat[x] >= 100>
+  [266] jmpifz [278] ............................ if pStat[x] >= 100 then
+  [269] getglobal 281 ........................... <thePuzzlesSolved>
+  [272] pushint8 1 .............................. <1>
+  [274] add ..................................... <thePuzzlesSolved + 1>
+  [275] setglobal 281 ........................... thePuzzlesSolved = thePuzzlesSolved + 1
+  [278] pushint8 1
+  [280] getlocal 1
+  [282] add
+  [283] setlocal 1
+  [285] endrepeat [226]
+  [287] getglobal 281 ........................... <thePuzzlesSolved>
+  [290] pushint8 3 .............................. <3>
+  [292] sub ..................................... <thePuzzlesSolved - 3>
+  [293] setlocal 3 .............................. puzzReady = thePuzzlesSolved - 3
+  [295] getlocal 3 .............................. <puzzReady>
+  [297] pushzero ................................ <0>
+  [298] gt ...................................... <puzzReady > 0>
+  [299] jmpifz [375] ............................ if puzzReady > 0 then
+  [302] getglobal 284 ........................... <cWands1>
+  [305] setlocal 1
+  [307] getlocal 1
+  [309] getglobal 283 ........................... <cPentacles2>
+  [312] lteq
+  [313] jmpifz [375] ............................ repeat with x = cWands1 to cPentacles2
+  [316] getlocal 3 .............................. <puzzReady>
+  [318] pushzero ................................ <0>
+  [319] eq ...................................... <puzzReady = 0>
+  [320] jmpifz [329] ............................ if puzzReady = 0 then / else
+  [323] jmp [375] ............................... exit repeat
+  [326] jmp [359]
+  [329] getglobal 93 ............................ <pStat>
+  [331] getlocal 1 .............................. <x>
+  [333] pusharglist 2 ........................... <pStat, x>
+  [335] objcall 17 .............................. <pStat[x]>
+  [337] pushzero ................................ <0>
+  [338] eq ...................................... <pStat[x] = 0>
+  [339] jmpifz [359] ............................ if pStat[x] = 0 then
+  [342] getlocal 3 .............................. <puzzReady>
+  [344] pushzero ................................ <0>
+  [345] gt ...................................... <puzzReady > 0>
+  [346] jmpifz [359] ............................ if puzzReady > 0 then
+  [349] getglobal 93 ............................ <pStat>
+  [351] getlocal 1 .............................. <x>
+  [353] pushint8 1 .............................. <1>
+  [355] pusharglistnoret 3 ...................... <pStat, x, 1>
+  [357] objcall 35 .............................. pStat[x] = 1
+  [359] getlocal 3 .............................. <puzzReady>
+  [361] pushint8 1 .............................. <1>
+  [363] sub ..................................... <puzzReady - 1>
+  [364] setlocal 3 .............................. puzzReady = puzzReady - 1
+  [366] pushint8 1
+  [368] getlocal 1
+  [370] add
+  [371] setlocal 1
+  [373] endrepeat [307]
+  [375] getglobal 93 ............................ <pStat>
+  [377] getglobal 21 ............................ <cGameMenus>
+  [379] pusharglist 2 ........................... <pStat, cGameMenus>
+  [381] objcall 17 .............................. <pStat[cGameMenus]>
+  [383] pushint8 95 ............................. <95>
+  [385] gteq .................................... <pStat[cGameMenus] >= 95>
+  [386] jmpifz [427] ............................ if pStat[cGameMenus] >= 95 then
+  [389] getglobal 93 ............................ <pStat>
+  [391] getglobal 285 ........................... <cSevenCups>
+  [394] pusharglist 2 ........................... <pStat, cSevenCups>
+  [396] objcall 17 .............................. <pStat[cSevenCups]>
+  [398] pushint8 100 ............................ <100>
+  [400] lt ...................................... <pStat[cSevenCups] < 100>
+  [401] jmpifz [417] ............................ if pStat[cSevenCups] < 100 then / else
+  [404] getglobal 93 ............................ <pStat>
+  [406] getglobal 21 ............................ <cGameMenus>
+  [408] pushint8 95 ............................. <95>
+  [410] pusharglistnoret 3 ...................... <pStat, cGameMenus, 95>
+  [412] objcall 35 .............................. pStat[cGameMenus] = 95
+  [414] jmp [427]
+  [417] getglobal 93 ............................ <pStat>
+  [419] getglobal 21 ............................ <cGameMenus>
+  [421] pushint8 100 ............................ <100>
+  [423] pusharglistnoret 3 ...................... <pStat, cGameMenus, 100>
+  [425] objcall 35 .............................. pStat[cGameMenus] = 100
+  [427] getglobal 93 ............................ <pStat>
+  [429] getglobal 21 ............................ <cGameMenus>
+  [431] pusharglist 2 ........................... <pStat, cGameMenus>
+  [433] objcall 17 .............................. <pStat[cGameMenus]>
+  [435] peek 0 .................................. case pStat[cGameMenus] of
+  [437] pushzero ................................ <0>
+  [438] eq
+  [439] jmpifz [498] ............................ (case) 0:
+  [442] getglobal 282 ........................... <cSwords1>
+  [445] setlocal 1
+  [447] getlocal 1
+  [449] getglobal 286 ........................... <cSwords2>
+  [452] lteq
+  [453] jmpifz [489] ............................ repeat with x = cSwords1 to cSwords2
+  [456] getglobal 93 ............................ <pStat>
+  [458] getlocal 1 .............................. <x>
+  [460] pusharglist 2 ........................... <pStat, x>
+  [462] objcall 17 .............................. <pStat[x]>
+  [464] pushint8 1 .............................. <1>
+  [466] lt ...................................... <pStat[x] < 1>
+  [467] jmpifz [480] ............................ if pStat[x] < 1 then
+  [470] getglobal 93 ............................ <pStat>
+  [472] getlocal 1 .............................. <x>
+  [474] pushint8 1 .............................. <1>
+  [476] pusharglistnoret 3 ...................... <pStat, x, 1>
+  [478] objcall 35 .............................. pStat[x] = 1
+  [480] pushint8 1
+  [482] getlocal 1
+  [484] add
+  [485] setlocal 1
+  [487] endrepeat [447]
+  [489] pushint8 10 ............................. <10>
+  [491] pusharglistnoret 1 ...................... <10>
+  [493] localcall 6 ............................. _Set_Game_Menu_Status(10)
+  [495] jmp [895]
+  [498] peek 0
+  [500] pushint8 10 ............................. <10>
+  [502] eq
+  [503] jmpifz [526] ............................ (case) 10:
+  [506] pushint8 1 .............................. <1>
+  [508] pushzero ................................ <0>
+  [509] pushint8 1 .............................. <1>
+  [511] pusharglistnoret 3 ...................... <1, 0, 1>
+  [513] localcall 2 ............................. updateMansionWindows(1, 0, 1)
+  [515] pushint8 100 ............................ <100>
+  [517] pushint8 20 ............................. <20>
+  [519] pusharglistnoret 2 ...................... <100, 20>
+  [521] localcall 3 ............................. updateForMansionPhase(100, 20)
+  [523] jmp [895]
+  [526] peek 0
+  [528] pushint8 20 ............................. <20>
+  [530] eq
+  [531] jmpifz [537] ............................ (case) 20:
+  [534] jmp [895]
+  [537] peek 0
+  [539] pushint8 30 ............................. <30>
+  [541] eq
+  [542] jmpifz [757] ............................ (case) 30:
+  [545] pushint8 2 .............................. <2>
+  [547] pushint8 100 ............................ <100>
+  [549] pushint8 101 ............................ <101>
+  [551] pusharglistnoret 3 ...................... <2, 100, 101>
+  [553] localcall 2 ............................. updateMansionWindows(2, 100, 101)
+  [555] pushint16 200 ........................... <200>
+  [558] pushint8 60 ............................. <60>
+  [560] pusharglistnoret 2 ...................... <200, 60>
+  [562] localcall 3 ............................. updateForMansionPhase(200, 60)
+  [564] pushzero ................................ <0>
+  [565] setlocal 4 .............................. highest = 0
+  [567] getglobal 287 ........................... <cMansion1>
+  [570] setlocal 1
+  [572] getlocal 1
+  [574] getglobal 288 ........................... <cMansion2>
+  [577] lteq
+  [578] jmpifz [614] ............................ repeat with x = cMansion1 to cMansion2
+  [581] getglobal 93 ............................ <pStat>
+  [583] getlocal 1 .............................. <x>
+  [585] pusharglist 2 ........................... <pStat, x>
+  [587] objcall 17 .............................. <pStat[x]>
+  [589] getlocal 4 .............................. <highest>
+  [591] gt ...................................... <pStat[x] > highest>
+  [592] jmpifz [605] ............................ if pStat[x] > highest then
+  [595] getglobal 93 ............................ <pStat>
+  [597] getlocal 1 .............................. <x>
+  [599] pusharglist 2 ........................... <pStat, x>
+  [601] objcall 17 .............................. <pStat[x]>
+  [603] setlocal 4 .............................. highest = pStat[x]
+  [605] pushint8 1
+  [607] getlocal 1
+  [609] add
+  [610] setlocal 1
+  [612] endrepeat [572]
+  [614] getlocal 4 .............................. <highest>
+  [616] pushint16 150 ........................... <150>
+  [619] gteq .................................... <highest >= 150>
+  [620] jmpifz [687] ............................ if highest >= 150 then / else
+  [623] getglobal 287 ........................... <cMansion1>
+  [626] setlocal 1
+  [628] getlocal 1
+  [630] getglobal 288 ........................... <cMansion2>
+  [633] lteq
+  [634] jmpifz [684] ............................ repeat with x = cMansion1 to cMansion2
+  [637] getglobal 93 ............................ <pStat>
+  [639] getlocal 1 .............................. <x>
+  [641] pusharglist 2 ........................... <pStat, x>
+  [643] objcall 17 .............................. <pStat[x]>
+  [645] pushint8 100 ............................ <100>
+  [647] gt ...................................... <pStat[x] > 100>
+  [648] getglobal 93 ............................ <pStat>
+  [650] getlocal 1 .............................. <x>
+  [652] pusharglist 2 ........................... <pStat, x>
+  [654] objcall 17 .............................. <pStat[x]>
+  [656] pushint16 150 ........................... <150>
+  [659] lt ...................................... <pStat[x] < 150>
+  [660] and ..................................... <(pStat[x] > 100) and (pStat[x] < 150)>
+  [661] jmpifz [675] ............................ if (pStat[x] > 100) and (pStat[x] < 150) then
+  [664] getglobal 93 ............................ <pStat>
+  [666] getlocal 1 .............................. <x>
+  [668] pushint16 150 ........................... <150>
+  [671] pusharglistnoret 3 ...................... <pStat, x, 150>
+  [673] objcall 35 .............................. pStat[x] = 150
+  [675] pushint8 1
+  [677] getlocal 1
+  [679] add
+  [680] setlocal 1
+  [682] endrepeat [628]
+  [684] jmp [754]
+  [687] getlocal 4 .............................. <highest>
+  [689] pushint8 108 ............................ <108>
+  [691] eq ...................................... <highest = 108>
+  [692] jmpifz [754] ............................ if highest = 108 then
+  [695] getglobal 287 ........................... <cMansion1>
+  [698] setlocal 1
+  [700] getlocal 1
+  [702] getglobal 288 ........................... <cMansion2>
+  [705] lteq
+  [706] jmpifz [754] ............................ repeat with x = cMansion1 to cMansion2
+  [709] getglobal 93 ............................ <pStat>
+  [711] getlocal 1 .............................. <x>
+  [713] pusharglist 2 ........................... <pStat, x>
+  [715] objcall 17 .............................. <pStat[x]>
+  [717] pushint8 100 ............................ <100>
+  [719] gt ...................................... <pStat[x] > 100>
+  [720] getglobal 93 ............................ <pStat>
+  [722] getlocal 1 .............................. <x>
+  [724] pusharglist 2 ........................... <pStat, x>
+  [726] objcall 17 .............................. <pStat[x]>
+  [728] pushint8 108 ............................ <108>
+  [730] lt ...................................... <pStat[x] < 108>
+  [731] and ..................................... <(pStat[x] > 100) and (pStat[x] < 108)>
+  [732] jmpifz [745] ............................ if (pStat[x] > 100) and (pStat[x] < 108) then
+  [735] getglobal 93 ............................ <pStat>
+  [737] getlocal 1 .............................. <x>
+  [739] pushint8 108 ............................ <108>
+  [741] pusharglistnoret 3 ...................... <pStat, x, 108>
+  [743] objcall 35 .............................. pStat[x] = 108
+  [745] pushint8 1
+  [747] getlocal 1
+  [749] add
+  [750] setlocal 1
+  [752] endrepeat [700]
+  [754] jmp [895]
+  [757] peek 0
+  [759] pushint8 60 ............................. <60>
+  [761] eq
+  [762] jmpifz [768] ............................ (case) 60:
+  [765] jmp [895]
+  [768] peek 0
+  [770] pushint8 70 ............................. <70>
+  [772] nteq
+  [773] jmpifz [784] ............................ (case) 70, ...
+  [776] peek 0
+  [778] pushint8 75 ............................. <75>
+  [780] eq
+  [781] jmpifz [842] ............................ (case) ..., 75:
+  [784] getglobal 93 ............................ <pStat>
+  [786] getglobal 21 ............................ <cGameMenus>
+  [788] pusharglist 2 ........................... <pStat, cGameMenus>
+  [790] objcall 17 .............................. <pStat[cGameMenus]>
+  [792] pushint8 70 ............................. <70>
+  [794] eq ...................................... <pStat[cGameMenus] = 70>
+  [795] jmpifz [823] ............................ if pStat[cGameMenus] = 70 then
+  [798] getglobal 93 ............................ <pStat>
+  [800] getglobal 261 ........................... <cHighPriestess>
+  [803] pusharglist 2 ........................... <pStat, cHighPriestess>
+  [805] objcall 17 .............................. <pStat[cHighPriestess]>
+  [807] pushint8 100 ............................ <100>
+  [809] gteq .................................... <pStat[cHighPriestess] >= 100>
+  [810] jmpifz [823] ............................ if pStat[cHighPriestess] >= 100 then
+  [813] getglobal 93 ............................ <pStat>
+  [815] getglobal 21 ............................ <cGameMenus>
+  [817] pushint8 75 ............................. <75>
+  [819] pusharglistnoret 3 ...................... <pStat, cGameMenus, 75>
+  [821] objcall 35 .............................. pStat[cGameMenus] = 75
+  [823] pushint8 3 .............................. <3>
+  [825] pushint16 200 ........................... <200>
+  [828] pushint16 201 ........................... <201>
+  [831] pusharglistnoret 3 ...................... <3, 200, 201>
+  [833] localcall 2 ............................. updateMansionWindows(3, 200, 201)
+  [835] pusharglistnoret 0 ...................... <>
+  [837] localcall 4 ............................. updateForMansionBeam()
+  [839] jmp [895]
+  [842] peek 0
+  [844] pushint8 80 ............................. <80>
+  [846] eq
+  [847] jmpifz [853] ............................ (case) 80:
+  [850] jmp [895]
+  [853] peek 0
+  [855] pushint8 90 ............................. <90>
+  [857] eq
+  [858] jmpifz [864] ............................ (case) 90:
+  [861] jmp [895]
+  [864] peek 0
+  [866] pushint8 95 ............................. <95>
+  [868] eq
+  [869] jmpifz [887] ............................ (case) 95:
+  [872] pushint8 4 .............................. <4>
+  [874] pushint16 300 ........................... <300>
+  [877] pushint16 301 ........................... <301>
+  [880] pusharglistnoret 3 ...................... <4, 300, 301>
+  [882] localcall 2 ............................. updateMansionWindows(4, 300, 301)
+  [884] jmp [895]
+  [887] peek 0
+  [889] pushint8 100 ............................ <100>
+  [891] eq
+  [892] jmpifz [895] ............................ (case) 100:
+  [895] pop 1 ................................... end case
+  [897] getglobal 93 ............................ <pStat>
+  [899] getglobal 248 ........................... <cPrologue>
+  [901] pusharglist 2 ........................... <pStat, cPrologue>
+  [903] objcall 17 .............................. <pStat[cPrologue]>
+  [905] pushzero ................................ <0>
+  [906] eq ...................................... <pStat[cPrologue] = 0>
+  [907] jmpifz [920] ............................ if pStat[cPrologue] = 0 then
+  [910] getglobal 93 ............................ <pStat>
+  [912] getglobal 248 ........................... <cPrologue>
+  [914] pushint8 1 .............................. <1>
+  [916] pusharglistnoret 3 ...................... <pStat, cPrologue, 1>
+  [918] objcall 35 .............................. pStat[cPrologue] = 1
+  [920] getglobal 93 ............................ <pStat>
+  [922] getglobal 289 ........................... <csPatchPirate>
+  [925] pushint8 1 .............................. <1>
+  [927] pusharglist 2 ........................... <csPatchPirate, 1>
+  [929] objcall 17 .............................. <csPatchPirate[1]>
+  [931] pusharglist 2 ........................... <pStat, csPatchPirate[1]>
+  [933] objcall 17 .............................. <pStat[csPatchPirate[1]]>
+  [935] pushint16 400 ........................... <400>
+  [938] gteq .................................... <pStat[csPatchPirate[1]] >= 400>
+  [939] jmpifz [960] ............................ if pStat[csPatchPirate[1]] >= 400 then
+  [942] getglobal 93 ............................ <pStat>
+  [944] getglobal 289 ........................... <csPatchPirate>
+  [947] pushint8 4 .............................. <4>
+  [949] pusharglist 2 ........................... <csPatchPirate, 4>
+  [951] objcall 17 .............................. <csPatchPirate[4]>
+  [953] pushint16 700 ........................... <700>
+  [956] pusharglistnoret 3 ...................... <pStat, csPatchPirate[4], 700>
+  [958] objcall 35 .............................. pStat[csPatchPirate[4]] = 700
+  [960] pusharglistnoret 0 ...................... <>
+  [962] localcall 7 ............................. _Update_Solved_Tarot()
+  [964] getglobal 93 ............................ <pStat>
+  [966] getglobal 290 ........................... <cMoonsMap>
+  [969] pusharglist 2 ........................... <pStat, cMoonsMap>
+  [971] objcall 17 .............................. <pStat[cMoonsMap]>
+  [973] pushint8 100 ............................ <100>
+  [975] lt ...................................... <pStat[cMoonsMap] < 100>
+  [976] jmpifz [1015] ........................... if pStat[cMoonsMap] < 100 then
+  [979] pushint8 3 .............................. <3>
+  [981] pusharglist 1 ........................... <3>
+  [983] localcall 12 ............................ <calcMapPiecesRemaining(3)>
+  [985] setlocal 5 .............................. PR = calcMapPiecesRemaining(3)
+  [987] getlocal 5 .............................. <PR>
+  [989] pushzero ................................ <0>
+  [990] gt ...................................... <PR > 0>
+  [991] jmpifz [1015] ........................... if PR > 0 then
+  [994] getglobal 93 ............................ <pStat>
+  [996] getglobal 290 ........................... <cMoonsMap>
+  [999] pushint8 2 .............................. <2>
+  [1001] pusharglistnoret 3 ..................... <pStat, cMoonsMap, 2>
+  [1003] objcall 35 ............................. pStat[cMoonsMap] = 2
+  [1005] getglobal 93 ........................... <pStat>
+  [1007] getglobal 291 .......................... <cMoonsPuzzles>
+  [1010] pushzero ............................... <0>
+  [1011] pusharglistnoret 3 ..................... <pStat, cMoonsPuzzles, 0>
+  [1013] objcall 35 ............................. pStat[cMoonsPuzzles] = 0
+  [1015] getglobal 93 ........................... <pStat>
+  [1017] getglobal 21 ........................... <cGameMenus>
+  [1019] pusharglist 2 .......................... <pStat, cGameMenus>
+  [1021] objcall 17 ............................. <pStat[cGameMenus]>
+  [1023] pushint8 95 ............................ <95>
+  [1025] lt ..................................... <pStat[cGameMenus] < 95>
+  [1026] jmpifz [1039] .......................... if pStat[cGameMenus] < 95 then
+  [1029] getglobal 93 ........................... <pStat>
+  [1031] getglobal 285 .......................... <cSevenCups>
+  [1034] pushzero ............................... <0>
+  [1035] pusharglistnoret 3 ..................... <pStat, cSevenCups, 0>
+  [1037] objcall 35 ............................. pStat[cSevenCups] = 0
+  [1039] getglobal 93 ........................... <pStat>
+  [1041] getglobal 21 ........................... <cGameMenus>
+  [1043] pusharglist 2 .......................... <pStat, cGameMenus>
+  [1045] objcall 17 ............................. <pStat[cGameMenus]>
+  [1047] pushint8 95 ............................ <95>
+  [1049] eq ..................................... <pStat[cGameMenus] = 95>
+  [1050] jmpifz [1079] .......................... if pStat[cGameMenus] = 95 then
+  [1053] getglobal 93 ........................... <pStat>
+  [1055] getglobal 285 .......................... <cSevenCups>
+  [1058] pusharglist 2 .......................... <pStat, cSevenCups>
+  [1060] objcall 17 ............................. <pStat[cSevenCups]>
+  [1062] pushint8 20 ............................ <20>
+  [1064] gt ..................................... <pStat[cSevenCups] > 20>
+  [1065] jmpifz [1079] .......................... if pStat[cSevenCups] > 20 then
+  [1068] getglobal 93 ........................... <pStat>
+  [1070] getglobal 285 .......................... <cSevenCups>
+  [1073] pushint8 10 ............................ <10>
+  [1075] pusharglistnoret 3 ..................... <pStat, cSevenCups, 10>
+  [1077] objcall 35 ............................. pStat[cSevenCups] = 10
+  [1079] getglobal 93 ........................... <pStat>
+  [1081] getglobal 291 .......................... <cMoonsPuzzles>
+  [1084] pusharglist 2 .......................... <pStat, cMoonsPuzzles>
+  [1086] objcall 17 ............................. <pStat[cMoonsPuzzles]>
+  [1088] pushint16 700 .......................... <700>
+  [1091] lt ..................................... <pStat[cMoonsPuzzles] < 700>
+  [1092] getglobal 93 ........................... <pStat>
+  [1094] getglobal 285 .......................... <cSevenCups>
+  [1097] pusharglist 2 .......................... <pStat, cSevenCups>
+  [1099] objcall 17 ............................. <pStat[cSevenCups]>
+  [1101] pushint16 700 .......................... <700>
+  [1104] lt ..................................... <pStat[cSevenCups] < 700>
+  [1105] or ..................................... <(pStat[cMoonsPuzzles] < 700) or (pStat[cSevenCups] < 700)>
+  [1106] jmpifz [1178] .......................... if (pStat[cMoonsPuzzles] < 700) or (pStat[cSevenCups] < 700) then / else
+  [1109] getglobal 93 ........................... <pStat>
+  [1111] getglobal 98 ........................... <cPreFinale>
+  [1113] pusharglist 2 .......................... <pStat, cPreFinale>
+  [1115] objcall 17 ............................. <pStat[cPreFinale]>
+  [1117] pushzero ............................... <0>
+  [1118] eq ..................................... <pStat[cPreFinale] = 0>
+  [1119] jmpifz [1132] .......................... if pStat[cPreFinale] = 0 then
+  [1122] getglobal 93 ........................... <pStat>
+  [1124] getglobal 98 ........................... <cPreFinale>
+  [1126] pushint8 2 ............................. <2>
+  [1128] pusharglistnoret 3 ..................... <pStat, cPreFinale, 2>
+  [1130] objcall 35 ............................. pStat[cPreFinale] = 2
+  [1132] getglobal 93 ........................... <pStat>
+  [1134] getglobal 98 ........................... <cPreFinale>
+  [1136] pusharglist 2 .......................... <pStat, cPreFinale>
+  [1138] objcall 17 ............................. <pStat[cPreFinale]>
+  [1140] pushint8 10 ............................ <10>
+  [1142] gt ..................................... <pStat[cPreFinale] > 10>
+  [1143] jmpifz [1156] .......................... if pStat[cPreFinale] > 10 then
+  [1146] getglobal 93 ........................... <pStat>
+  [1148] getglobal 98 ........................... <cPreFinale>
+  [1150] pushint8 10 ............................ <10>
+  [1152] pusharglistnoret 3 ..................... <pStat, cPreFinale, 10>
+  [1154] objcall 35 ............................. pStat[cPreFinale] = 10
+  [1156] getglobal 188 .......................... <pData>
+  [1158] getglobal 98 ........................... <cPreFinale>
+  [1160] pushcons 3 ............................. <"empty">
+  [1162] pusharglistnoret 3 ..................... <pData, cPreFinale, "empty">
+  [1164] objcall 35 ............................. pData[cPreFinale] = "empty"
+  [1166] getglobal 93 ........................... <pStat>
+  [1168] getglobal 25 ........................... <cFinale>
+  [1170] pushzero ............................... <0>
+  [1171] pusharglistnoret 3 ..................... <pStat, cFinale, 0>
+  [1173] objcall 35 ............................. pStat[cFinale] = 0
+  [1175] jmp [1202]
+  [1178] getglobal 93 ........................... <pStat>
+  [1180] getglobal 98 ........................... <cPreFinale>
+  [1182] pusharglist 2 .......................... <pStat, cPreFinale>
+  [1184] objcall 17 ............................. <pStat[cPreFinale]>
+  [1186] pushint8 100 ........................... <100>
+  [1188] lt ..................................... <pStat[cPreFinale] < 100>
+  [1189] jmpifz [1202] .......................... if pStat[cPreFinale] < 100 then
+  [1192] getglobal 93 ........................... <pStat>
+  [1194] getglobal 98 ........................... <cPreFinale>
+  [1196] pushint8 100 ........................... <100>
+  [1198] pusharglistnoret 3 ..................... <pStat, cPreFinale, 100>
+  [1200] objcall 35 ............................. pStat[cPreFinale] = 100
+  [1202] pusharglistnoret 0 ..................... <>
+  [1204] extcall 292 ............................ grabWordStat63()
+  [1207] getparam 0 ............................. <GN>
+  [1209] pusharglistnoret 1 ..................... <GN>
+  [1211] localcall 14 ........................... setTokenDescription(GN)
+  [1213] getglobal 24 ........................... <currPuzzle>
+  [1215] setlocal 6 ............................. CP = currPuzzle
+  [1217] getlocal 6 ............................. <CP>
+  [1219] pushcons 4 ............................. <" of 100">
+  [1221] joinstr ................................ <CP & " of 100">
+  [1222] setlocal 7 ............................. c3 = CP & " of 100"
+  [1224] pushcons 0 ............................. <EMPTY>
+  [1226] setlocal 8 ............................. c4 = EMPTY
+  [1228] pushcons 0 ............................. <EMPTY>
+  [1230] setlocal 9 ............................. c5 = EMPTY
+  [1232] getglobal 183 .......................... <pSwords>
+  [1234] getlocal 6 ............................. <CP>
+  [1236] pusharglist 2 .......................... <pSwords, CP>
+  [1238] objcall 17 ............................. <pSwords[CP]>
+  [1240] pushcons 5 ............................. <"of">
+  [1242] joinpadstr ............................. <pSwords[CP] && "of">
+  [1243] getglobal 293 .......................... <pTotalSwords>
+  [1246] joinpadstr ............................. <pSwords[CP] && "of" && pTotalSwords>
+  [1247] pushcons 6 ............................. <"Swords">
+  [1249] joinpadstr ............................. <pSwords[CP] && "of" && pTotalSwords && "Swords">
+  [1250] setlocal 10 ............................ c6 = pSwords[CP] && "of" && pTotalSwords && "Swords"
+  [1252] getglobal 184 .......................... <pWands>
+  [1254] getlocal 6 ............................. <CP>
+  [1256] pusharglist 2 .......................... <pWands, CP>
+  [1258] objcall 17 ............................. <pWands[CP]>
+  [1260] pushcons 5 ............................. <"of">
+  [1262] joinpadstr ............................. <pWands[CP] && "of">
+  [1263] getglobal 294 .......................... <pTotalWands>
+  [1266] joinpadstr ............................. <pWands[CP] && "of" && pTotalWands>
+  [1267] pushcons 7 ............................. <"Wands">
+  [1269] joinpadstr ............................. <pWands[CP] && "of" && pTotalWands && "Wands">
+  [1270] setlocal 11 ............................ c7 = pWands[CP] && "of" && pTotalWands && "Wands"
+  [1272] getglobal 185 .......................... <pCups>
+  [1274] getlocal 6 ............................. <CP>
+  [1276] pusharglist 2 .......................... <pCups, CP>
+  [1278] objcall 17 ............................. <pCups[CP]>
+  [1280] pushcons 5 ............................. <"of">
+  [1282] joinpadstr ............................. <pCups[CP] && "of">
+  [1283] getglobal 295 .......................... <pTotalCups>
+  [1286] joinpadstr ............................. <pCups[CP] && "of" && pTotalCups>
+  [1287] pushcons 8 ............................. <"Cups">
+  [1289] joinpadstr ............................. <pCups[CP] && "of" && pTotalCups && "Cups">
+  [1290] setlocal 12 ............................ c8 = pCups[CP] && "of" && pTotalCups && "Cups"
+  [1292] getglobal 186 .......................... <pPentacles>
+  [1294] getlocal 6 ............................. <CP>
+  [1296] pusharglist 2 .......................... <pPentacles, CP>
+  [1298] objcall 17 ............................. <pPentacles[CP]>
+  [1300] pushcons 5 ............................. <"of">
+  [1302] joinpadstr ............................. <pPentacles[CP] && "of">
+  [1303] getglobal 296 .......................... <pTotalPentacles>
+  [1306] joinpadstr ............................. <pPentacles[CP] && "of" && pTotalPentacles>
+  [1307] pushcons 9 ............................. <"Pentacles">
+  [1309] joinpadstr ............................. <pPentacles[CP] && "of" && pTotalPentacles && "Pentacles">
+  [1310] setlocal 13 ............................ c9 = pPentacles[CP] && "of" && pTotalPentacles && "Pentacles"
+  [1312] getlocal 6 ............................. <CP>
+  [1314] getglobal 282 .......................... <cSwords1>
+  [1317] gteq ................................... <CP >= cSwords1>
+  [1318] getlocal 6 ............................. <CP>
+  [1320] getglobal 286 .......................... <cSwords2>
+  [1323] lteq ................................... <CP <= cSwords2>
+  [1324] and .................................... <(CP >= cSwords1) and (CP <= cSwords2)>
+  [1325] jmpifz [1356] .......................... if (CP >= cSwords1) and (CP <= cSwords2) then
+  [1328] getlocal 6 ............................. <CP>
+  [1330] getglobal 282 .......................... <cSwords1>
+  [1333] sub .................................... <CP - cSwords1>
+  [1334] pushint8 1 ............................. <1>
+  [1336] add .................................... <CP - cSwords1 + 1>
+  [1337] pushcons 5 ............................. <"of">
+  [1339] joinpadstr ............................. <CP - cSwords1 + 1 && "of">
+  [1340] getglobal 286 .......................... <cSwords2>
+  [1343] getglobal 282 .......................... <cSwords1>
+  [1346] sub .................................... <cSwords2 - cSwords1>
+  [1347] pushint8 1 ............................. <1>
+  [1349] add .................................... <cSwords2 - cSwords1 + 1>
+  [1350] joinpadstr ............................. <CP - cSwords1 + 1 && "of" && cSwords2 - cSwords1 + 1>
+  [1351] pushcons 10 ............................ <"SWORDS">
+  [1353] joinpadstr ............................. <CP - cSwords1 + 1 && "of" && cSwords2 - cSwords1 + 1 && "SWORDS">
+  [1354] setlocal 8 ............................. c4 = CP - cSwords1 + 1 && "of" && cSwords2 - cSwords1 + 1 && "SWORDS"
+  [1356] getlocal 6 ............................. <CP>
+  [1358] getglobal 284 .......................... <cWands1>
+  [1361] gteq ................................... <CP >= cWands1>
+  [1362] getlocal 6 ............................. <CP>
+  [1364] getglobal 297 .......................... <cWands2>
+  [1367] lteq ................................... <CP <= cWands2>
+  [1368] and .................................... <(CP >= cWands1) and (CP <= cWands2)>
+  [1369] jmpifz [1400] .......................... if (CP >= cWands1) and (CP <= cWands2) then
+  [1372] getlocal 6 ............................. <CP>
+  [1374] getglobal 284 .......................... <cWands1>
+  [1377] sub .................................... <CP - cWands1>
+  [1378] pushint8 1 ............................. <1>
+  [1380] add .................................... <CP - cWands1 + 1>
+  [1381] pushcons 5 ............................. <"of">
+  [1383] joinpadstr ............................. <CP - cWands1 + 1 && "of">
+  [1384] getglobal 297 .......................... <cWands2>
+  [1387] getglobal 284 .......................... <cWands1>
+  [1390] sub .................................... <cWands2 - cWands1>
+  [1391] pushint8 1 ............................. <1>
+  [1393] add .................................... <cWands2 - cWands1 + 1>
+  [1394] joinpadstr ............................. <CP - cWands1 + 1 && "of" && cWands2 - cWands1 + 1>
+  [1395] pushcons 11 ............................ <"WANDS">
+  [1397] joinpadstr ............................. <CP - cWands1 + 1 && "of" && cWands2 - cWands1 + 1 && "WANDS">
+  [1398] setlocal 8 ............................. c4 = CP - cWands1 + 1 && "of" && cWands2 - cWands1 + 1 && "WANDS"
+  [1400] getlocal 6 ............................. <CP>
+  [1402] getglobal 298 .......................... <cCups1>
+  [1405] gteq ................................... <CP >= cCups1>
+  [1406] getlocal 6 ............................. <CP>
+  [1408] getglobal 299 .......................... <cCups2>
+  [1411] lteq ................................... <CP <= cCups2>
+  [1412] and .................................... <(CP >= cCups1) and (CP <= cCups2)>
+  [1413] jmpifz [1444] .......................... if (CP >= cCups1) and (CP <= cCups2) then
+  [1416] getlocal 6 ............................. <CP>
+  [1418] getglobal 298 .......................... <cCups1>
+  [1421] sub .................................... <CP - cCups1>
+  [1422] pushint8 1 ............................. <1>
+  [1424] add .................................... <CP - cCups1 + 1>
+  [1425] pushcons 5 ............................. <"of">
+  [1427] joinpadstr ............................. <CP - cCups1 + 1 && "of">
+  [1428] getglobal 299 .......................... <cCups2>
+  [1431] getglobal 298 .......................... <cCups1>
+  [1434] sub .................................... <cCups2 - cCups1>
+  [1435] pushint8 1 ............................. <1>
+  [1437] add .................................... <cCups2 - cCups1 + 1>
+  [1438] joinpadstr ............................. <CP - cCups1 + 1 && "of" && cCups2 - cCups1 + 1>
+  [1439] pushcons 12 ............................ <"CUPS">
+  [1441] joinpadstr ............................. <CP - cCups1 + 1 && "of" && cCups2 - cCups1 + 1 && "CUPS">
+  [1442] setlocal 8 ............................. c4 = CP - cCups1 + 1 && "of" && cCups2 - cCups1 + 1 && "CUPS"
+  [1444] getlocal 6 ............................. <CP>
+  [1446] getglobal 300 .......................... <cPentacles1>
+  [1449] gteq ................................... <CP >= cPentacles1>
+  [1450] getlocal 6 ............................. <CP>
+  [1452] getglobal 283 .......................... <cPentacles2>
+  [1455] lteq ................................... <CP <= cPentacles2>
+  [1456] and .................................... <(CP >= cPentacles1) and (CP <= cPentacles2)>
+  [1457] jmpifz [1488] .......................... if (CP >= cPentacles1) and (CP <= cPentacles2) then
+  [1460] getlocal 6 ............................. <CP>
+  [1462] getglobal 300 .......................... <cPentacles1>
+  [1465] sub .................................... <CP - cPentacles1>
+  [1466] pushint8 1 ............................. <1>
+  [1468] add .................................... <CP - cPentacles1 + 1>
+  [1469] pushcons 5 ............................. <"of">
+  [1471] joinpadstr ............................. <CP - cPentacles1 + 1 && "of">
+  [1472] getglobal 283 .......................... <cPentacles2>
+  [1475] getglobal 300 .......................... <cPentacles1>
+  [1478] sub .................................... <cPentacles2 - cPentacles1>
+  [1479] pushint8 1 ............................. <1>
+  [1481] add .................................... <cPentacles2 - cPentacles1 + 1>
+  [1482] joinpadstr ............................. <CP - cPentacles1 + 1 && "of" && cPentacles2 - cPentacles1 + 1>
+  [1483] pushcons 13 ............................ <"PENTACLES">
+  [1485] joinpadstr ............................. <CP - cPentacles1 + 1 && "of" && cPentacles2 - cPentacles1 + 1 && "PENTACLES">
+  [1486] setlocal 8 ............................. c4 = CP - cPentacles1 + 1 && "of" && cPentacles2 - cPentacles1 + 1 && "PENTACLES"
+  [1488] getlocal 6 ............................. <CP>
+  [1490] getglobal 287 .......................... <cMansion1>
+  [1493] gteq ................................... <CP >= cMansion1>
+  [1494] getlocal 6 ............................. <CP>
+  [1496] getglobal 288 .......................... <cMansion2>
+  [1499] lteq ................................... <CP <= cMansion2>
+  [1500] and .................................... <(CP >= cMansion1) and (CP <= cMansion2)>
+  [1501] jmpifz [1532] .......................... if (CP >= cMansion1) and (CP <= cMansion2) then
+  [1504] getlocal 6 ............................. <CP>
+  [1506] getglobal 287 .......................... <cMansion1>
+  [1509] sub .................................... <CP - cMansion1>
+  [1510] pushint8 1 ............................. <1>
+  [1512] add .................................... <CP - cMansion1 + 1>
+  [1513] pushcons 5 ............................. <"of">
+  [1515] joinpadstr ............................. <CP - cMansion1 + 1 && "of">
+  [1516] getglobal 288 .......................... <cMansion2>
+  [1519] getglobal 287 .......................... <cMansion1>
+  [1522] sub .................................... <cMansion2 - cMansion1>
+  [1523] pushint8 1 ............................. <1>
+  [1525] add .................................... <cMansion2 - cMansion1 + 1>
+  [1526] joinpadstr ............................. <CP - cMansion1 + 1 && "of" && cMansion2 - cMansion1 + 1>
+  [1527] pushcons 14 ............................ <"MANSION">
+  [1529] joinpadstr ............................. <CP - cMansion1 + 1 && "of" && cMansion2 - cMansion1 + 1 && "MANSION">
+  [1530] setlocal 8 ............................. c4 = CP - cMansion1 + 1 && "of" && cMansion2 - cMansion1 + 1 && "MANSION"
+  [1532] getglobal 92 ........................... <menuStat>
+  [1534] getlocal 6 ............................. <CP>
+  [1536] pusharglist 2 .......................... <menuStat, CP>
+  [1538] objcall 17 ............................. <menuStat[CP]>
+  [1540] pushint8 3 ............................. <3>
+  [1542] gteq ................................... <menuStat[CP] >= 3>
+  [1543] jmpifz [1550] .......................... if menuStat[CP] >= 3 then
+  [1546] pushcons 15 ............................ <"--- SOLVED ---">
+  [1548] setlocal 9 ............................. c5 = "--- SOLVED ---"
+  [1550] getparam 0 ............................. <GN>
+  [1552] pushzero ............................... <0>
+  [1553] eq ..................................... <GN = 0>
+  [1554] jmpifz [1558] .......................... if GN = 0 then
+  [1557] ret .................................... exit
+  [1558] getlocal 7 ............................. <c3>
+  [1560] getglobal 263 .......................... <CR>
+  [1563] joinstr ................................ <c3 & CR>
+  [1564] getlocal 8 ............................. <c4>
+  [1566] joinstr ................................ <c3 & CR & c4>
+  [1567] getglobal 263 .......................... <CR>
+  [1570] joinstr ................................ <c3 & CR & c4 & CR>
+  [1571] getglobal 199 .......................... <token1>
+  [1573] getparam 0 ............................. <GN>
+  [1575] pusharglist 2 .......................... <token1, GN>
+  [1577] objcall 17 ............................. <token1[GN]>
+  [1579] joinstr ................................ <c3 & CR & c4 & CR & token1[GN]>
+  [1580] getglobal 263 .......................... <CR>
+  [1583] joinstr ................................ <c3 & CR & c4 & CR & token1[GN] & CR>
+  [1584] getglobal 200 .......................... <token2>
+  [1586] getparam 0 ............................. <GN>
+  [1588] pusharglist 2 .......................... <token2, GN>
+  [1590] objcall 17 ............................. <token2[GN]>
+  [1592] joinstr ................................ <c3 & CR & c4 & CR & token1[GN] & CR & token2[GN]>
+  [1593] getglobal 263 .......................... <CR>
+  [1596] joinstr ................................ <c3 & CR & c4 & CR & token1[GN] & CR & token2[GN] & CR>
+  [1597] getlocal 9 ............................. <c5>
+  [1599] joinstr ................................ <c3 & CR & c4 & CR & token1[GN] & CR & token2[GN] & CR & c5>
+  [1600] getglobal 263 .......................... <CR>
+  [1603] joinstr ................................ <c3 & CR & c4 & CR & token1[GN] & CR & token2[GN] & CR & c5 & CR>
+  [1604] getlocal 10 ............................ <c6>
+  [1606] joinstr ................................ <c3 & CR & c4 & CR & token1[GN] & CR & token2[GN] & CR & c5 & CR & c6>
+  [1607] getglobal 263 .......................... <CR>
+  [1610] joinstr ................................ <c3 & CR & c4 & CR & token1[GN] & CR & token2[GN] & CR & c5 & CR & c6 & CR>
+  [1611] getlocal 11 ............................ <c7>
+  [1613] joinstr ................................ <c3 & CR & c4 & CR & token1[GN] & CR & token2[GN] & CR & c5 & CR & c6 & CR & c7>
+  [1614] getglobal 263 .......................... <CR>
+  [1617] joinstr ................................ <c3 & CR & c4 & CR & token1[GN] & CR & token2[GN] & CR & c5 & CR & c6 & CR & c7 & CR>
+  [1618] getlocal 12 ............................ <c8>
+  [1620] joinstr ................................ <c3 & CR & c4 & CR & token1[GN] & CR & token2[GN] & CR & c5 & CR & c6 & CR & c7 & CR & c8>
+  [1621] getglobal 263 .......................... <CR>
+  [1624] joinstr ................................ <c3 & CR & c4 & CR & token1[GN] & CR & token2[GN] & CR & c5 & CR & c6 & CR & c7 & CR & c8 & CR>
+  [1625] getlocal 13 ............................ <c9>
+  [1627] joinstr ................................ <c3 & CR & c4 & CR & token1[GN] & CR & token2[GN] & CR & c5 & CR & c6 & CR & c7 & CR & c8 & CR & c9>
+  [1628] setglobal 301 .......................... pInfo = c3 & CR & c4 & CR & token1[GN] & CR & token2[GN] & CR & c5 & CR & c6 & CR & c7 & CR & c8 & CR & c9
+  [1631] pusharglistnoret 0 ..................... <>
+  [1633] localcall 15 ........................... updatePages()
+  [1635] ret
+end
+
+on makeWindowCode
+  [  0] pusharglist 0 ........................... <>
+  [  2] extcall 313 ............................. <list()>
+  [  5] setlocal 0 .............................. R = list()
+  [  7] pushint8 1 .............................. <1>
+  [  9] setlocal 1
+  [ 11] getlocal 1
+  [ 13] pushint8 7 .............................. <7>
+  [ 15] lteq
+  [ 16] jmpifz [ 38] ............................ repeat with x = 1 to 7
+  [ 19] getlocal 0 .............................. <R>
+  [ 21] getlocal 1 .............................. <x>
+  [ 23] getlocal 1 .............................. <x>
+  [ 25] pusharglistnoret 3 ...................... <R, x, x>
+  [ 27] objcall 35 .............................. R[x] = x
+  [ 29] pushint8 1
+  [ 31] getlocal 1
+  [ 33] add
+  [ 34] setlocal 1
+  [ 36] endrepeat [ 11]
+  [ 38] pushint8 1 .............................. <1>
+  [ 40] setlocal 1
+  [ 42] getlocal 1
+  [ 44] pushint8 7 .............................. <7>
+  [ 46] lteq
+  [ 47] jmpifz [108] ............................ repeat with x = 1 to 7
+  [ 50] pushint8 7 .............................. <7>
+  [ 52] pusharglist 1 ........................... <7>
+  [ 54] extcall 314 ............................. <random(7)>
+  [ 57] setlocal 2 .............................. N = random(7)
+  [ 59] getlocal 0 .............................. <R>
+  [ 61] getlocal 1 .............................. <x>
+  [ 63] pusharglist 2 ........................... <R, x>
+  [ 65] objcall 17 .............................. <R[x]>
+  [ 67] setlocal 3 .............................. r1 = R[x]
+  [ 69] getlocal 0 .............................. <R>
+  [ 71] getlocal 2 .............................. <N>
+  [ 73] pusharglist 2 ........................... <R, N>
+  [ 75] objcall 17 .............................. <R[N]>
+  [ 77] setlocal 4 .............................. r2 = R[N]
+  [ 79] getlocal 0 .............................. <R>
+  [ 81] getlocal 1 .............................. <x>
+  [ 83] getlocal 4 .............................. <r2>
+  [ 85] pusharglistnoret 3 ...................... <R, x, r2>
+  [ 87] objcall 35 .............................. R[x] = r2
+  [ 89] getlocal 0 .............................. <R>
+  [ 91] getlocal 2 .............................. <N>
+  [ 93] getlocal 3 .............................. <r1>
+  [ 95] pusharglistnoret 3 ...................... <R, N, r1>
+  [ 97] objcall 35 .............................. R[N] = r1
+  [ 99] pushint8 1
+  [101] getlocal 1
+  [103] add
+  [104] setlocal 1
+  [106] endrepeat [ 42]
+  [108] pushcons 0 .............................. <EMPTY>
+  [110] setglobal 205 ........................... pWindowCode = EMPTY
+  [112] pushint8 1 .............................. <1>
+  [114] setlocal 1
+  [116] getlocal 1
+  [118] pushint8 7 .............................. <7>
+  [120] lteq
+  [121] jmpifz [146] ............................ repeat with x = 1 to 7
+  [124] getglobal 205 ........................... <pWindowCode>
+  [126] getlocal 0 .............................. <R>
+  [128] getlocal 1 .............................. <x>
+  [130] pusharglist 2 ........................... <R, x>
+  [132] objcall 17 .............................. <R[x]>
+  [134] joinstr ................................. <pWindowCode & R[x]>
+  [135] setglobal 205 ........................... pWindowCode = pWindowCode & R[x]
+  [137] pushint8 1
+  [139] getlocal 1
+  [141] add
+  [142] setlocal 1
+  [144] endrepeat [116]
+  [146] pushint8 1 .............................. <1>
+  [148] setlocal 1
+  [150] getlocal 1
+  [152] pushint8 7 .............................. <7>
+  [154] lteq
+  [155] jmpifz [182] ............................ repeat with x = 1 to 7
+  [158] getlocal 0 .............................. <R>
+  [160] getlocal 1 .............................. <x>
+  [162] pushint8 4 .............................. <4>
+  [164] pusharglist 1 ........................... <4>
+  [166] extcall 314 ............................. <random(4)>
+  [169] pusharglistnoret 3 ...................... <R, x, random(4)>
+  [171] objcall 35 .............................. R[x] = random(4)
+  [173] pushint8 1
+  [175] getlocal 1
+  [177] add
+  [178] setlocal 1
+  [180] endrepeat [150]
+  [182] pushint8 1 .............................. <1>
+  [184] setlocal 1
+  [186] getlocal 1
+  [188] pushint8 7 .............................. <7>
+  [190] lteq
+  [191] jmpifz [216] ............................ repeat with x = 1 to 7
+  [194] getglobal 205 ........................... <pWindowCode>
+  [196] getlocal 0 .............................. <R>
+  [198] getlocal 1 .............................. <x>
+  [200] pusharglist 2 ........................... <R, x>
+  [202] objcall 17 .............................. <R[x]>
+  [204] joinstr ................................. <pWindowCode & R[x]>
+  [205] setglobal 205 ........................... pWindowCode = pWindowCode & R[x]
+  [207] pushint8 1
+  [209] getlocal 1
+  [211] add
+  [212] setlocal 1
+  [214] endrepeat [186]
+  [216] ret
+end
+
+on updateMansionWindows which, closeW, openW
+  [  0] pusharglist 0 ........................... <[]>
+  [  2] pushlist ................................ <[]>
+  [  3] setlocal 0 .............................. windowStat = []
+  [  5] getparam 0 .............................. <which>
+  [  7] peek 0 .................................. case which of
+  [  9] pushint8 1 .............................. <1>
+  [ 11] eq
+  [ 12] jmpifz [ 22] ............................ (case) 1:
+  [ 15] pushint8 17 ............................. <17>
+  [ 17] setlocal 1 .............................. base = 17
+  [ 19] jmp [ 82]
+  [ 22] peek 0
+  [ 24] pushint8 2 .............................. <2>
+  [ 26] eq
+  [ 27] jmpifz [ 40] ............................ (case) 2:
+  [ 30] pushint8 17 ............................. <17>
+  [ 32] pushint8 19 ............................. <19>
+  [ 34] add ..................................... <17 + 19>
+  [ 35] setlocal 1 .............................. base = 17 + 19
+  [ 37] jmp [ 82]
+  [ 40] peek 0
+  [ 42] pushint8 3 .............................. <3>
+  [ 44] eq
+  [ 45] jmpifz [ 61] ............................ (case) 3:
+  [ 48] pushint8 17 ............................. <17>
+  [ 50] pushint8 19 ............................. <19>
+  [ 52] add ..................................... <17 + 19>
+  [ 53] pushint8 18 ............................. <18>
+  [ 55] add ..................................... <17 + 19 + 18>
+  [ 56] setlocal 1 .............................. base = 17 + 19 + 18
+  [ 58] jmp [ 82]
+  [ 61] peek 0
+  [ 63] pushint8 4 .............................. <4>
+  [ 65] eq
+  [ 66] jmpifz [ 82] ............................ (case) 4:
+  [ 69] pushint8 17 ............................. <17>
+  [ 71] pushint8 19 ............................. <19>
+  [ 73] add ..................................... <17 + 19>
+  [ 74] pushint8 18 ............................. <18>
+  [ 76] add ..................................... <17 + 19 + 18>
+  [ 77] pushint8 16 ............................. <16>
+  [ 79] add ..................................... <17 + 19 + 18 + 16>
+  [ 80] setlocal 1 .............................. base = 17 + 19 + 18 + 16
+  [ 82] pop 1 ................................... end case
+  [ 84] pushint8 7 .............................. <7>
+  [ 86] setlocal 2
+  [ 88] getlocal 2
+  [ 90] pushint8 1 .............................. <1>
+  [ 92] gteq
+  [ 93] jmpifz [122] ............................ repeat with x = 7 down to 1
+  [ 96] getlocal 0 .............................. <windowStat>
+  [ 98] getlocal 2 .............................. <x>
+  [100] getlocal 1 .............................. <base>
+  [102] pusharglistnoret 3 ...................... <windowStat, x, base>
+  [104] objcall 35 .............................. windowStat[x] = base
+  [106] getlocal 1 .............................. <base>
+  [108] pushint8 2 .............................. <2>
+  [110] sub ..................................... <base - 2>
+  [111] setlocal 1 .............................. base = base - 2
+  [113] pushint8 -1
+  [115] getlocal 2
+  [117] add
+  [118] setlocal 2
+  [120] endrepeat [ 88]
+  [122] pushint8 1 .............................. <1>
+  [124] setlocal 2
+  [126] getlocal 2
+  [128] pushint8 7 .............................. <7>
+  [130] lteq
+  [131] jmpifz [206] ............................ repeat with x = 1 to 7
+  [134] getglobal 287 ........................... <cMansion1>
+  [137] getlocal 2 .............................. <x>
+  [139] pushint8 1 .............................. <1>
+  [141] sub ..................................... <x - 1>
+  [142] add ..................................... <cMansion1 + (x - 1)>
+  [143] setlocal 3 .............................. N = cMansion1 + (x - 1)
+  [145] getglobal 281 ........................... <thePuzzlesSolved>
+  [148] getlocal 0 .............................. <windowStat>
+  [150] getlocal 2 .............................. <x>
+  [152] pusharglist 2 ........................... <windowStat, x>
+  [154] objcall 17 .............................. <windowStat[x]>
+  [156] lt ...................................... <thePuzzlesSolved < windowStat[x]>
+  [157] jmpifz [173] ............................ if thePuzzlesSolved < windowStat[x] then
+  [160] getglobal 93 ............................ <pStat>
+  [162] getlocal 3 .............................. <N>
+  [164] getparam 1 .............................. <closeW>
+  [166] pusharglistnoret 3 ...................... <pStat, N, closeW>
+  [168] objcall 35 .............................. pStat[N] = closeW
+  [170] jmp [197] ............................... next repeat
+  [173] getglobal 93 ............................ <pStat>
+  [175] getlocal 3 .............................. <N>
+  [177] pusharglist 2 ........................... <pStat, N>
+  [179] objcall 17 .............................. <pStat[N]>
+  [181] getparam 2 .............................. <openW>
+  [183] lt ...................................... <pStat[N] < openW>
+  [184] jmpifz [197] ............................ if pStat[N] < openW then
+  [187] getglobal 93 ............................ <pStat>
+  [189] getlocal 3 .............................. <N>
+  [191] getparam 2 .............................. <openW>
+  [193] pusharglistnoret 3 ...................... <pStat, N, openW>
+  [195] objcall 35 .............................. pStat[N] = openW
+  [197] pushint8 1
+  [199] getlocal 2
+  [201] add
+  [202] setlocal 2
+  [204] endrepeat [126]
+  [206] ret
+end
+
+on updateForMansionPhase goal, stat
+  [  0] pushzero ................................ <0>
+  [  1] setlocal 0 .............................. ct = 0
+  [  3] getglobal 287 ........................... <cMansion1>
+  [  6] setlocal 1
+  [  8] getlocal 1
+  [ 10] getglobal 288 ........................... <cMansion2>
+  [ 13] lteq
+  [ 14] jmpifz [ 47] ............................ repeat with x = cMansion1 to cMansion2
+  [ 17] getglobal 93 ............................ <pStat>
+  [ 19] getlocal 1 .............................. <x>
+  [ 21] pusharglist 2 ........................... <pStat, x>
+  [ 23] objcall 17 .............................. <pStat[x]>
+  [ 25] getparam 0 .............................. <goal>
+  [ 27] eq ...................................... <pStat[x] = goal>
+  [ 28] jmpifz [ 38] ............................ if pStat[x] = goal then
+  [ 31] getlocal 0 .............................. <ct>
+  [ 33] pushint8 1 .............................. <1>
+  [ 35] add ..................................... <ct + 1>
+  [ 36] setlocal 0 .............................. ct = ct + 1
+  [ 38] pushint8 1
+  [ 40] getlocal 1
+  [ 42] add
+  [ 43] setlocal 1
+  [ 45] endrepeat [  8]
+  [ 47] getlocal 0 .............................. <ct>
+  [ 49] pushint8 7 .............................. <7>
+  [ 51] eq ...................................... <ct = 7>
+  [ 52] jmpifz [ 61] ............................ if ct = 7 then
+  [ 55] getparam 1 .............................. <stat>
+  [ 57] pusharglistnoret 1 ...................... <stat>
+  [ 59] localcall 6 ............................. _Set_Game_Menu_Status(stat)
+  [ 61] ret
+end
+
+on updateForMansionBeam
+  [  0] getglobal 93 ............................ <pStat>
+  [  2] getglobal 261 ........................... <cHighPriestess>
+  [  5] pusharglist 2 ........................... <pStat, cHighPriestess>
+  [  7] objcall 17 .............................. <pStat[cHighPriestess]>
+  [  9] pushint8 100 ............................ <100>
+  [ 11] gteq .................................... <pStat[cHighPriestess] >= 100>
+  [ 12] jmpifz [ 86] ............................ if pStat[cHighPriestess] >= 100 then
+  [ 15] pushzero ................................ <0>
+  [ 16] setlocal 0 .............................. ct = 0
+  [ 18] getglobal 287 ........................... <cMansion1>
+  [ 21] setlocal 1
+  [ 23] getlocal 1
+  [ 25] getglobal 288 ........................... <cMansion2>
+  [ 28] lteq
+  [ 29] jmpifz [ 63] ............................ repeat with x = cMansion1 to cMansion2
+  [ 32] getglobal 93 ............................ <pStat>
+  [ 34] getlocal 1 .............................. <x>
+  [ 36] pusharglist 2 ........................... <pStat, x>
+  [ 38] objcall 17 .............................. <pStat[x]>
+  [ 40] pushint16 300 ........................... <300>
+  [ 43] eq ...................................... <pStat[x] = 300>
+  [ 44] jmpifz [ 54] ............................ if pStat[x] = 300 then
+  [ 47] getlocal 0 .............................. <ct>
+  [ 49] pushint8 1 .............................. <1>
+  [ 51] add ..................................... <ct + 1>
+  [ 52] setlocal 0 .............................. ct = ct + 1
+  [ 54] pushint8 1
+  [ 56] getlocal 1
+  [ 58] add
+  [ 59] setlocal 1
+  [ 61] endrepeat [ 23]
+  [ 63] getlocal 0 .............................. <ct>
+  [ 65] pushint8 7 .............................. <7>
+  [ 67] lt ...................................... <ct < 7>
+  [ 68] jmpifz [ 80] ............................ if ct < 7 then / else
+  [ 71] pushint8 75 ............................. <75>
+  [ 73] pusharglistnoret 1 ...................... <75>
+  [ 75] localcall 6 ............................. _Set_Game_Menu_Status(75)
+  [ 77] jmp [ 86]
+  [ 80] pushint8 80 ............................. <80>
+  [ 82] pusharglistnoret 1 ...................... <80>
+  [ 84] localcall 6 ............................. _Set_Game_Menu_Status(80)
+  [ 86] ret
+end
+
+on updateStatCompendiumToMoonMenu
+  [  0] pushint8 94 ............................. <94>
+  [  2] pusharglistnoret 1 ...................... <94>
+  [  4] localcall 6 ............................. _Set_Game_Menu_Status(94)
+  [  6] getglobal 287 ........................... <cMansion1>
+  [  9] setlocal 0
+  [ 11] getlocal 0
+  [ 13] getglobal 288 ........................... <cMansion2>
+  [ 16] lteq
+  [ 17] jmpifz [ 40] ............................ repeat with x = cMansion1 to cMansion2
+  [ 20] getglobal 93 ............................ <pStat>
+  [ 22] getlocal 0 .............................. <x>
+  [ 24] pushint16 300 ........................... <300>
+  [ 27] pusharglistnoret 3 ...................... <pStat, x, 300>
+  [ 29] objcall 35 .............................. pStat[x] = 300
+  [ 31] pushint8 1
+  [ 33] getlocal 0
+  [ 35] add
+  [ 36] setlocal 0
+  [ 38] endrepeat [ 11]
+  [ 40] ret
+end
+
+on _Set_Game_Menu_Status N
+  [  0] getglobal 93 ............................ <pStat>
+  [  2] getglobal 21 ............................ <cGameMenus>
+  [  4] pusharglist 2 ........................... <pStat, cGameMenus>
+  [  6] objcall 17 .............................. <pStat[cGameMenus]>
+  [  8] getparam 0 .............................. <N>
+  [ 10] lt ...................................... <pStat[cGameMenus] < N>
+  [ 11] jmpifz [ 24] ............................ if pStat[cGameMenus] < N then
+  [ 14] getglobal 93 ............................ <pStat>
+  [ 16] getglobal 21 ............................ <cGameMenus>
+  [ 18] getparam 0 .............................. <N>
+  [ 20] pusharglistnoret 3 ...................... <pStat, cGameMenus, N>
+  [ 22] objcall 35 .............................. pStat[cGameMenus] = N
+  [ 24] ret
+end
+
+on _Update_Solved_Tarot
+  [  0] pushint8 1 .............................. <1>
+  [  2] setlocal 0
+  [  4] getlocal 0
+  [  6] pushint8 5 .............................. <5>
+  [  8] lteq
+  [  9] jmpifz [ 78] ............................ repeat with x = 1 to 5
+  [ 12] getglobal 188 ........................... <pData>
+  [ 14] getglobal 327 ........................... <csTarot>
+  [ 17] getlocal 0 .............................. <x>
+  [ 19] pusharglist 2 ........................... <csTarot, x>
+  [ 21] objcall 17 .............................. <csTarot[x]>
+  [ 23] pusharglist 2 ........................... <pData, csTarot[x]>
+  [ 25] objcall 17 .............................. <pData[csTarot[x]]>
+  [ 27] pushint8 100 ............................ <100>
+  [ 29] eq ...................................... <pData[csTarot[x]] = 100>
+  [ 30] jmpifz [ 69] ............................ if pData[csTarot[x]] = 100 then
+  [ 33] getglobal 188 ........................... <pData>
+  [ 35] getglobal 217 ........................... <csWager>
+  [ 37] getlocal 0 .............................. <x>
+  [ 39] pusharglist 2 ........................... <csWager, x>
+  [ 41] objcall 17 .............................. <csWager[x]>
+  [ 43] pusharglist 2 ........................... <pData, csWager[x]>
+  [ 45] objcall 17 .............................. <pData[csWager[x]]>
+  [ 47] pushint8 100 ............................ <100>
+  [ 49] lt ...................................... <pData[csWager[x]] < 100>
+  [ 50] jmpifz [ 69] ............................ if pData[csWager[x]] < 100 then
+  [ 53] getglobal 188 ........................... <pData>
+  [ 55] getglobal 217 ........................... <csWager>
+  [ 57] getlocal 0 .............................. <x>
+  [ 59] pusharglist 2 ........................... <csWager, x>
+  [ 61] objcall 17 .............................. <csWager[x]>
+  [ 63] pushint8 100 ............................ <100>
+  [ 65] pusharglistnoret 3 ...................... <pData, csWager[x], 100>
+  [ 67] objcall 35 .............................. pData[csWager[x]] = 100
+  [ 69] pushint8 1
+  [ 71] getlocal 0
+  [ 73] add
+  [ 74] setlocal 0
+  [ 76] endrepeat [  4]
+  [ 78] ret
+end
+
+on exceptionPuzzleLaunch N, b
+  [  0] getparam 0 .............................. <N>
+  [  2] getglobal 25 ............................ <cFinale>
+  [  4] eq ...................................... <N = cFinale>
+  [  5] jmpifz [ 21] ............................ if N = cFinale then
+  [  8] getglobal 328 ........................... <lastPuzzle>
+  [ 11] getglobal 25 ............................ <cFinale>
+  [ 13] eq ...................................... <lastPuzzle = cFinale>
+  [ 14] jmpifz [ 21] ............................ if lastPuzzle = cFinale then
+  [ 17] getglobal 98 ............................ <cPreFinale>
+  [ 19] setparam 0 .............................. N = cPreFinale
+  [ 21] getparam 0 .............................. <N>
+  [ 23] getglobal 202 ........................... <cTokens>
+  [ 25] eq ...................................... <N = cTokens>
+  [ 26] jmpifz [ 50] ............................ if N = cTokens then
+  [ 29] getglobal 328 ........................... <lastPuzzle>
+  [ 32] getglobal 202 ........................... <cTokens>
+  [ 34] nteq .................................... <lastPuzzle <> cTokens>
+  [ 35] jmpifz [ 46] ............................ if lastPuzzle <> cTokens then / else
+  [ 38] getglobal 328 ........................... <lastPuzzle>
+  [ 41] setparam 0 .............................. N = lastPuzzle
+  [ 43] jmp [ 50]
+  [ 46] getglobal 21 ............................ <cGameMenus>
+  [ 48] setparam 0 .............................. N = cGameMenus
+  [ 50] getparam 0 .............................. <N>
+  [ 52] pushint8 1 .............................. <1>
+  [ 54] lt ...................................... <N < 1>
+  [ 55] getparam 0 .............................. <N>
+  [ 57] getglobal 262 ........................... <cPuzzleTotal>
+  [ 60] gt ...................................... <N > cPuzzleTotal>
+  [ 61] or ...................................... <(N < 1) or (N > cPuzzleTotal)>
+  [ 62] jmpifz [ 69] ............................ if (N < 1) or (N > cPuzzleTotal) then
+  [ 65] getglobal 21 ............................ <cGameMenus>
+  [ 67] setparam 0 .............................. N = cGameMenus
+  [ 69] getparam 1 .............................. <b>
+  [ 71] pushint8 1 .............................. <1>
+  [ 73] eq ...................................... <b = 1>
+  [ 74] jmpifz [101] ............................ if b = 1 then
+  [ 77] getparam 0 .............................. <N>
+  [ 79] getglobal 248 ........................... <cPrologue>
+  [ 81] eq ...................................... <N = cPrologue>
+  [ 82] jmpifz [ 89] ............................ if N = cPrologue then
+  [ 85] getglobal 21 ............................ <cGameMenus>
+  [ 87] setparam 0 .............................. N = cGameMenus
+  [ 89] getparam 0 .............................. <N>
+  [ 91] getglobal 25 ............................ <cFinale>
+  [ 93] eq ...................................... <N = cFinale>
+  [ 94] jmpifz [101] ............................ if N = cFinale then
+  [ 97] getglobal 98 ............................ <cPreFinale>
+  [ 99] setparam 0 .............................. N = cPreFinale
+  [101] getparam 0 .............................. <N>
+  [103] getglobal 264 ........................... <cPreHP>
+  [106] eq ...................................... <N = cPreHP>
+  [107] getglobal 93 ............................ <pStat>
+  [109] getglobal 264 ........................... <cPreHP>
+  [112] pusharglist 2 ........................... <pStat, cPreHP>
+  [114] objcall 17 .............................. <pStat[cPreHP]>
+  [116] pushint8 100 ............................ <100>
+  [118] eq ...................................... <pStat[cPreHP] = 100>
+  [119] and ..................................... <(N = cPreHP) and (pStat[cPreHP] = 100)>
+  [120] jmpifz [128] ............................ if (N = cPreHP) and (pStat[cPreHP] = 100) then
+  [123] getglobal 261 ........................... <cHighPriestess>
+  [126] setparam 0 .............................. N = cHighPriestess
+  [128] getparam 0 .............................. <N>
+  [130] getglobal 261 ........................... <cHighPriestess>
+  [133] eq ...................................... <N = cHighPriestess>
+  [134] getglobal 93 ............................ <pStat>
+  [136] getglobal 261 ........................... <cHighPriestess>
+  [139] pusharglist 2 ........................... <pStat, cHighPriestess>
+  [141] objcall 17 .............................. <pStat[cHighPriestess]>
+  [143] pushint8 100 ............................ <100>
+  [145] eq ...................................... <pStat[cHighPriestess] = 100>
+  [146] and ..................................... <(N = cHighPriestess) and (pStat[cHighPriestess] = 100)>
+  [147] jmpifz [155] ............................ if (N = cHighPriestess) and (pStat[cHighPriestess] = 100) then
+  [150] getglobal 329 ........................... <cMoonMorph>
+  [153] setparam 0 .............................. N = cMoonMorph
+  [155] getparam 0 .............................. <N>
+  [157] pusharglistnoret 1 ...................... <N>
+  [159] extcall 137 ............................. return N
+  [161] ret
+end
+
+on launchMansionPuzzle
+  [  0] getglobal 287 ........................... <cMansion1>
+  [  3] setlocal 0
+  [  5] getlocal 0
+  [  7] getglobal 288 ........................... <cMansion2>
+  [ 10] lteq
+  [ 11] jmpifz [233] ............................ repeat with x = cMansion1 to cMansion2
+  [ 14] getglobal 93 ............................ <pStat>
+  [ 16] getglobal 21 ............................ <cGameMenus>
+  [ 18] pusharglist 2 ........................... <pStat, cGameMenus>
+  [ 20] objcall 17 .............................. <pStat[cGameMenus]>
+  [ 22] peek 0 .................................. case pStat[cGameMenus] of
+  [ 24] pushzero ................................ <0>
+  [ 25] nteq
+  [ 26] jmpifz [ 45] ............................ (case) 0, ...
+  [ 29] peek 0
+  [ 31] pushint8 10 ............................. <10>
+  [ 33] nteq
+  [ 34] jmpifz [ 45] ............................ (case) ..., 10, ...
+  [ 37] peek 0
+  [ 39] pushint8 20 ............................. <20>
+  [ 41] eq
+  [ 42] jmpifz [ 75] ............................ (case) ..., 20:
+  [ 45] getglobal 330 ........................... <pVolume>
+  [ 48] getlocal 0 .............................. <x>
+  [ 50] pushint8 100 ............................ <100>
+  [ 52] pusharglistnoret 3 ...................... <pVolume, x, 100>
+  [ 54] objcall 35 .............................. pVolume[x] = 100
+  [ 56] getglobal 331 ........................... <pFrame>
+  [ 59] getlocal 0 .............................. <x>
+  [ 61] pushcons 16 ............................. <"passwords">
+  [ 63] pusharglistnoret 3 ...................... <pFrame, x, "passwords">
+  [ 65] objcall 35 .............................. pFrame[x] = "passwords"
+  [ 67] getglobal 205 ........................... <pWindowCode>
+  [ 69] setglobal 332 ........................... pMiscellaneous = pWindowCode
+  [ 72] jmp [222]
+  [ 75] peek 0
+  [ 77] pushint8 30 ............................. <30>
+  [ 79] nteq
+  [ 80] jmpifz [ 91] ............................ (case) 30, ...
+  [ 83] peek 0
+  [ 85] pushint8 60 ............................. <60>
+  [ 87] eq
+  [ 88] jmpifz [116] ............................ (case) ..., 60:
+  [ 91] getglobal 330 ........................... <pVolume>
+  [ 94] getlocal 0 .............................. <x>
+  [ 96] pushint8 100 ............................ <100>
+  [ 98] pusharglistnoret 3 ...................... <pVolume, x, 100>
+  [100] objcall 35 .............................. pVolume[x] = 100
+  [102] getglobal 331 ........................... <pFrame>
+  [105] getlocal 0 .............................. <x>
+  [107] pushcons 17 ............................. <"hex-words">
+  [109] pusharglistnoret 3 ...................... <pFrame, x, "hex-words">
+  [111] objcall 35 .............................. pFrame[x] = "hex-words"
+  [113] jmp [222]
+  [116] peek 0
+  [118] pushint8 70 ............................. <70>
+  [120] nteq
+  [121] jmpifz [148] ............................ (case) 70, ...
+  [124] peek 0
+  [126] pushint8 75 ............................. <75>
+  [128] nteq
+  [129] jmpifz [148] ............................ (case) ..., 75, ...
+  [132] peek 0
+  [134] pushint8 80 ............................. <80>
+  [136] nteq
+  [137] jmpifz [148] ............................ (case) ..., 80, ...
+  [140] peek 0
+  [142] pushint8 90 ............................. <90>
+  [144] eq
+  [145] jmpifz [184] ............................ (case) ..., 90:
+  [148] getglobal 330 ........................... <pVolume>
+  [151] getlocal 0 .............................. <x>
+  [153] pushint8 100 ............................ <100>
+  [155] pusharglistnoret 3 ...................... <pVolume, x, 100>
+  [157] objcall 35 .............................. pVolume[x] = 100
+  [159] getglobal 331 ........................... <pFrame>
+  [162] getlocal 0 .............................. <x>
+  [164] pushcons 18 ............................. <"unnecessary">
+  [166] pusharglistnoret 3 ...................... <pFrame, x, "unnecessary">
+  [168] objcall 35 .............................. pFrame[x] = "unnecessary"
+  [170] getglobal 93 ............................ <pStat>
+  [172] getglobal 21 ............................ <cGameMenus>
+  [174] pusharglist 2 ........................... <pStat, cGameMenus>
+  [176] objcall 17 .............................. <pStat[cGameMenus]>
+  [178] setglobal 332 ........................... pMiscellaneous = pStat[cGameMenus]
+  [181] jmp [222]
+  [184] peek 0
+  [186] pushint8 95 ............................. <95>
+  [188] nteq
+  [189] jmpifz [200] ............................ (case) 95, ...
+  [192] peek 0
+  [194] pushint8 100 ............................ <100>
+  [196] eq
+  [197] jmpifz [222] ............................ (case) ..., 100:
+  [200] getglobal 330 ........................... <pVolume>
+  [203] getlocal 0 .............................. <x>
+  [205] pushint8 100 ............................ <100>
+  [207] pusharglistnoret 3 ...................... <pVolume, x, 100>
+  [209] objcall 35 .............................. pVolume[x] = 100
+  [211] getglobal 331 ........................... <pFrame>
+  [214] getlocal 0 .............................. <x>
+  [216] pushcons 19 ............................. <"connects">
+  [218] pusharglistnoret 3 ...................... <pFrame, x, "connects">
+  [220] objcall 35 .............................. pFrame[x] = "connects"
+  [222] pop 1 ................................... end case
+  [224] pushint8 1
+  [226] getlocal 0
+  [228] add
+  [229] setlocal 0
+  [231] endrepeat [  5]
+  [233] ret
+end
+
+on putMenuStatsFromFlash
+  [  0] pushint8 1 .............................. <1>
+  [  2] setlocal 0
+  [  4] getlocal 0
+  [  6] getglobal 262 ........................... <cPuzzleTotal>
+  [  9] lteq
+  [ 10] jmpifz [296] ............................ repeat with x = 1 to cPuzzleTotal
+  [ 13] getlocal 0 .............................. <x>
+  [ 15] getglobal 287 ........................... <cMansion1>
+  [ 18] lt ...................................... <x < cMansion1>
+  [ 19] getlocal 0 .............................. <x>
+  [ 21] getglobal 288 ........................... <cMansion2>
+  [ 24] gt ...................................... <x > cMansion2>
+  [ 25] or ...................................... <(x < cMansion1) or (x > cMansion2)>
+  [ 26] jmpifz [286] ............................ if (x < cMansion1) or (x > cMansion2) then
+  [ 29] getglobal 93 ............................ <pStat>
+  [ 31] getlocal 0 .............................. <x>
+  [ 33] pusharglist 2 ........................... <pStat, x>
+  [ 35] objcall 17 .............................. <pStat[x]>
+  [ 37] pushzero ................................ <0>
+  [ 38] eq ...................................... <pStat[x] = 0>
+  [ 39] jmpifz [ 54] ............................ if pStat[x] = 0 then
+  [ 42] getglobal 92 ............................ <menuStat>
+  [ 44] getlocal 0 .............................. <x>
+  [ 46] pushzero ................................ <0>
+  [ 47] pusharglistnoret 3 ...................... <menuStat, x, 0>
+  [ 49] objcall 35 .............................. menuStat[x] = 0
+  [ 51] jmp [286] ............................... next repeat
+  [ 54] getglobal 93 ............................ <pStat>
+  [ 56] getlocal 0 .............................. <x>
+  [ 58] pusharglist 2 ........................... <pStat, x>
+  [ 60] objcall 17 .............................. <pStat[x]>
+  [ 62] pushint8 1 .............................. <1>
+  [ 64] eq ...................................... <pStat[x] = 1>
+  [ 65] jmpifz [ 81] ............................ if pStat[x] = 1 then
+  [ 68] getglobal 92 ............................ <menuStat>
+  [ 70] getlocal 0 .............................. <x>
+  [ 72] pushint8 1 .............................. <1>
+  [ 74] pusharglistnoret 3 ...................... <menuStat, x, 1>
+  [ 76] objcall 35 .............................. menuStat[x] = 1
+  [ 78] jmp [286] ............................... next repeat
+  [ 81] getglobal 93 ............................ <pStat>
+  [ 83] getlocal 0 .............................. <x>
+  [ 85] pusharglist 2 ........................... <pStat, x>
+  [ 87] objcall 17 .............................. <pStat[x]>
+  [ 89] pushint8 100 ............................ <100>
+  [ 91] lt ...................................... <pStat[x] < 100>
+  [ 92] jmpifz [108] ............................ if pStat[x] < 100 then
+  [ 95] getglobal 92 ............................ <menuStat>
+  [ 97] getlocal 0 .............................. <x>
+  [ 99] pushint8 2 .............................. <2>
+  [101] pusharglistnoret 3 ...................... <menuStat, x, 2>
+  [103] objcall 35 .............................. menuStat[x] = 2
+  [105] jmp [286] ............................... next repeat
+  [108] getglobal 93 ............................ <pStat>
+  [110] getlocal 0 .............................. <x>
+  [112] pusharglist 2 ........................... <pStat, x>
+  [114] objcall 17 .............................. <pStat[x]>
+  [116] pushint16 200 ........................... <200>
+  [119] lt ...................................... <pStat[x] < 200>
+  [120] jmpifz [136] ............................ if pStat[x] < 200 then
+  [123] getglobal 92 ............................ <menuStat>
+  [125] getlocal 0 .............................. <x>
+  [127] pushint8 3 .............................. <3>
+  [129] pusharglistnoret 3 ...................... <menuStat, x, 3>
+  [131] objcall 35 .............................. menuStat[x] = 3
+  [133] jmp [286] ............................... next repeat
+  [136] getglobal 93 ............................ <pStat>
+  [138] getlocal 0 .............................. <x>
+  [140] pusharglist 2 ........................... <pStat, x>
+  [142] objcall 17 .............................. <pStat[x]>
+  [144] pushint16 300 ........................... <300>
+  [147] lt ...................................... <pStat[x] < 300>
+  [148] jmpifz [164] ............................ if pStat[x] < 300 then
+  [151] getglobal 92 ............................ <menuStat>
+  [153] getlocal 0 .............................. <x>
+  [155] pushint8 4 .............................. <4>
+  [157] pusharglistnoret 3 ...................... <menuStat, x, 4>
+  [159] objcall 35 .............................. menuStat[x] = 4
+  [161] jmp [286] ............................... next repeat
+  [164] getglobal 93 ............................ <pStat>
+  [166] getlocal 0 .............................. <x>
+  [168] pusharglist 2 ........................... <pStat, x>
+  [170] objcall 17 .............................. <pStat[x]>
+  [172] pushint16 400 ........................... <400>
+  [175] lt ...................................... <pStat[x] < 400>
+  [176] jmpifz [192] ............................ if pStat[x] < 400 then
+  [179] getglobal 92 ............................ <menuStat>
+  [181] getlocal 0 .............................. <x>
+  [183] pushint8 5 .............................. <5>
+  [185] pusharglistnoret 3 ...................... <menuStat, x, 5>
+  [187] objcall 35 .............................. menuStat[x] = 5
+  [189] jmp [286] ............................... next repeat
+  [192] getglobal 93 ............................ <pStat>
+  [194] getlocal 0 .............................. <x>
+  [196] pusharglist 2 ........................... <pStat, x>
+  [198] objcall 17 .............................. <pStat[x]>
+  [200] pushint16 500 ........................... <500>
+  [203] lt ...................................... <pStat[x] < 500>
+  [204] jmpifz [220] ............................ if pStat[x] < 500 then
+  [207] getglobal 92 ............................ <menuStat>
+  [209] getlocal 0 .............................. <x>
+  [211] pushint8 6 .............................. <6>
+  [213] pusharglistnoret 3 ...................... <menuStat, x, 6>
+  [215] objcall 35 .............................. menuStat[x] = 6
+  [217] jmp [286] ............................... next repeat
+  [220] getglobal 93 ............................ <pStat>
+  [222] getlocal 0 .............................. <x>
+  [224] pusharglist 2 ........................... <pStat, x>
+  [226] objcall 17 .............................. <pStat[x]>
+  [228] pushint16 600 ........................... <600>
+  [231] lt ...................................... <pStat[x] < 600>
+  [232] jmpifz [248] ............................ if pStat[x] < 600 then
+  [235] getglobal 92 ............................ <menuStat>
+  [237] getlocal 0 .............................. <x>
+  [239] pushint8 7 .............................. <7>
+  [241] pusharglistnoret 3 ...................... <menuStat, x, 7>
+  [243] objcall 35 .............................. menuStat[x] = 7
+  [245] jmp [286] ............................... next repeat
+  [248] getglobal 93 ............................ <pStat>
+  [250] getlocal 0 .............................. <x>
+  [252] pusharglist 2 ........................... <pStat, x>
+  [254] objcall 17 .............................. <pStat[x]>
+  [256] pushint16 700 ........................... <700>
+  [259] lt ...................................... <pStat[x] < 700>
+  [260] jmpifz [276] ............................ if pStat[x] < 700 then
+  [263] getglobal 92 ............................ <menuStat>
+  [265] getlocal 0 .............................. <x>
+  [267] pushint8 8 .............................. <8>
+  [269] pusharglistnoret 3 ...................... <menuStat, x, 8>
+  [271] objcall 35 .............................. menuStat[x] = 8
+  [273] jmp [286] ............................... next repeat
+  [276] getglobal 92 ............................ <menuStat>
+  [278] getlocal 0 .............................. <x>
+  [280] pushint8 9 .............................. <9>
+  [282] pusharglistnoret 3 ...................... <menuStat, x, 9>
+  [284] objcall 35 .............................. menuStat[x] = 9
+  [286] pushint8 1
+  [288] getlocal 0
+  [290] add
+  [291] setlocal 0
+  [293] endrepeat [  4]
+  [296] getglobal 287 ........................... <cMansion1>
+  [299] setlocal 0
+  [301] getlocal 0
+  [303] getglobal 288 ........................... <cMansion2>
+  [306] lteq
+  [307] jmpifz [920] ............................ repeat with x = cMansion1 to cMansion2
+  [310] getglobal 93 ............................ <pStat>
+  [312] getglobal 21 ............................ <cGameMenus>
+  [314] pusharglist 2 ........................... <pStat, cGameMenus>
+  [316] objcall 17 .............................. <pStat[cGameMenus]>
+  [318] peek 0 .................................. case pStat[cGameMenus] of
+  [320] pushzero ................................ <0>
+  [321] nteq
+  [322] jmpifz [341] ............................ (case) 0, ...
+  [325] peek 0
+  [327] pushint8 10 ............................. <10>
+  [329] nteq
+  [330] jmpifz [341] ............................ (case) ..., 10, ...
+  [333] peek 0
+  [335] pushint8 20 ............................. <20>
+  [337] eq
+  [338] jmpifz [447] ............................ (case) ..., 20:
+  [341] getglobal 93 ............................ <pStat>
+  [343] getlocal 0 .............................. <x>
+  [345] pusharglist 2 ........................... <pStat, x>
+  [347] objcall 17 .............................. <pStat[x]>
+  [349] pushzero ................................ <0>
+  [350] eq ...................................... <pStat[x] = 0>
+  [351] jmpifz [366] ............................ if pStat[x] = 0 then / else
+  [354] getglobal 92 ............................ <menuStat>
+  [356] getlocal 0 .............................. <x>
+  [358] pushzero ................................ <0>
+  [359] pusharglistnoret 3 ...................... <menuStat, x, 0>
+  [361] objcall 35 .............................. menuStat[x] = 0
+  [363] jmp [444]
+  [366] getglobal 93 ............................ <pStat>
+  [368] getlocal 0 .............................. <x>
+  [370] pusharglist 2 ........................... <pStat, x>
+  [372] objcall 17 .............................. <pStat[x]>
+  [374] pushint8 1 .............................. <1>
+  [376] eq ...................................... <pStat[x] = 1>
+  [377] jmpifz [393] ............................ if pStat[x] = 1 then / else
+  [380] getglobal 92 ............................ <menuStat>
+  [382] getlocal 0 .............................. <x>
+  [384] pushint8 1 .............................. <1>
+  [386] pusharglistnoret 3 ...................... <menuStat, x, 1>
+  [388] objcall 35 .............................. menuStat[x] = 1
+  [390] jmp [444]
+  [393] getglobal 93 ............................ <pStat>
+  [395] getlocal 0 .............................. <x>
+  [397] pusharglist 2 ........................... <pStat, x>
+  [399] objcall 17 .............................. <pStat[x]>
+  [401] pushint8 100 ............................ <100>
+  [403] lt ...................................... <pStat[x] < 100>
+  [404] jmpifz [420] ............................ if pStat[x] < 100 then / else
+  [407] getglobal 92 ............................ <menuStat>
+  [409] getlocal 0 .............................. <x>
+  [411] pushint8 2 .............................. <2>
+  [413] pusharglistnoret 3 ...................... <menuStat, x, 2>
+  [415] objcall 35 .............................. menuStat[x] = 2
+  [417] jmp [444]
+  [420] getglobal 93 ............................ <pStat>
+  [422] getlocal 0 .............................. <x>
+  [424] pusharglist 2 ........................... <pStat, x>
+  [426] objcall 17 .............................. <pStat[x]>
+  [428] pushint8 100 ............................ <100>
+  [430] eq ...................................... <pStat[x] = 100>
+  [431] jmpifz [444] ............................ if pStat[x] = 100 then
+  [434] getglobal 92 ............................ <menuStat>
+  [436] getlocal 0 .............................. <x>
+  [438] pushint8 3 .............................. <3>
+  [440] pusharglistnoret 3 ...................... <menuStat, x, 3>
+  [442] objcall 35 .............................. menuStat[x] = 3
+  [444] jmp [908]
+  [447] peek 0
+  [449] pushint8 30 ............................. <30>
+  [451] nteq
+  [452] jmpifz [463] ............................ (case) 30, ...
+  [455] peek 0
+  [457] pushint8 60 ............................. <60>
+  [459] eq
+  [460] jmpifz [596] ............................ (case) ..., 60:
+  [463] getglobal 93 ............................ <pStat>
+  [465] getlocal 0 .............................. <x>
+  [467] pusharglist 2 ........................... <pStat, x>
+  [469] objcall 17 .............................. <pStat[x]>
+  [471] pushint8 100 ............................ <100>
+  [473] lt ...................................... <pStat[x] < 100>
+  [474] jmpifz [487] ............................ if pStat[x] < 100 then
+  [477] getglobal 93 ............................ <pStat>
+  [479] getlocal 0 .............................. <x>
+  [481] pushint8 100 ............................ <100>
+  [483] pusharglistnoret 3 ...................... <pStat, x, 100>
+  [485] objcall 35 .............................. pStat[x] = 100
+  [487] getglobal 93 ............................ <pStat>
+  [489] getlocal 0 .............................. <x>
+  [491] pusharglist 2 ........................... <pStat, x>
+  [493] objcall 17 .............................. <pStat[x]>
+  [495] pushint8 100 ............................ <100>
+  [497] eq ...................................... <pStat[x] = 100>
+  [498] jmpifz [513] ............................ if pStat[x] = 100 then / else
+  [501] getglobal 92 ............................ <menuStat>
+  [503] getlocal 0 .............................. <x>
+  [505] pushzero ................................ <0>
+  [506] pusharglistnoret 3 ...................... <menuStat, x, 0>
+  [508] objcall 35 .............................. menuStat[x] = 0
+  [510] jmp [593]
+  [513] getglobal 93 ............................ <pStat>
+  [515] getlocal 0 .............................. <x>
+  [517] pusharglist 2 ........................... <pStat, x>
+  [519] objcall 17 .............................. <pStat[x]>
+  [521] pushint8 110 ............................ <110>
+  [523] lteq .................................... <pStat[x] <= 110>
+  [524] jmpifz [540] ............................ if pStat[x] <= 110 then / else
+  [527] getglobal 92 ............................ <menuStat>
+  [529] getlocal 0 .............................. <x>
+  [531] pushint8 1 .............................. <1>
+  [533] pusharglistnoret 3 ...................... <menuStat, x, 1>
+  [535] objcall 35 .............................. menuStat[x] = 1
+  [537] jmp [593]
+  [540] getglobal 93 ............................ <pStat>
+  [542] getlocal 0 .............................. <x>
+  [544] pusharglist 2 ........................... <pStat, x>
+  [546] objcall 17 .............................. <pStat[x]>
+  [548] pushint16 200 ........................... <200>
+  [551] lt ...................................... <pStat[x] < 200>
+  [552] jmpifz [568] ............................ if pStat[x] < 200 then / else
+  [555] getglobal 92 ............................ <menuStat>
+  [557] getlocal 0 .............................. <x>
+  [559] pushint8 2 .............................. <2>
+  [561] pusharglistnoret 3 ...................... <menuStat, x, 2>
+  [563] objcall 35 .............................. menuStat[x] = 2
+  [565] jmp [593]
+  [568] getglobal 93 ............................ <pStat>
+  [570] getlocal 0 .............................. <x>
+  [572] pusharglist 2 ........................... <pStat, x>
+  [574] objcall 17 .............................. <pStat[x]>
+  [576] pushint16 200 ........................... <200>
+  [579] eq ...................................... <pStat[x] = 200>
+  [580] jmpifz [593] ............................ if pStat[x] = 200 then
+  [583] getglobal 92 ............................ <menuStat>
+  [585] getlocal 0 .............................. <x>
+  [587] pushint8 3 .............................. <3>
+  [589] pusharglistnoret 3 ...................... <menuStat, x, 3>
+  [591] objcall 35 .............................. menuStat[x] = 3
+  [593] jmp [908]
+  [596] peek 0
+  [598] pushint8 70 ............................. <70>
+  [600] nteq
+  [601] jmpifz [628] ............................ (case) 70, ...
+  [604] peek 0
+  [606] pushint8 75 ............................. <75>
+  [608] nteq
+  [609] jmpifz [628] ............................ (case) ..., 75, ...
+  [612] peek 0
+  [614] pushint8 80 ............................. <80>
+  [616] nteq
+  [617] jmpifz [628] ............................ (case) ..., 80, ...
+  [620] peek 0
+  [622] pushint8 90 ............................. <90>
+  [624] eq
+  [625] jmpifz [765] ............................ (case) ..., 90:
+  [628] getglobal 93 ............................ <pStat>
+  [630] getlocal 0 .............................. <x>
+  [632] pusharglist 2 ........................... <pStat, x>
+  [634] objcall 17 .............................. <pStat[x]>
+  [636] pushint16 200 ........................... <200>
+  [639] lt ...................................... <pStat[x] < 200>
+  [640] jmpifz [654] ............................ if pStat[x] < 200 then
+  [643] getglobal 93 ............................ <pStat>
+  [645] getlocal 0 .............................. <x>
+  [647] pushint16 200 ........................... <200>
+  [650] pusharglistnoret 3 ...................... <pStat, x, 200>
+  [652] objcall 35 .............................. pStat[x] = 200
+  [654] getglobal 93 ............................ <pStat>
+  [656] getlocal 0 .............................. <x>
+  [658] pusharglist 2 ........................... <pStat, x>
+  [660] objcall 17 .............................. <pStat[x]>
+  [662] pushint16 200 ........................... <200>
+  [665] eq ...................................... <pStat[x] = 200>
+  [666] jmpifz [681] ............................ if pStat[x] = 200 then / else
+  [669] getglobal 92 ............................ <menuStat>
+  [671] getlocal 0 .............................. <x>
+  [673] pushzero ................................ <0>
+  [674] pusharglistnoret 3 ...................... <menuStat, x, 0>
+  [676] objcall 35 .............................. menuStat[x] = 0
+  [678] jmp [762]
+  [681] getglobal 93 ............................ <pStat>
+  [683] getlocal 0 .............................. <x>
+  [685] pusharglist 2 ........................... <pStat, x>
+  [687] objcall 17 .............................. <pStat[x]>
+  [689] pushint16 201 ........................... <201>
+  [692] lteq .................................... <pStat[x] <= 201>
+  [693] jmpifz [709] ............................ if pStat[x] <= 201 then / else
+  [696] getglobal 92 ............................ <menuStat>
+  [698] getlocal 0 .............................. <x>
+  [700] pushint8 1 .............................. <1>
+  [702] pusharglistnoret 3 ...................... <menuStat, x, 1>
+  [704] objcall 35 .............................. menuStat[x] = 1
+  [706] jmp [762]
+  [709] getglobal 93 ............................ <pStat>
+  [711] getlocal 0 .............................. <x>
+  [713] pusharglist 2 ........................... <pStat, x>
+  [715] objcall 17 .............................. <pStat[x]>
+  [717] pushint16 300 ........................... <300>
+  [720] lt ...................................... <pStat[x] < 300>
+  [721] jmpifz [737] ............................ if pStat[x] < 300 then / else
+  [724] getglobal 92 ............................ <menuStat>
+  [726] getlocal 0 .............................. <x>
+  [728] pushint8 2 .............................. <2>
+  [730] pusharglistnoret 3 ...................... <menuStat, x, 2>
+  [732] objcall 35 .............................. menuStat[x] = 2
+  [734] jmp [762]
+  [737] getglobal 93 ............................ <pStat>
+  [739] getlocal 0 .............................. <x>
+  [741] pusharglist 2 ........................... <pStat, x>
+  [743] objcall 17 .............................. <pStat[x]>
+  [745] pushint16 300 ........................... <300>
+  [748] eq ...................................... <pStat[x] = 300>
+  [749] jmpifz [762] ............................ if pStat[x] = 300 then
+  [752] getglobal 92 ............................ <menuStat>
+  [754] getlocal 0 .............................. <x>
+  [756] pushint8 3 .............................. <3>
+  [758] pusharglistnoret 3 ...................... <menuStat, x, 3>
+  [760] objcall 35 .............................. menuStat[x] = 3
+  [762] jmp [908]
+  [765] peek 0
+  [767] pushint8 94 ............................. <94>
+  [769] nteq
+  [770] jmpifz [789] ............................ (case) 94, ...
+  [773] peek 0
+  [775] pushint8 95 ............................. <95>
+  [777] nteq
+  [778] jmpifz [789] ............................ (case) ..., 95, ...
+  [781] peek 0
+  [783] pushint8 100 ............................ <100>
+  [785] eq
+  [786] jmpifz [908] ............................ (case) ..., 100:
+  [789] getglobal 93 ............................ <pStat>
+  [791] getlocal 0 .............................. <x>
+  [793] pusharglist 2 ........................... <pStat, x>
+  [795] objcall 17 .............................. <pStat[x]>
+  [797] pushint16 300 ........................... <300>
+  [800] lt ...................................... <pStat[x] < 300>
+  [801] jmpifz [815] ............................ if pStat[x] < 300 then
+  [804] getglobal 93 ............................ <pStat>
+  [806] getlocal 0 .............................. <x>
+  [808] pushint16 300 ........................... <300>
+  [811] pusharglistnoret 3 ...................... <pStat, x, 300>
+  [813] objcall 35 .............................. pStat[x] = 300
+  [815] getglobal 93 ............................ <pStat>
+  [817] getlocal 0 .............................. <x>
+  [819] pusharglist 2 ........................... <pStat, x>
+  [821] objcall 17 .............................. <pStat[x]>
+  [823] pushint16 300 ........................... <300>
+  [826] eq ...................................... <pStat[x] = 300>
+  [827] jmpifz [842] ............................ if pStat[x] = 300 then / else
+  [830] getglobal 92 ............................ <menuStat>
+  [832] getlocal 0 .............................. <x>
+  [834] pushzero ................................ <0>
+  [835] pusharglistnoret 3 ...................... <menuStat, x, 0>
+  [837] objcall 35 .............................. menuStat[x] = 0
+  [839] jmp [908]
+  [842] getglobal 93 ............................ <pStat>
+  [844] getlocal 0 .............................. <x>
+  [846] pusharglist 2 ........................... <pStat, x>
+  [848] objcall 17 .............................. <pStat[x]>
+  [850] pushint16 310 ........................... <310>
+  [853] lteq .................................... <pStat[x] <= 310>
+  [854] jmpifz [870] ............................ if pStat[x] <= 310 then / else
+  [857] getglobal 92 ............................ <menuStat>
+  [859] getlocal 0 .............................. <x>
+  [861] pushint8 1 .............................. <1>
+  [863] pusharglistnoret 3 ...................... <menuStat, x, 1>
+  [865] objcall 35 .............................. menuStat[x] = 1
+  [867] jmp [908]
+  [870] getglobal 93 ............................ <pStat>
+  [872] getlocal 0 .............................. <x>
+  [874] pusharglist 2 ........................... <pStat, x>
+  [876] objcall 17 .............................. <pStat[x]>
+  [878] pushint16 400 ........................... <400>
+  [881] lt ...................................... <pStat[x] < 400>
+  [882] jmpifz [898] ............................ if pStat[x] < 400 then / else
+  [885] getglobal 92 ............................ <menuStat>
+  [887] getlocal 0 .............................. <x>
+  [889] pushint8 2 .............................. <2>
+  [891] pusharglistnoret 3 ...................... <menuStat, x, 2>
+  [893] objcall 35 .............................. menuStat[x] = 2
+  [895] jmp [908]
+  [898] getglobal 92 ............................ <menuStat>
+  [900] getlocal 0 .............................. <x>
+  [902] pushint8 3 .............................. <3>
+  [904] pusharglistnoret 3 ...................... <menuStat, x, 3>
+  [906] objcall 35 .............................. menuStat[x] = 3
+  [908] pop 1 ................................... end case
+  [910] pushint8 1
+  [912] getlocal 0
+  [914] add
+  [915] setlocal 0
+  [917] endrepeat [301]
+  [920] pushcons 0 .............................. <EMPTY>
+  [922] setglobal 333 ........................... chunkMenuStat = EMPTY
+  [925] pushint8 1 .............................. <1>
+  [927] setlocal 0
+  [929] getlocal 0
+  [931] getglobal 262 ........................... <cPuzzleTotal>
+  [934] lteq
+  [935] jmpifz [967] ............................ repeat with x = 1 to cPuzzleTotal
+  [938] getglobal 333 ........................... <chunkMenuStat>
+  [941] getglobal 92 ............................ <menuStat>
+  [943] getlocal 0 .............................. <x>
+  [945] pusharglist 2 ........................... <menuStat, x>
+  [947] objcall 17 .............................. <menuStat[x]>
+  [949] pusharglist 1 ........................... <menuStat[x]>
+  [951] extcall 334 ............................. <string(menuStat[x])>
+  [954] joinstr ................................. <chunkMenuStat & string(menuStat[x])>
+  [955] setglobal 333 ........................... chunkMenuStat = chunkMenuStat & string(menuStat[x])
+  [958] pushint8 1
+  [960] getlocal 0
+  [962] add
+  [963] setlocal 0
+  [965] endrepeat [929]
+  [967] ret
+end
+
+on getMenuStatsFromFlash
+  [  0] pushcons 20 ............................. <"gMenuUpdate">
+  [  2] pushzero ................................ <0>
+  [  3] pusharglist 2 ........................... <"gMenuUpdate", 0>
+  [  5] extcall 43 .............................. <misc_GetFlash("gMenuUpdate", 0)>
+  [  7] setlocal 0 .............................. S = misc_GetFlash("gMenuUpdate", 0)
+  [  9] getlocal 0 .............................. <S>
+  [ 11] getobjprop 134 .......................... <S.length>
+  [ 13] pushint8 100 ............................ <100>
+  [ 15] lt ...................................... <S.length < 100>
+  [ 16] jmpifz [ 23] ............................ if S.length < 100 then
+  [ 19] pusharglistnoret 0 ...................... <>
+  [ 21] extcall 137 ............................. return 
+  [ 23] getlocal 0 .............................. <S>
+  [ 25] getobjprop 134 .......................... <S.length>
+  [ 27] pushint8 100 ............................ <100>
+  [ 29] eq ...................................... <S.length = 100>
+  [ 30] jmpifz [ 62] ............................ if S.length = 100 then
+  [ 33] pushint8 101 ............................ <101>
+  [ 35] setlocal 1
+  [ 37] getlocal 1
+  [ 39] getglobal 262 ........................... <cPuzzleTotal>
+  [ 42] lteq
+  [ 43] jmpifz [ 62] ............................ repeat with x = 101 to cPuzzleTotal
+  [ 46] getlocal 0 .............................. <S>
+  [ 48] pushcons 21 ............................. <"3">
+  [ 50] joinstr ................................. <S & "3">
+  [ 51] setlocal 0 .............................. S = S & "3"
+  [ 53] pushint8 1
+  [ 55] getlocal 1
+  [ 57] add
+  [ 58] setlocal 1
+  [ 60] endrepeat [ 37]
+  [ 62] getlocal 0 .............................. <S>
+  [ 64] pushcons 0 .............................. <EMPTY>
+  [ 66] nteq .................................... <S <> EMPTY>
+  [ 67] jmpifz [322] ............................ if S <> EMPTY then
+  [ 70] getlocal 0 .............................. <S>
+  [ 72] getglobal 333 ........................... <chunkMenuStat>
+  [ 75] eq ...................................... <S = chunkMenuStat>
+  [ 76] getlocal 0 .............................. <S>
+  [ 78] pushsymb 135 ............................ <#char>
+  [ 80] pushint8 1 .............................. <1>
+  [ 82] pushint8 3 .............................. <3>
+  [ 84] pusharglist 4 ........................... <S, #char, 1, 3>
+  [ 86] objcall 136 ............................. <S.char[1..3]>
+  [ 88] pushcons 22 ............................. <"NaN">
+  [ 90] eq ...................................... <S.char[1..3] = "NaN">
+  [ 91] or ...................................... <(S = chunkMenuStat) or (S.char[1..3] = "NaN")>
+  [ 92] getglobal 333 ........................... <chunkMenuStat>
+  [ 95] pushcons 0 .............................. <EMPTY>
+  [ 97] eq ...................................... <chunkMenuStat = EMPTY>
+  [ 98] or ...................................... <(S = chunkMenuStat) or (S.char[1..3] = "NaN") or (chunkMenuStat = EMPTY)>
+  [ 99] jmpifz [105] ............................ if (S = chunkMenuStat) or (S.char[1..3] = "NaN") or (chunkMenuStat = EMPTY) then / else
+  [102] jmp [322]
+  [105] pushint8 1 .............................. <1>
+  [107] setlocal 1
+  [109] getlocal 1
+  [111] getglobal 262 ........................... <cPuzzleTotal>
+  [114] lteq
+  [115] jmpifz [322] ............................ repeat with x = 1 to cPuzzleTotal
+  [118] getglobal 333 ........................... <chunkMenuStat>
+  [121] pushsymb 135 ............................ <#char>
+  [123] getlocal 1 .............................. <x>
+  [125] pusharglist 3 ........................... <chunkMenuStat, #char, x>
+  [127] objcall 136 ............................. <chunkMenuStat.char[x]>
+  [129] pusharglist 1 ........................... <chunkMenuStat.char[x]>
+  [131] extcall 42 .............................. <integer(chunkMenuStat.char[x])>
+  [133] setlocal 2 .............................. m1 = integer(chunkMenuStat.char[x])
+  [135] getlocal 0 .............................. <S>
+  [137] pushsymb 135 ............................ <#char>
+  [139] getlocal 1 .............................. <x>
+  [141] pusharglist 3 ........................... <S, #char, x>
+  [143] objcall 136 ............................. <S.char[x]>
+  [145] pusharglist 1 ........................... <S.char[x]>
+  [147] extcall 42 .............................. <integer(S.char[x])>
+  [149] setlocal 3 .............................. m2 = integer(S.char[x])
+  [151] getlocal 3 .............................. <m2>
+  [153] getlocal 2 .............................. <m1>
+  [155] gt ...................................... <m2 > m1>
+  [156] jmpifz [313] ............................ if m2 > m1 then
+  [159] getlocal 3 .............................. <m2>
+  [161] peek 0 .................................. case m2 of
+  [163] pushint8 3 .............................. <3>
+  [165] eq
+  [166] jmpifz [182] ............................ (case) 3:
+  [169] getglobal 93 ............................ <pStat>
+  [171] getlocal 1 .............................. <x>
+  [173] pushint8 100 ............................ <100>
+  [175] pusharglistnoret 3 ...................... <pStat, x, 100>
+  [177] objcall 35 .............................. pStat[x] = 100
+  [179] jmp [311]
+  [182] peek 0
+  [184] pushint8 4 .............................. <4>
+  [186] eq
+  [187] jmpifz [204] ............................ (case) 4:
+  [190] getglobal 93 ............................ <pStat>
+  [192] getlocal 1 .............................. <x>
+  [194] pushint16 200 ........................... <200>
+  [197] pusharglistnoret 3 ...................... <pStat, x, 200>
+  [199] objcall 35 .............................. pStat[x] = 200
+  [201] jmp [311]
+  [204] peek 0
+  [206] pushint8 5 .............................. <5>
+  [208] eq
+  [209] jmpifz [226] ............................ (case) 5:
+  [212] getglobal 93 ............................ <pStat>
+  [214] getlocal 1 .............................. <x>
+  [216] pushint16 300 ........................... <300>
+  [219] pusharglistnoret 3 ...................... <pStat, x, 300>
+  [221] objcall 35 .............................. pStat[x] = 300
+  [223] jmp [311]
+  [226] peek 0
+  [228] pushint8 6 .............................. <6>
+  [230] eq
+  [231] jmpifz [248] ............................ (case) 6:
+  [234] getglobal 93 ............................ <pStat>
+  [236] getlocal 1 .............................. <x>
+  [238] pushint16 400 ........................... <400>
+  [241] pusharglistnoret 3 ...................... <pStat, x, 400>
+  [243] objcall 35 .............................. pStat[x] = 400
+  [245] jmp [311]
+  [248] peek 0
+  [250] pushint8 7 .............................. <7>
+  [252] eq
+  [253] jmpifz [270] ............................ (case) 7:
+  [256] getglobal 93 ............................ <pStat>
+  [258] getlocal 1 .............................. <x>
+  [260] pushint16 500 ........................... <500>
+  [263] pusharglistnoret 3 ...................... <pStat, x, 500>
+  [265] objcall 35 .............................. pStat[x] = 500
+  [267] jmp [311]
+  [270] peek 0
+  [272] pushint8 8 .............................. <8>
+  [274] eq
+  [275] jmpifz [292] ............................ (case) 8:
+  [278] getglobal 93 ............................ <pStat>
+  [280] getlocal 1 .............................. <x>
+  [282] pushint16 600 ........................... <600>
+  [285] pusharglistnoret 3 ...................... <pStat, x, 600>
+  [287] objcall 35 .............................. pStat[x] = 600
+  [289] jmp [311]
+  [292] peek 0
+  [294] pushint8 9 .............................. <9>
+  [296] eq
+  [297] jmpifz [311] ............................ (case) 9:
+  [300] getglobal 93 ............................ <pStat>
+  [302] getlocal 1 .............................. <x>
+  [304] pushint16 700 ........................... <700>
+  [307] pusharglistnoret 3 ...................... <pStat, x, 700>
+  [309] objcall 35 .............................. pStat[x] = 700
+  [311] pop 1 ................................... end case
+  [313] pushint8 1
+  [315] getlocal 1
+  [317] add
+  [318] setlocal 1
+  [320] endrepeat [109]
+  [322] ret
+end
+
+on calcMapPiecesRemaining byMenuStat
+  [  0] pusharglistnoret 0 ...................... <>
+  [  2] localcall 10 ............................ putMenuStatsFromFlash()
+  [  4] pushzero ................................ <0>
+  [  5] setlocal 0 .............................. T = 0
+  [  7] getglobal 282 ........................... <cSwords1>
+  [ 10] setlocal 1
+  [ 12] getlocal 1
+  [ 14] getglobal 283 ........................... <cPentacles2>
+  [ 17] lteq
+  [ 18] jmpifz [ 51] ............................ repeat with x = cSwords1 to cPentacles2
+  [ 21] getglobal 92 ............................ <menuStat>
+  [ 23] getlocal 1 .............................. <x>
+  [ 25] pusharglist 2 ........................... <menuStat, x>
+  [ 27] objcall 17 .............................. <menuStat[x]>
+  [ 29] getparam 0 .............................. <byMenuStat>
+  [ 31] lt ...................................... <menuStat[x] < byMenuStat>
+  [ 32] jmpifz [ 42] ............................ if menuStat[x] < byMenuStat then
+  [ 35] getlocal 0 .............................. <T>
+  [ 37] pushint8 1 .............................. <1>
+  [ 39] add ..................................... <T + 1>
+  [ 40] setlocal 0 .............................. T = T + 1
+  [ 42] pushint8 1
+  [ 44] getlocal 1
+  [ 46] add
+  [ 47] setlocal 1
+  [ 49] endrepeat [ 12]
+  [ 51] getglobal 287 ........................... <cMansion1>
+  [ 54] setlocal 1
+  [ 56] getlocal 1
+  [ 58] getglobal 288 ........................... <cMansion2>
+  [ 61] lteq
+  [ 62] jmpifz [ 96] ............................ repeat with x = cMansion1 to cMansion2
+  [ 65] getglobal 93 ............................ <pStat>
+  [ 67] getlocal 1 .............................. <x>
+  [ 69] pusharglist 2 ........................... <pStat, x>
+  [ 71] objcall 17 .............................. <pStat[x]>
+  [ 73] pushint16 400 ........................... <400>
+  [ 76] lt ...................................... <pStat[x] < 400>
+  [ 77] jmpifz [ 87] ............................ if pStat[x] < 400 then
+  [ 80] getlocal 0 .............................. <T>
+  [ 82] pushint8 1 .............................. <1>
+  [ 84] add ..................................... <T + 1>
+  [ 85] setlocal 0 .............................. T = T + 1
+  [ 87] pushint8 1
+  [ 89] getlocal 1
+  [ 91] add
+  [ 92] setlocal 1
+  [ 94] endrepeat [ 56]
+  [ 96] getlocal 0 .............................. <T>
+  [ 98] pusharglistnoret 1 ...................... <T>
+  [100] extcall 137 ............................. return T
+  [102] ret
+end
+
+on tallyMapPieces
+  [  0] pushzero ................................ <0>
+  [  1] setlocal 0 .............................. ct = 0
+  [  3] pushcons 0 .............................. <EMPTY>
+  [  5] setlocal 1 .............................. S = EMPTY
+  [  7] getglobal 282 ........................... <cSwords1>
+  [ 10] setlocal 2
+  [ 12] getlocal 2
+  [ 14] getglobal 283 ........................... <cPentacles2>
+  [ 17] lteq
+  [ 18] jmpifz [ 68] ............................ repeat with x = cSwords1 to cPentacles2
+  [ 21] getglobal 93 ............................ <pStat>
+  [ 23] getlocal 2 .............................. <x>
+  [ 25] pusharglist 2 ........................... <pStat, x>
+  [ 27] objcall 17 .............................. <pStat[x]>
+  [ 29] pushint8 100 ............................ <100>
+  [ 31] lt ...................................... <pStat[x] < 100>
+  [ 32] jmpifz [ 45] ............................ if pStat[x] < 100 then
+  [ 35] getlocal 1 .............................. <S>
+  [ 37] pushcons 23 ............................. <"0">
+  [ 39] joinstr ................................. <S & "0">
+  [ 40] setlocal 1 .............................. S = S & "0"
+  [ 42] jmp [ 59] ............................... next repeat
+  [ 45] getlocal 0 .............................. <ct>
+  [ 47] pushint8 1 .............................. <1>
+  [ 49] add ..................................... <ct + 1>
+  [ 50] setlocal 0 .............................. ct = ct + 1
+  [ 52] getlocal 1 .............................. <S>
+  [ 54] pushcons 24 ............................. <"1">
+  [ 56] joinstr ................................. <S & "1">
+  [ 57] setlocal 1 .............................. S = S & "1"
+  [ 59] pushint8 1
+  [ 61] getlocal 2
+  [ 63] add
+  [ 64] setlocal 2
+  [ 66] endrepeat [ 12]
+  [ 68] getglobal 287 ........................... <cMansion1>
+  [ 71] setlocal 2
+  [ 73] getlocal 2
+  [ 75] getglobal 288 ........................... <cMansion2>
+  [ 78] lteq
+  [ 79] jmpifz [130] ............................ repeat with x = cMansion1 to cMansion2
+  [ 82] getglobal 93 ............................ <pStat>
+  [ 84] getlocal 2 .............................. <x>
+  [ 86] pusharglist 2 ........................... <pStat, x>
+  [ 88] objcall 17 .............................. <pStat[x]>
+  [ 90] pushint16 400 ........................... <400>
+  [ 93] lt ...................................... <pStat[x] < 400>
+  [ 94] jmpifz [107] ............................ if pStat[x] < 400 then
+  [ 97] getlocal 1 .............................. <S>
+  [ 99] pushcons 23 ............................. <"0">
+  [101] joinstr ................................. <S & "0">
+  [102] setlocal 1 .............................. S = S & "0"
+  [104] jmp [121] ............................... next repeat
+  [107] getlocal 0 .............................. <ct>
+  [109] pushint8 1 .............................. <1>
+  [111] add ..................................... <ct + 1>
+  [112] setlocal 0 .............................. ct = ct + 1
+  [114] getlocal 1 .............................. <S>
+  [116] pushcons 24 ............................. <"1">
+  [118] joinstr ................................. <S & "1">
+  [119] setlocal 1 .............................. S = S & "1"
+  [121] pushint8 1
+  [123] getlocal 2
+  [125] add
+  [126] setlocal 2
+  [128] endrepeat [ 73]
+  [130] getlocal 1 .............................. <S>
+  [132] pusharglistnoret 1 ...................... <S>
+  [134] extcall 137 ............................. return S
+  [136] ret
+end
+
+on setTokenDescription GN
+  [  0] getparam 0 .............................. <GN>
+  [  2] pushzero ................................ <0>
+  [  3] eq ...................................... <GN = 0>
+  [  4] jmpifz [  8] ............................ if GN = 0 then
+  [  7] ret ..................................... exit
+  [  8] pusharglistnoret 0 ...................... <>
+  [ 10] localcall 10 ............................ putMenuStatsFromFlash()
+  [ 12] pushzero ................................ <0>
+  [ 13] setlocal 0 .............................. newGameStat = 0
+  [ 15] pushzero ................................ <0>
+  [ 16] setlocal 1 .............................. virgin = 0
+  [ 18] pushzero ................................ <0>
+  [ 19] setlocal 2 .............................. solved = 0
+  [ 21] getglobal 282 ........................... <cSwords1>
+  [ 24] setlocal 3
+  [ 26] getlocal 3
+  [ 28] getglobal 283 ........................... <cPentacles2>
+  [ 31] lteq
+  [ 32] jmpifz [ 86] ............................ repeat with x = cSwords1 to cPentacles2
+  [ 35] getglobal 92 ............................ <menuStat>
+  [ 37] getlocal 3 .............................. <x>
+  [ 39] pusharglist 2 ........................... <menuStat, x>
+  [ 41] objcall 17 .............................. <menuStat[x]>
+  [ 43] pushint8 2 .............................. <2>
+  [ 45] gteq .................................... <menuStat[x] >= 2>
+  [ 46] jmpifz [ 56] ............................ if menuStat[x] >= 2 then
+  [ 49] getlocal 1 .............................. <virgin>
+  [ 51] pushint8 1 .............................. <1>
+  [ 53] add ..................................... <virgin + 1>
+  [ 54] setlocal 1 .............................. virgin = virgin + 1
+  [ 56] getglobal 92 ............................ <menuStat>
+  [ 58] getlocal 3 .............................. <x>
+  [ 60] pusharglist 2 ........................... <menuStat, x>
+  [ 62] objcall 17 .............................. <menuStat[x]>
+  [ 64] pushint8 3 .............................. <3>
+  [ 66] gteq .................................... <menuStat[x] >= 3>
+  [ 67] jmpifz [ 77] ............................ if menuStat[x] >= 3 then
+  [ 70] getlocal 2 .............................. <solved>
+  [ 72] pushint8 1 .............................. <1>
+  [ 74] add ..................................... <solved + 1>
+  [ 75] setlocal 2 .............................. solved = solved + 1
+  [ 77] pushint8 1
+  [ 79] getlocal 3
+  [ 81] add
+  [ 82] setlocal 3
+  [ 84] endrepeat [ 26]
+  [ 86] getglobal 287 ........................... <cMansion1>
+  [ 89] setlocal 3
+  [ 91] getlocal 3
+  [ 93] getglobal 288 ........................... <cMansion2>
+  [ 96] lteq
+  [ 97] jmpifz [152] ............................ repeat with x = cMansion1 to cMansion2
+  [100] getglobal 92 ............................ <menuStat>
+  [102] getlocal 3 .............................. <x>
+  [104] pusharglist 2 ........................... <menuStat, x>
+  [106] objcall 17 .............................. <menuStat[x]>
+  [108] pushint8 2 .............................. <2>
+  [110] gteq .................................... <menuStat[x] >= 2>
+  [111] jmpifz [121] ............................ if menuStat[x] >= 2 then
+  [114] getlocal 1 .............................. <virgin>
+  [116] pushint8 1 .............................. <1>
+  [118] add ..................................... <virgin + 1>
+  [119] setlocal 1 .............................. virgin = virgin + 1
+  [121] getglobal 93 ............................ <pStat>
+  [123] getlocal 3 .............................. <x>
+  [125] pusharglist 2 ........................... <pStat, x>
+  [127] objcall 17 .............................. <pStat[x]>
+  [129] pushint16 400 ........................... <400>
+  [132] gteq .................................... <pStat[x] >= 400>
+  [133] jmpifz [143] ............................ if pStat[x] >= 400 then
+  [136] getlocal 2 .............................. <solved>
+  [138] pushint8 1 .............................. <1>
+  [140] add ..................................... <solved + 1>
+  [141] setlocal 2 .............................. solved = solved + 1
+  [143] pushint8 1
+  [145] getlocal 3
+  [147] add
+  [148] setlocal 3
+  [150] endrepeat [ 91]
+  [152] getglobal 92 ............................ <menuStat>
+  [154] getglobal 290 ........................... <cMoonsMap>
+  [157] pusharglist 2 ........................... <menuStat, cMoonsMap>
+  [159] objcall 17 .............................. <menuStat[cMoonsMap]>
+  [161] pushint8 2 .............................. <2>
+  [163] gteq .................................... <menuStat[cMoonsMap] >= 2>
+  [164] jmpifz [174] ............................ if menuStat[cMoonsMap] >= 2 then
+  [167] getlocal 1 .............................. <virgin>
+  [169] pushint8 1 .............................. <1>
+  [171] add ..................................... <virgin + 1>
+  [172] setlocal 1 .............................. virgin = virgin + 1
+  [174] getlocal 2 .............................. <solved>
+  [176] pushzero ................................ <0>
+  [177] eq ...................................... <solved = 0>
+  [178] jmpifz [200] ............................ if solved = 0 then
+  [181] getlocal 1 .............................. <virgin>
+  [183] pushzero ................................ <0>
+  [184] eq ...................................... <virgin = 0>
+  [185] jmpifz [192] ............................ if virgin = 0 then
+  [188] pushint8 1 .............................. <1>
+  [190] setlocal 0 .............................. newGameStat = 1
+  [192] pushcons 25 ............................. <"77 Bewitchments remain">
+  [194] setlocal 4 .............................. c1 = "77 Bewitchments remain"
+  [196] pushcons 26 ............................. <"and the Moon's Map is a mystery.">
+  [198] setlocal 5 .............................. c2 = "and the Moon's Map is a mystery."
+  [200] getlocal 2 .............................. <solved>
+  [202] pushzero ................................ <0>
+  [203] gt ...................................... <solved > 0>
+  [204] getlocal 2 .............................. <solved>
+  [206] pushint8 77 ............................. <77>
+  [208] lt ...................................... <solved < 77>
+  [209] and ..................................... <(solved > 0) and (solved < 77)>
+  [210] jmpifz [242] ............................ if (solved > 0) and (solved < 77) then
+  [213] getlocal 2 .............................. <solved>
+  [215] pushint8 76 ............................. <76>
+  [217] lt ...................................... <solved < 76>
+  [218] jmpifz [234] ............................ if solved < 76 then / else
+  [221] pushint8 77 ............................. <77>
+  [223] getlocal 2 .............................. <solved>
+  [225] sub ..................................... <77 - solved>
+  [226] pushcons 27 ............................. <"Bewitchments remain">
+  [228] joinpadstr .............................. <77 - solved && "Bewitchments remain">
+  [229] setlocal 4 .............................. c1 = 77 - solved && "Bewitchments remain"
+  [231] jmp [238]
+  [234] pushcons 28 ............................. <"1 Bewitchment remains">
+  [236] setlocal 4 .............................. c1 = "1 Bewitchment remains"
+  [238] pushcons 29 ............................. <"and the Moon's Map is muddled.">
+  [240] setlocal 5 .............................. c2 = "and the Moon's Map is muddled."
+  [242] getlocal 2 .............................. <solved>
+  [244] pushint8 77 ............................. <77>
+  [246] eq ...................................... <solved = 77>
+  [247] jmpifz [386] ............................ if solved = 77 then
+  [250] getglobal 92 ............................ <menuStat>
+  [252] getglobal 290 ........................... <cMoonsMap>
+  [255] pusharglist 2 ........................... <menuStat, cMoonsMap>
+  [257] objcall 17 .............................. <menuStat[cMoonsMap]>
+  [259] pushint8 3 .............................. <3>
+  [261] lt ...................................... <menuStat[cMoonsMap] < 3>
+  [262] jmpifz [276] ............................ if menuStat[cMoonsMap] < 3 then / else
+  [265] pushcons 30 ............................. <"All the pieces are gathered">
+  [267] setlocal 4 .............................. c1 = "All the pieces are gathered"
+  [269] pushcons 31 ............................. <"yet the Moon's Map is not whole.">
+  [271] setlocal 5 .............................. c2 = "yet the Moon's Map is not whole."
+  [273] jmp [386]
+  [276] getglobal 92 ............................ <menuStat>
+  [278] getglobal 291 ........................... <cMoonsPuzzles>
+  [281] pusharglist 2 ........................... <menuStat, cMoonsPuzzles>
+  [283] objcall 17 .............................. <menuStat[cMoonsPuzzles]>
+  [285] pushint8 9 .............................. <9>
+  [287] lt ...................................... <menuStat[cMoonsPuzzles] < 9>
+  [288] jmpifz [302] ............................ if menuStat[cMoonsPuzzles] < 9 then / else
+  [291] pushcons 32 ............................. <"The Moon's Map is whole">
+  [293] setlocal 4 .............................. c1 = "The Moon's Map is whole"
+  [295] pushcons 33 ............................. <"yet Spirits and Innominates await.">
+  [297] setlocal 5 .............................. c2 = "yet Spirits and Innominates await."
+  [299] jmp [386]
+  [302] getglobal 92 ............................ <menuStat>
+  [304] getglobal 285 ........................... <cSevenCups>
+  [307] pusharglist 2 ........................... <menuStat, cSevenCups>
+  [309] objcall 17 .............................. <menuStat[cSevenCups]>
+  [311] pushint8 9 .............................. <9>
+  [313] lt ...................................... <menuStat[cSevenCups] < 9>
+  [314] jmpifz [328] ............................ if menuStat[cSevenCups] < 9 then / else
+  [317] pushcons 34 ............................. <"The Moon's Map is complete">
+  [319] setlocal 4 .............................. c1 = "The Moon's Map is complete"
+  [321] pushcons 35 ............................. <"yet the Seven Cups are not restored.">
+  [323] setlocal 5 .............................. c2 = "yet the Seven Cups are not restored."
+  [325] jmp [386]
+  [328] getglobal 92 ............................ <menuStat>
+  [330] getglobal 98 ............................ <cPreFinale>
+  [332] pusharglist 2 ........................... <menuStat, cPreFinale>
+  [334] objcall 17 .............................. <menuStat[cPreFinale]>
+  [336] pushint8 9 .............................. <9>
+  [338] lt ...................................... <menuStat[cPreFinale] < 9>
+  [339] jmpifz [353] ............................ if menuStat[cPreFinale] < 9 then / else
+  [342] pushcons 34 ............................. <"The Moon's Map is complete">
+  [344] setlocal 4 .............................. c1 = "The Moon's Map is complete"
+  [346] pushcons 36 ............................. <"and the Finale awaits.">
+  [348] setlocal 5 .............................. c2 = "and the Finale awaits."
+  [350] jmp [386]
+  [353] getglobal 92 ............................ <menuStat>
+  [355] getglobal 25 ............................ <cFinale>
+  [357] pusharglist 2 ........................... <menuStat, cFinale>
+  [359] objcall 17 .............................. <menuStat[cFinale]>
+  [361] pushint8 9 .............................. <9>
+  [363] lt ...................................... <menuStat[cFinale] < 9>
+  [364] jmpifz [378] ............................ if menuStat[cFinale] < 9 then / else
+  [367] pushcons 37 ............................. <"The Moon's Map is complete.">
+  [369] setlocal 4 .............................. c1 = "The Moon's Map is complete."
+  [371] pushcons 38 ............................. <"The Book of Thoth remains hidden.">
+  [373] setlocal 5 .............................. c2 = "The Book of Thoth remains hidden."
+  [375] jmp [386]
+  [378] pushcons 39 ............................. <"The Fool has earned the Gift of Prophecy.">
+  [380] setlocal 4 .............................. c1 = "The Fool has earned the Gift of Prophecy."
+  [382] pushcons 40 ............................. <"The Book of Thoth is entombed once again.">
+  [384] setlocal 5 .............................. c2 = "The Book of Thoth is entombed once again."
+  [386] getglobal 199 ........................... <token1>
+  [388] getparam 0 .............................. <GN>
+  [390] getlocal 4 .............................. <c1>
+  [392] pusharglistnoret 3 ...................... <token1, GN, c1>
+  [394] objcall 35 .............................. token1[GN] = c1
+  [396] getglobal 200 ........................... <token2>
+  [398] getparam 0 .............................. <GN>
+  [400] getlocal 5 .............................. <c2>
+  [402] pusharglistnoret 3 ...................... <token2, GN, c2>
+  [404] objcall 35 .............................. token2[GN] = c2
+  [406] getglobal 201 ........................... <token3>
+  [408] getparam 0 .............................. <GN>
+  [410] getlocal 0 .............................. <newGameStat>
+  [412] pusharglistnoret 3 ...................... <token3, GN, newGameStat>
+  [414] objcall 35 .............................. token3[GN] = newGameStat
+  [416] ret
+end
+
+on updatePages
+  [  0] getglobal 344 ........................... <csDEL>
+  [  3] pushint8 1 .............................. <1>
+  [  5] pusharglist 2 ........................... <csDEL, 1>
+  [  7] objcall 17 .............................. <csDEL[1]>
+  [  9] setlocal 0
+  [ 11] getlocal 0
+  [ 13] getglobal 344 ........................... <csDEL>
+  [ 16] pushint8 7 .............................. <7>
+  [ 18] pusharglist 2 ........................... <csDEL, 7>
+  [ 20] objcall 17 .............................. <csDEL[7]>
+  [ 22] lteq
+  [ 23] jmpifz [ 45] ............................ repeat with x = csDEL[1] to csDEL[7]
+  [ 26] getglobal 100 ........................... <pPage>
+  [ 28] getlocal 0 .............................. <x>
+  [ 30] pushint8 2 .............................. <2>
+  [ 32] pusharglistnoret 3 ...................... <pPage, x, 2>
+  [ 34] objcall 35 .............................. pPage[x] = 2
+  [ 36] pushint8 1
+  [ 38] getlocal 0
+  [ 40] add
+  [ 41] setlocal 0
+  [ 43] endrepeat [ 11]
+  [ 45] getglobal 345 ........................... <csHEX>
+  [ 48] pushint8 1 .............................. <1>
+  [ 50] pusharglist 2 ........................... <csHEX, 1>
+  [ 52] objcall 17 .............................. <csHEX[1]>
+  [ 54] setlocal 0
+  [ 56] getlocal 0
+  [ 58] getglobal 345 ........................... <csHEX>
+  [ 61] pushint8 7 .............................. <7>
+  [ 63] pusharglist 2 ........................... <csHEX, 7>
+  [ 65] objcall 17 .............................. <csHEX[7]>
+  [ 67] lteq
+  [ 68] jmpifz [ 90] ............................ repeat with x = csHEX[1] to csHEX[7]
+  [ 71] getglobal 100 ........................... <pPage>
+  [ 73] getlocal 0 .............................. <x>
+  [ 75] pushint8 4 .............................. <4>
+  [ 77] pusharglistnoret 3 ...................... <pPage, x, 4>
+  [ 79] objcall 35 .............................. pPage[x] = 4
+  [ 81] pushint8 1
+  [ 83] getlocal 0
+  [ 85] add
+  [ 86] setlocal 0
+  [ 88] endrepeat [ 56]
+  [ 90] getglobal 346 ........................... <csREM>
+  [ 93] pushint8 1 .............................. <1>
+  [ 95] pusharglist 2 ........................... <csREM, 1>
+  [ 97] objcall 17 .............................. <csREM[1]>
+  [ 99] setlocal 0
+  [101] getlocal 0
+  [103] getglobal 346 ........................... <csREM>
+  [106] pushint8 7 .............................. <7>
+  [108] pusharglist 2 ........................... <csREM, 7>
+  [110] objcall 17 .............................. <csREM[7]>
+  [112] lteq
+  [113] jmpifz [135] ............................ repeat with x = csREM[1] to csREM[7]
+  [116] getglobal 100 ........................... <pPage>
+  [118] getlocal 0 .............................. <x>
+  [120] pushint8 6 .............................. <6>
+  [122] pusharglistnoret 3 ...................... <pPage, x, 6>
+  [124] objcall 35 .............................. pPage[x] = 6
+  [126] pushint8 1
+  [128] getlocal 0
+  [130] add
+  [131] setlocal 0
+  [133] endrepeat [101]
+  [135] getglobal 287 ........................... <cMansion1>
+  [138] setlocal 0
+  [140] getlocal 0
+  [142] getglobal 288 ........................... <cMansion2>
+  [145] lteq
+  [146] jmpifz [362] ............................ repeat with x = cMansion1 to cMansion2
+  [149] getglobal 93 ............................ <pStat>
+  [151] getlocal 0 .............................. <x>
+  [153] pusharglist 2 ........................... <pStat, x>
+  [155] objcall 17 .............................. <pStat[x]>
+  [157] pushint8 100 ............................ <100>
+  [159] lt ...................................... <pStat[x] < 100>
+  [160] jmpifz [176] ............................ if pStat[x] < 100 then
+  [163] getglobal 100 ........................... <pPage>
+  [165] getlocal 0 .............................. <x>
+  [167] pushint8 1 .............................. <1>
+  [169] pusharglistnoret 3 ...................... <pPage, x, 1>
+  [171] objcall 35 .............................. pPage[x] = 1
+  [173] jmp [353] ............................... next repeat
+  [176] getglobal 93 ............................ <pStat>
+  [178] getlocal 0 .............................. <x>
+  [180] pusharglist 2 ........................... <pStat, x>
+  [182] objcall 17 .............................. <pStat[x]>
+  [184] pushint8 100 ............................ <100>
+  [186] eq ...................................... <pStat[x] = 100>
+  [187] jmpifz [203] ............................ if pStat[x] = 100 then
+  [190] getglobal 100 ........................... <pPage>
+  [192] getlocal 0 .............................. <x>
+  [194] pushint8 2 .............................. <2>
+  [196] pusharglistnoret 3 ...................... <pPage, x, 2>
+  [198] objcall 35 .............................. pPage[x] = 2
+  [200] jmp [353] ............................... next repeat
+  [203] getglobal 93 ............................ <pStat>
+  [205] getlocal 0 .............................. <x>
+  [207] pusharglist 2 ........................... <pStat, x>
+  [209] objcall 17 .............................. <pStat[x]>
+  [211] pushint16 200 ........................... <200>
+  [214] lt ...................................... <pStat[x] < 200>
+  [215] jmpifz [231] ............................ if pStat[x] < 200 then
+  [218] getglobal 100 ........................... <pPage>
+  [220] getlocal 0 .............................. <x>
+  [222] pushint8 3 .............................. <3>
+  [224] pusharglistnoret 3 ...................... <pPage, x, 3>
+  [226] objcall 35 .............................. pPage[x] = 3
+  [228] jmp [353] ............................... next repeat
+  [231] getglobal 93 ............................ <pStat>
+  [233] getlocal 0 .............................. <x>
+  [235] pusharglist 2 ........................... <pStat, x>
+  [237] objcall 17 .............................. <pStat[x]>
+  [239] pushint16 200 ........................... <200>
+  [242] eq ...................................... <pStat[x] = 200>
+  [243] jmpifz [259] ............................ if pStat[x] = 200 then
+  [246] getglobal 100 ........................... <pPage>
+  [248] getlocal 0 .............................. <x>
+  [250] pushint8 4 .............................. <4>
+  [252] pusharglistnoret 3 ...................... <pPage, x, 4>
+  [254] objcall 35 .............................. pPage[x] = 4
+  [256] jmp [353] ............................... next repeat
+  [259] getglobal 93 ............................ <pStat>
+  [261] getlocal 0 .............................. <x>
+  [263] pusharglist 2 ........................... <pStat, x>
+  [265] objcall 17 .............................. <pStat[x]>
+  [267] pushint16 300 ........................... <300>
+  [270] lt ...................................... <pStat[x] < 300>
+  [271] jmpifz [287] ............................ if pStat[x] < 300 then
+  [274] getglobal 100 ........................... <pPage>
+  [276] getlocal 0 .............................. <x>
+  [278] pushint8 5 .............................. <5>
+  [280] pusharglistnoret 3 ...................... <pPage, x, 5>
+  [282] objcall 35 .............................. pPage[x] = 5
+  [284] jmp [353] ............................... next repeat
+  [287] getglobal 93 ............................ <pStat>
+  [289] getlocal 0 .............................. <x>
+  [291] pusharglist 2 ........................... <pStat, x>
+  [293] objcall 17 .............................. <pStat[x]>
+  [295] pushint16 300 ........................... <300>
+  [298] eq ...................................... <pStat[x] = 300>
+  [299] jmpifz [315] ............................ if pStat[x] = 300 then
+  [302] getglobal 100 ........................... <pPage>
+  [304] getlocal 0 .............................. <x>
+  [306] pushint8 6 .............................. <6>
+  [308] pusharglistnoret 3 ...................... <pPage, x, 6>
+  [310] objcall 35 .............................. pPage[x] = 6
+  [312] jmp [353] ............................... next repeat
+  [315] getglobal 93 ............................ <pStat>
+  [317] getlocal 0 .............................. <x>
+  [319] pusharglist 2 ........................... <pStat, x>
+  [321] objcall 17 .............................. <pStat[x]>
+  [323] pushint16 400 ........................... <400>
+  [326] lt ...................................... <pStat[x] < 400>
+  [327] jmpifz [343] ............................ if pStat[x] < 400 then
+  [330] getglobal 100 ........................... <pPage>
+  [332] getlocal 0 .............................. <x>
+  [334] pushint8 7 .............................. <7>
+  [336] pusharglistnoret 3 ...................... <pPage, x, 7>
+  [338] objcall 35 .............................. pPage[x] = 7
+  [340] jmp [353] ............................... next repeat
+  [343] getglobal 100 ........................... <pPage>
+  [345] getlocal 0 .............................. <x>
+  [347] pushint8 8 .............................. <8>
+  [349] pusharglistnoret 3 ...................... <pPage, x, 8>
+  [351] objcall 35 .............................. pPage[x] = 8
+  [353] pushint8 1
+  [355] getlocal 0
+  [357] add
+  [358] setlocal 0
+  [360] endrepeat [140]
+  [362] ret
+end
+
+on _Help_Tokens_Exception N
+  [  0] getparam 0 .............................. <N>
+  [  2] getglobal 247 ........................... <cHelpTokens>
+  [  4] eq ...................................... <N = cHelpTokens>
+  [  5] jmpifz [ 14] ............................ if N = cHelpTokens then
+  [  8] getglobal 21 ............................ <cGameMenus>
+  [ 10] pusharglistnoret 1 ...................... <cGameMenus>
+  [ 12] extcall 137 ............................. return cGameMenus
+  [ 14] getparam 0 .............................. <N>
+  [ 16] pusharglistnoret 1 ...................... <N>
+  [ 18] extcall 137 ............................. return N
+  [ 20] ret
+end

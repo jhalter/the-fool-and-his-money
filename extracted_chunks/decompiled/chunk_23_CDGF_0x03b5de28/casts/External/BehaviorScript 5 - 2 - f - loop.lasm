@@ -1,0 +1,22 @@
+on prepareFrame
+  [  0] pusharglistnoret 0 ...................... <>
+  [  2] extcall 9 ............................... fin_PrepPlay()
+  [  4] ret
+end
+
+on exitFrame
+  [  0] pusharglistnoret 0 ...................... <>
+  [  2] extcall 10 .............................. fin_ExitPlay()
+  [  4] ret
+end
+
+on idle
+  [  0] pusharglistnoret 0 ...................... <>
+  [  2] extcall 5 ............................... calcMouseChunk()
+  [  4] gettoplevelprop 6 ....................... <_movie>
+  [  6] pushint8 15 ............................. <15>
+  [  8] setobjprop 7 ............................ _movie.idleHandlerPeriod = 15
+  [ 10] pushint8 1 .............................. <1>
+  [ 12] setlocal 0 .............................. sleep = 1
+  [ 14] ret
+end

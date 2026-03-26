@@ -1,0 +1,1522 @@
+global CR, QU, theDirectorVersion, theGameStartTime, theInitPhase, cFileIO, cTestIO, cGameDirectory, cWork, cLink, cXtraDirectory, cSavedGamesDirectory, cSaveDirectoryCliff, cOpenGameNum, prefTotal, prefChunk, prefNumber, zipCode, uniqueKey, uniquePass, uniqueName, uniqueAttempt, fName, theDataChunk, theDataName, theDataTrue, theDataTotal, theDataStatus, _StartUp_Switched, _Window_Switched, _Start_Comments, _PassKey_Pass, _PassKey_Name
+
+on special_Frame_1
+  [  0] gettoplevelprop 686 ..................... <_global>
+  [  3] pusharglistnoret 1 ...................... <_global>
+  [  5] objcall 687 ............................. _global.clearGlobals()
+  [  8] pusharglistnoret 0 ...................... <>
+  [ 10] extcall 688 ............................. clearASObjects()
+  [ 13] pushzero ................................ <0>
+  [ 14] setglobal 689 ........................... _Start_Comments = 0
+  [ 17] pushint8 1 .............................. <1>
+  [ 19] setglobal 691 ........................... theInitPhase = 1
+  [ 22] gettoplevelprop 14 ...................... <_movie>
+  [ 24] pushint8 15 ............................. <15>
+  [ 26] setobjprop 692 .......................... _movie.idleHandlerPeriod = 15
+  [ 29] pushint8 20 ............................. <20>
+  [ 31] setmovieprop 693 ........................ the cpuHogTicks = 20
+  [ 34] gettoplevelprop 14 ...................... <_movie>
+  [ 36] pushint8 1 .............................. <1>
+  [ 38] setobjprop 694 .......................... _movie.exitLock = 1
+  [ 41] pushzero ................................ <0>
+  [ 42] setglobal 695 ........................... theGameStartTime = 0
+  [ 45] pushzero ................................ <0>
+  [ 46] setglobal 602 ........................... _StartUp_Switched = 0
+  [ 49] pushzero ................................ <0>
+  [ 50] setglobal 570 ........................... _Window_Switched = 0
+  [ 53] pusharglistnoret 0 ...................... <>
+  [ 55] extcall 251 ............................. noInterface()
+  [ 57] pushint8 13 ............................. <13>
+  [ 59] pusharglist 1 ........................... <13>
+  [ 61] extcall 611 ............................. <numToChar(13)>
+  [ 64] setglobal 263 ........................... CR = numToChar(13)
+  [ 67] pushint8 34 ............................. <34>
+  [ 69] pusharglist 1 ........................... <34>
+  [ 71] extcall 611 ............................. <numToChar(34)>
+  [ 74] setglobal 486 ........................... QU = numToChar(34)
+  [ 77] pushcons 0 .............................. <EMPTY>
+  [ 79] pusharglistnoret 1 ...................... <EMPTY>
+  [ 81] extcall 26 .............................. init_Window_Title(EMPTY)
+  [ 83] pushcons 1 .............................. <"fileio">
+  [ 85] pusharglist 1 ........................... <"fileio">
+  [ 87] extcall 697 ............................. <xtra("fileio")>
+  [ 90] pusharglist 1 ........................... <xtra("fileio")>
+  [ 92] extcall 696 ............................. <new(xtra("fileio"))>
+  [ 95] setglobal 142 ........................... cFileIO = new(xtra("fileio"))
+  [ 97] pushcons 1 .............................. <"fileio">
+  [ 99] pusharglist 1 ........................... <"fileio">
+  [101] extcall 697 ............................. <xtra("fileio")>
+  [104] pusharglist 1 ........................... <xtra("fileio")>
+  [106] extcall 696 ............................. <new(xtra("fileio"))>
+  [109] setglobal 151 ........................... cTestIO = new(xtra("fileio"))
+  [111] gettoplevelprop 81 ...................... <_player>
+  [113] getobjprop 698 .......................... <_player.productVersion>
+  [116] pusharglist 1 ........................... <_player.productVersion>
+  [118] extcall 334 ............................. <string(_player.productVersion)>
+  [121] pushsymb 135 ............................ <#char>
+  [123] pushint8 1 .............................. <1>
+  [125] pushint8 2 .............................. <2>
+  [127] pusharglist 4 ........................... <string(_player.productVersion), #char, 1, 2>
+  [129] objcall 136 ............................. <string(_player.productVersion).char[1..2]>
+  [131] pushcons 2 .............................. <"11">
+  [133] nteq .................................... <string(_player.productVersion).char[1..2] <> "11">
+  [134] jmpifz [180] ............................ if string(_player.productVersion).char[1..2] <> "11" then / else
+  [137] pushint8 10 ............................. <10>
+  [139] setglobal 160 ........................... theDirectorVersion = 10
+  [141] getglobal 151 ........................... <cTestIO>
+  [143] pushcons 3 .............................. <"D:\\TFaHM_work\\data.txt">
+  [145] pushint8 1 .............................. <1>
+  [147] pusharglistnoret 3 ...................... <cTestIO, "D:\\TFaHM_work\\data.txt", 1>
+  [149] objcall 141 ............................. cTestIO.openfile("D:\\TFaHM_work\\data.txt", 1)
+  [151] getglobal 151 ........................... <cTestIO>
+  [153] pusharglist 1 ........................... <cTestIO>
+  [155] objcall 176 ............................. <cTestIO.readFile()>
+  [157] setlocal 0 .............................. chunk = cTestIO.readFile()
+  [159] getglobal 151 ........................... <cTestIO>
+  [161] pusharglistnoret 1 ...................... <cTestIO>
+  [163] objcall 145 ............................. cTestIO.closeFile()
+  [165] pushcons 4 .............................. <"miscellaneous">
+  [167] pusharglist 1 ........................... <"miscellaneous">
+  [169] extcall 612 ............................. <member("miscellaneous")>
+  [172] getlocal 0 .............................. <chunk>
+  [174] setobjprop 657 .......................... member("miscellaneous").text = chunk
+  [177] jmp [191]
+  [180] pushint8 11 ............................. <11>
+  [182] setglobal 160 ........................... theDirectorVersion = 11
+  [184] gettoplevelprop 14 ...................... <_movie>
+  [186] pushint8 10 ............................. <10>
+  [188] setobjprop 699 .......................... _movie.scriptExecutionStyle = 10
+  [191] pushzero ................................ <0>
+  [192] setglobal 745 ........................... theDataStatus = 0
+  [195] gettoplevelprop 14 ...................... <_movie>
+  [197] getobjprop 700 .......................... <_movie.path>
+  [200] setglobal 260 ........................... cGameDirectory = _movie.path
+  [203] pushcons 5 .............................. <"D:\\TFaHM_work\\">
+  [205] setglobal 607 ........................... cWork = "D:\\TFaHM_work\\"
+  [208] getglobal 607 ........................... <cWork>
+  [211] pushcons 6 .............................. <"zzz-COPY-Game-HERE\\">
+  [213] joinstr ................................. <cWork & "zzz-COPY-Game-HERE\\">
+  [214] setglobal 608 ........................... cLink = cWork & "zzz-COPY-Game-HERE\\"
+  [217] getglobal 607 ........................... <cWork>
+  [220] pushcons 7 .............................. <"ZZZAVED-GAMEZZZ\\">
+  [222] joinstr ................................. <cWork & "ZZZAVED-GAMEZZZ\\">
+  [223] setglobal 159 ........................... cSaveDirectoryCliff = cWork & "ZZZAVED-GAMEZZZ\\"
+  [225] getmovieprop 701 ........................ <the platform>
+  [228] pushcons 8 .............................. <"Windows">
+  [230] containsstr ............................. <the platform contains "Windows">
+  [231] jmpifz [255] ............................ if the platform contains "Windows" then / else
+  [234] getglobal 260 ........................... <cGameDirectory>
+  [237] pushcons 9 .............................. <"Xtras\\">
+  [239] joinstr ................................. <cGameDirectory & "Xtras\\">
+  [240] setglobal 259 ........................... cXtraDirectory = cGameDirectory & "Xtras\\"
+  [243] getglobal 260 ........................... <cGameDirectory>
+  [246] pushcons 10 ............................. <"Saved Games\\">
+  [248] joinstr ................................. <cGameDirectory & "Saved Games\\">
+  [249] setglobal 509 ........................... cSavedGamesDirectory = cGameDirectory & "Saved Games\\"
+  [252] jmp [273]
+  [255] getglobal 260 ........................... <cGameDirectory>
+  [258] pushcons 11 ............................. <"Xtras:">
+  [260] joinstr ................................. <cGameDirectory & "Xtras:">
+  [261] setglobal 259 ........................... cXtraDirectory = cGameDirectory & "Xtras:"
+  [264] getglobal 260 ........................... <cGameDirectory>
+  [267] pushcons 12 ............................. <"Saved Games:">
+  [269] joinstr ................................. <cGameDirectory & "Saved Games:">
+  [270] setglobal 509 ........................... cSavedGamesDirectory = cGameDirectory & "Saved Games:"
+  [273] getglobal 260 ........................... <cGameDirectory>
+  [276] pusharglistnoret 1 ...................... <cGameDirectory>
+  [278] localcall 15 ............................ _Put_Start(cGameDirectory)
+  [280] getglobal 259 ........................... <cXtraDirectory>
+  [283] pusharglistnoret 1 ...................... <cXtraDirectory>
+  [285] localcall 15 ............................ _Put_Start(cXtraDirectory)
+  [287] getglobal 509 ........................... <cSavedGamesDirectory>
+  [290] pusharglistnoret 1 ...................... <cSavedGamesDirectory>
+  [292] localcall 15 ............................ _Put_Start(cSavedGamesDirectory)
+  [294] getglobal 159 ........................... <cSaveDirectoryCliff>
+  [296] pusharglistnoret 1 ...................... <cSaveDirectoryCliff>
+  [298] localcall 15 ............................ _Put_Start(cSaveDirectoryCliff)
+  [300] pushint8 3 .............................. <3>
+  [302] setlocal 1
+  [304] getlocal 1
+  [306] pushint8 8 .............................. <8>
+  [308] lteq
+  [309] jmpifz [330] ............................ repeat with x = 3 to 8
+  [312] getlocal 1 .............................. <x>
+  [314] pushint8 1 .............................. <1>
+  [316] pusharglistnoret 2 ...................... <x, 1>
+  [318] extcall 397 ............................. misc_VisStaticSprite(x, 1)
+  [321] pushint8 1
+  [323] getlocal 1
+  [325] add
+  [326] setlocal 1
+  [328] endrepeat [304]
+  [330] pushcons 13 ............................. <"special_Prefs()">
+  [332] pusharglistnoret 1 ...................... <"special_Prefs()">
+  [334] localcall 15 ............................ _Put_Start("special_Prefs()")
+  [336] pusharglistnoret 0 ...................... <>
+  [338] localcall 6 ............................. special_Prefs()
+  [340] pushcons 14 ............................. <"special_CheckCastMembers()">
+  [342] pusharglistnoret 1 ...................... <"special_CheckCastMembers()">
+  [344] localcall 15 ............................ _Put_Start("special_CheckCastMembers()")
+  [346] pusharglistnoret 0 ...................... <>
+  [348] extcall 599 ............................. special_CheckCastMembers()
+  [351] pushint8 2 .............................. <2>
+  [353] setglobal 691 ........................... theInitPhase = 2
+  [356] ret
+end
+
+on special_Frame_2
+  [  0] pushcons 0 .............................. <EMPTY>
+  [  2] setglobal 753 ........................... _PassKey_Pass = EMPTY
+  [  5] pushcons 0 .............................. <EMPTY>
+  [  7] setglobal 754 ........................... _PassKey_Name = EMPTY
+  [ 10] getglobal 691 ........................... <theInitPhase>
+  [ 13] pushint8 3 .............................. <3>
+  [ 15] lt ...................................... <theInitPhase < 3>
+  [ 16] jmpifz [310] ............................ if theInitPhase < 3 then
+  [ 19] getglobal 157 ........................... <prefChunk>
+  [ 21] getglobal 257 ........................... <prefTotal>
+  [ 24] pusharglist 2 ........................... <prefChunk, prefTotal>
+  [ 26] objcall 17 .............................. <prefChunk[prefTotal]>
+  [ 28] pushcons 15 ............................. <"---">
+  [ 30] nteq .................................... <prefChunk[prefTotal] <> "---">
+  [ 31] jmpifz [ 55] ............................ if prefChunk[prefTotal] <> "---" then / else
+  [ 34] getglobal 157 ........................... <prefChunk>
+  [ 36] getglobal 257 ........................... <prefTotal>
+  [ 39] pusharglist 2 ........................... <prefChunk, prefTotal>
+  [ 41] objcall 17 .............................. <prefChunk[prefTotal]>
+  [ 43] pusharglistnoret 1 ...................... <prefChunk[prefTotal]>
+  [ 45] localcall 15 ............................ _Put_Start(prefChunk[prefTotal])
+  [ 47] pushint8 3 .............................. <3>
+  [ 49] setglobal 691 ........................... theInitPhase = 3
+  [ 52] jmp [310]
+  [ 55] getglobal 151 ........................... <cTestIO>
+  [ 57] getglobal 260 ........................... <cGameDirectory>
+  [ 60] pushcons 16 ............................. <"PassKey.txt">
+  [ 62] joinstr ................................. <cGameDirectory & "PassKey.txt">
+  [ 63] pushint8 1 .............................. <1>
+  [ 65] pusharglistnoret 3 ...................... <cTestIO, cGameDirectory & "PassKey.txt", 1>
+  [ 67] objcall 141 ............................. cTestIO.openfile(cGameDirectory & "PassKey.txt", 1)
+  [ 69] getglobal 151 ........................... <cTestIO>
+  [ 71] pusharglist 1 ........................... <cTestIO>
+  [ 73] objcall 176 ............................. <cTestIO.readFile()>
+  [ 75] setlocal 0 .............................. chunk = cTestIO.readFile()
+  [ 77] getglobal 151 ........................... <cTestIO>
+  [ 79] pusharglistnoret 1 ...................... <cTestIO>
+  [ 81] objcall 145 ............................. cTestIO.closeFile()
+  [ 83] getlocal 0 .............................. <chunk>
+  [ 85] getobjprop 134 .......................... <chunk.length>
+  [ 87] pushint16 1000 .......................... <1000>
+  [ 90] eq ...................................... <chunk.length = 1000>
+  [ 91] jmpifz [288] ............................ if chunk.length = 1000 then / else
+  [ 94] getlocal 0 .............................. <chunk>
+  [ 96] pushsymb 135 ............................ <#char>
+  [ 98] pushint8 4 .............................. <4>
+  [100] getlocal 0 .............................. <chunk>
+  [102] getobjprop 134 .......................... <chunk.length>
+  [104] pusharglist 4 ........................... <chunk, #char, 4, chunk.length>
+  [106] objcall 136 ............................. <chunk.char[4..chunk.length]>
+  [108] setlocal 0 .............................. chunk = chunk.char[4..chunk.length]
+  [110] getlocal 0 .............................. <chunk>
+  [112] pusharglist 1 ........................... <chunk>
+  [114] localcall 11 ............................ <decodeZip(chunk)>
+  [116] setlocal 0 .............................. chunk = decodeZip(chunk)
+  [118] pushcons 17 ............................. <"|">
+  [120] getlocal 0 .............................. <chunk>
+  [122] pusharglist 2 ........................... <"|", chunk>
+  [124] extcall 211 ............................. <offset("|", chunk)>
+  [126] setlocal 1 .............................. pos = offset("|", chunk)
+  [128] getlocal 0 .............................. <chunk>
+  [130] pushsymb 135 ............................ <#char>
+  [132] getlocal 1 .............................. <pos>
+  [134] pushint8 1 .............................. <1>
+  [136] add ..................................... <pos + 1>
+  [137] getlocal 0 .............................. <chunk>
+  [139] getobjprop 134 .......................... <chunk.length>
+  [141] pusharglist 4 ........................... <chunk, #char, pos + 1, chunk.length>
+  [143] objcall 136 ............................. <chunk.char[pos + 1..chunk.length]>
+  [145] setlocal 0 .............................. chunk = chunk.char[pos + 1..chunk.length]
+  [147] pushcons 17 ............................. <"|">
+  [149] getlocal 0 .............................. <chunk>
+  [151] pusharglist 2 ........................... <"|", chunk>
+  [153] extcall 211 ............................. <offset("|", chunk)>
+  [155] setlocal 1 .............................. pos = offset("|", chunk)
+  [157] getlocal 0 .............................. <chunk>
+  [159] pushsymb 135 ............................ <#char>
+  [161] pushint8 1 .............................. <1>
+  [163] getlocal 1 .............................. <pos>
+  [165] pushint8 1 .............................. <1>
+  [167] sub ..................................... <pos - 1>
+  [168] pusharglist 4 ........................... <chunk, #char, 1, pos - 1>
+  [170] objcall 136 ............................. <chunk.char[1..pos - 1]>
+  [172] setglobal 753 ........................... _PassKey_Pass = chunk.char[1..pos - 1]
+  [175] getlocal 0 .............................. <chunk>
+  [177] pushsymb 135 ............................ <#char>
+  [179] getlocal 1 .............................. <pos>
+  [181] pushint8 1 .............................. <1>
+  [183] add ..................................... <pos + 1>
+  [184] getlocal 0 .............................. <chunk>
+  [186] getobjprop 134 .......................... <chunk.length>
+  [188] pusharglist 4 ........................... <chunk, #char, pos + 1, chunk.length>
+  [190] objcall 136 ............................. <chunk.char[pos + 1..chunk.length]>
+  [192] setlocal 0 .............................. chunk = chunk.char[pos + 1..chunk.length]
+  [194] pushcons 17 ............................. <"|">
+  [196] getlocal 0 .............................. <chunk>
+  [198] pusharglist 2 ........................... <"|", chunk>
+  [200] extcall 211 ............................. <offset("|", chunk)>
+  [202] setlocal 1 .............................. pos = offset("|", chunk)
+  [204] getlocal 0 .............................. <chunk>
+  [206] pushsymb 135 ............................ <#char>
+  [208] pushint8 1 .............................. <1>
+  [210] getlocal 1 .............................. <pos>
+  [212] pushint8 1 .............................. <1>
+  [214] sub ..................................... <pos - 1>
+  [215] pusharglist 4 ........................... <chunk, #char, 1, pos - 1>
+  [217] objcall 136 ............................. <chunk.char[1..pos - 1]>
+  [219] setglobal 754 ........................... _PassKey_Name = chunk.char[1..pos - 1]
+  [222] pushint8 3 .............................. <3>
+  [224] setglobal 691 ........................... theInitPhase = 3
+  [227] getglobal 753 ........................... <_PassKey_Pass>
+  [230] pushsymb 135 ............................ <#char>
+  [232] pushint8 1 .............................. <1>
+  [234] pushint8 3 .............................. <3>
+  [236] pusharglist 4 ........................... <_PassKey_Pass, #char, 1, 3>
+  [238] objcall 136 ............................. <_PassKey_Pass.char[1..3]>
+  [240] pushcons 18 ............................. <"-">
+  [242] joinstr ................................. <_PassKey_Pass.char[1..3] & "-">
+  [243] getglobal 753 ........................... <_PassKey_Pass>
+  [246] pushsymb 135 ............................ <#char>
+  [248] pushint8 4 .............................. <4>
+  [250] pushint8 6 .............................. <6>
+  [252] pusharglist 4 ........................... <_PassKey_Pass, #char, 4, 6>
+  [254] objcall 136 ............................. <_PassKey_Pass.char[4..6]>
+  [256] joinstr ................................. <_PassKey_Pass.char[1..3] & "-" & _PassKey_Pass.char[4..6]>
+  [257] pushcons 18 ............................. <"-">
+  [259] joinstr ................................. <_PassKey_Pass.char[1..3] & "-" & _PassKey_Pass.char[4..6] & "-">
+  [260] getglobal 753 ........................... <_PassKey_Pass>
+  [263] pushsymb 135 ............................ <#char>
+  [265] pushint8 7 .............................. <7>
+  [267] pushint8 9 .............................. <9>
+  [269] pusharglist 4 ........................... <_PassKey_Pass, #char, 7, 9>
+  [271] objcall 136 ............................. <_PassKey_Pass.char[7..9]>
+  [273] joinstr ................................. <_PassKey_Pass.char[1..3] & "-" & _PassKey_Pass.char[4..6] & "-" & _PassKey_Pass.char[7..9]>
+  [274] pusharglistnoret 1 ...................... <_PassKey_Pass.char[1..3] & "-" & _PassKey_Pass.char[4..6] & "-" & _PassKey_Pass.char[7..9]>
+  [276] extcall 174 ............................. _PUT(_PassKey_Pass.char[1..3] & "-" & _PassKey_Pass.char[4..6] & "-" & _PassKey_Pass.char[7..9])
+  [278] getglobal 754 ........................... <_PassKey_Name>
+  [281] pusharglistnoret 1 ...................... <_PassKey_Name>
+  [283] extcall 174 ............................. _PUT(_PassKey_Name)
+  [285] jmp [310]
+  [288] pushcons 4 .............................. <"miscellaneous">
+  [290] pusharglist 1 ........................... <"miscellaneous">
+  [292] extcall 612 ............................. <member("miscellaneous")>
+  [295] getobjprop 657 .......................... <member("miscellaneous").text>
+  [298] setglobal 707 ........................... theDataChunk = member("miscellaneous").text
+  [301] pusharglistnoret 0 ...................... <>
+  [303] localcall 7 ............................. special_ReadDataChunk()
+  [305] pushint8 3 .............................. <3>
+  [307] setglobal 691 ........................... theInitPhase = 3
+  [310] gettoplevelprop 14 ...................... <_movie>
+  [312] getglobal 691 ........................... <theInitPhase>
+  [315] pusharglistnoret 2 ...................... <_movie, theInitPhase>
+  [317] objcall 18 .............................. _movie.go(theInitPhase)
+  [319] ret
+end
+
+on special_Frame_3
+  [  0] getglobal 691 ........................... <theInitPhase>
+  [  3] peek 0 .................................. case theInitPhase of
+  [  5] pushint8 3 .............................. <3>
+  [  7] eq
+  [  8] jmpifz [100] ............................ (case) 3:
+  [ 11] pushcons 0 .............................. <EMPTY>
+  [ 13] setglobal 708 ........................... uniqueKey = EMPTY
+  [ 16] pushcons 0 .............................. <EMPTY>
+  [ 18] setglobal 709 ........................... uniquePass = EMPTY
+  [ 21] pushcons 0 .............................. <EMPTY>
+  [ 23] setglobal 710 ........................... uniqueName = EMPTY
+  [ 26] pushzero ................................ <0>
+  [ 27] setglobal 711 ........................... uniqueAttempt = 0
+  [ 30] getglobal 157 ........................... <prefChunk>
+  [ 32] getglobal 257 ........................... <prefTotal>
+  [ 35] pusharglist 2 ........................... <prefChunk, prefTotal>
+  [ 37] objcall 17 .............................. <prefChunk[prefTotal]>
+  [ 39] pushcons 15 ............................. <"---">
+  [ 41] eq ...................................... <prefChunk[prefTotal] = "---">
+  [ 42] jmpifz [ 80] ............................ if prefChunk[prefTotal] = "---" then / else
+  [ 45] pushint8 9 .............................. <9>
+  [ 47] pusharglist 1 ........................... <9>
+  [ 49] extcall 429 ............................. <sprite(9)>
+  [ 52] pushcons 19 ............................. <"fromDirectorPuzzlePhase">
+  [ 54] pushint8 10 ............................. <10>
+  [ 56] pusharglist 1 ........................... <10>
+  [ 58] extcall 334 ............................. <string(10)>
+  [ 61] pusharglistnoret 3 ...................... <sprite(9), "fromDirectorPuzzlePhase", string(10)>
+  [ 63] objcall 439 ............................. sprite(9).setVariable("fromDirectorPuzzlePhase", string(10))
+  [ 66] pushcons 20 ............................. <"keyPassWord">
+  [ 68] pushint8 3 .............................. <3>
+  [ 70] set 0 ................................... set the keyDownScript to "keyPassWord"
+  [ 72] pushint8 4 .............................. <4>
+  [ 74] setglobal 691 ........................... theInitPhase = 4
+  [ 77] jmp [ 97]
+  [ 80] getglobal 157 ........................... <prefChunk>
+  [ 82] getglobal 257 ........................... <prefTotal>
+  [ 85] pusharglist 2 ........................... <prefChunk, prefTotal>
+  [ 87] objcall 17 .............................. <prefChunk[prefTotal]>
+  [ 89] setglobal 710 ........................... uniqueName = prefChunk[prefTotal]
+  [ 92] pushint8 10 ............................. <10>
+  [ 94] setglobal 691 ........................... theInitPhase = 10
+  [ 97] jmp [689]
+  [100] peek 0
+  [102] pushint8 4 .............................. <4>
+  [104] eq
+  [105] jmpifz [182] ............................ (case) 4:
+  [108] getglobal 708 ........................... <uniqueKey>
+  [111] pushcons 0 .............................. <EMPTY>
+  [113] nteq .................................... <uniqueKey <> EMPTY>
+  [114] jmpifz [144] ............................ if uniqueKey <> EMPTY then
+  [117] pushint8 9 .............................. <9>
+  [119] pusharglist 1 ........................... <9>
+  [121] extcall 429 ............................. <sprite(9)>
+  [124] pushcons 21 ............................. <"fromDirectorKey">
+  [126] getglobal 708 ........................... <uniqueKey>
+  [129] pusharglist 1 ........................... <uniqueKey>
+  [131] extcall 334 ............................. <string(uniqueKey)>
+  [134] pusharglistnoret 3 ...................... <sprite(9), "fromDirectorKey", string(uniqueKey)>
+  [136] objcall 439 ............................. sprite(9).setVariable("fromDirectorKey", string(uniqueKey))
+  [139] pushcons 0 .............................. <EMPTY>
+  [141] setglobal 708 ........................... uniqueKey = EMPTY
+  [144] pushint8 9 .............................. <9>
+  [146] pusharglist 1 ........................... <9>
+  [148] extcall 429 ............................. <sprite(9)>
+  [151] pushcons 22 ............................. <"fromDirectorPass">
+  [153] pushint8 1 .............................. <1>
+  [155] pusharglist 3 ........................... <sprite(9), "fromDirectorPass", 1>
+  [157] objcall 440 ............................. <sprite(9).getVariable("fromDirectorPass", 1)>
+  [160] setglobal 709 ........................... uniquePass = sprite(9).getVariable("fromDirectorPass", 1)
+  [163] getglobal 709 ........................... <uniquePass>
+  [166] getobjprop 134 .......................... <uniquePass.length>
+  [168] pushint8 9 .............................. <9>
+  [170] eq ...................................... <uniquePass.length = 9>
+  [171] jmpifz [179] ............................ if uniquePass.length = 9 then
+  [174] pushint8 5 .............................. <5>
+  [176] setglobal 691 ........................... theInitPhase = 5
+  [179] jmp [689]
+  [182] peek 0
+  [184] pushint8 5 .............................. <5>
+  [186] eq
+  [187] jmpifz [272] ............................ (case) 5:
+  [190] getglobal 753 ........................... <_PassKey_Pass>
+  [193] pushcons 0 .............................. <EMPTY>
+  [195] eq ...................................... <_PassKey_Pass = EMPTY>
+  [196] jmpifz [212] ............................ if _PassKey_Pass = EMPTY then / else
+  [199] getglobal 709 ........................... <uniquePass>
+  [202] pusharglist 1 ........................... <uniquePass>
+  [204] localcall 8 ............................. <special_FindPassWordName(uniquePass)>
+  [206] setglobal 710 ........................... uniqueName = special_FindPassWordName(uniquePass)
+  [209] jmp [247]
+  [212] getglobal 709 ........................... <uniquePass>
+  [215] getglobal 753 ........................... <_PassKey_Pass>
+  [218] eq ...................................... <uniquePass = _PassKey_Pass>
+  [219] jmpifz [247] ............................ if uniquePass = _PassKey_Pass then
+  [222] getglobal 754 ........................... <_PassKey_Name>
+  [225] setglobal 710 ........................... uniqueName = _PassKey_Name
+  [228] getglobal 151 ........................... <cTestIO>
+  [230] getglobal 260 ........................... <cGameDirectory>
+  [233] pushcons 16 ............................. <"PassKey.txt">
+  [235] joinstr ................................. <cGameDirectory & "PassKey.txt">
+  [236] pushzero ................................ <0>
+  [237] pusharglistnoret 3 ...................... <cTestIO, cGameDirectory & "PassKey.txt", 0>
+  [239] objcall 141 ............................. cTestIO.openfile(cGameDirectory & "PassKey.txt", 0)
+  [241] getglobal 151 ........................... <cTestIO>
+  [243] pusharglistnoret 1 ...................... <cTestIO>
+  [245] objcall 152 ............................. delete cTestIO
+  [247] getglobal 710 ........................... <uniqueName>
+  [250] pushcons 0 .............................. <EMPTY>
+  [252] eq ...................................... <uniqueName = EMPTY>
+  [253] jmpifz [264] ............................ if uniqueName = EMPTY then / else
+  [256] pushint8 6 .............................. <6>
+  [258] setglobal 691 ........................... theInitPhase = 6
+  [261] jmp [269]
+  [264] pushint8 10 ............................. <10>
+  [266] setglobal 691 ........................... theInitPhase = 10
+  [269] jmp [689]
+  [272] peek 0
+  [274] pushint8 6 .............................. <6>
+  [276] eq
+  [277] jmpifz [424] ............................ (case) 6:
+  [280] getglobal 711 ........................... <uniqueAttempt>
+  [283] pushint8 1 .............................. <1>
+  [285] add ..................................... <uniqueAttempt + 1>
+  [286] setglobal 711 ........................... uniqueAttempt = uniqueAttempt + 1
+  [289] getglobal 711 ........................... <uniqueAttempt>
+  [292] pushint8 7 .............................. <7>
+  [294] eq ...................................... <uniqueAttempt = 7>
+  [295] jmpifz [309] ............................ if uniqueAttempt = 7 then
+  [298] pusharglistnoret 0 ...................... <>
+  [300] extcall 462 ............................. finally_Quit()
+  [303] pop 1
+  [305] pusharglistnoret 0 ...................... <>
+  [307] extcall 137 ............................. return 
+  [309] getglobal 711 ........................... <uniqueAttempt>
+  [312] pushint8 3 .............................. <3>
+  [314] lteq .................................... <uniqueAttempt <= 3>
+  [315] jmpifz [342] ............................ if uniqueAttempt <= 3 then / else
+  [318] pushint8 9 .............................. <9>
+  [320] pusharglist 1 ........................... <9>
+  [322] extcall 429 ............................. <sprite(9)>
+  [325] pushcons 23 ............................. <"messageNum">
+  [327] pushint8 1 .............................. <1>
+  [329] pusharglist 1 ........................... <1>
+  [331] extcall 334 ............................. <string(1)>
+  [334] pusharglistnoret 3 ...................... <sprite(9), "messageNum", string(1)>
+  [336] objcall 439 ............................. sprite(9).setVariable("messageNum", string(1))
+  [339] jmp [363]
+  [342] pushint8 9 .............................. <9>
+  [344] pusharglist 1 ........................... <9>
+  [346] extcall 429 ............................. <sprite(9)>
+  [349] pushcons 23 ............................. <"messageNum">
+  [351] pushint8 2 .............................. <2>
+  [353] pusharglist 1 ........................... <2>
+  [355] extcall 334 ............................. <string(2)>
+  [358] pusharglistnoret 3 ...................... <sprite(9), "messageNum", string(2)>
+  [360] objcall 439 ............................. sprite(9).setVariable("messageNum", string(2))
+  [363] gettoplevelprop 81 ...................... <_player>
+  [365] pusharglistnoret 1 ...................... <_player>
+  [367] objcall 82 .............................. _player.flushInputEvents()
+  [369] pushint8 9 .............................. <9>
+  [371] pusharglist 1 ........................... <9>
+  [373] extcall 429 ............................. <sprite(9)>
+  [376] pushcons 19 ............................. <"fromDirectorPuzzlePhase">
+  [378] pushint8 30 ............................. <30>
+  [380] pusharglist 1 ........................... <30>
+  [382] extcall 334 ............................. <string(30)>
+  [385] pusharglistnoret 3 ...................... <sprite(9), "fromDirectorPuzzlePhase", string(30)>
+  [387] objcall 439 ............................. sprite(9).setVariable("fromDirectorPuzzlePhase", string(30))
+  [390] pushint8 9 .............................. <9>
+  [392] pusharglist 1 ........................... <9>
+  [394] extcall 429 ............................. <sprite(9)>
+  [397] pushcons 22 ............................. <"fromDirectorPass">
+  [399] pushcons 0 .............................. <EMPTY>
+  [401] pusharglistnoret 3 ...................... <sprite(9), "fromDirectorPass", EMPTY>
+  [403] objcall 439 ............................. sprite(9).setVariable("fromDirectorPass", EMPTY)
+  [406] pushcons 0 .............................. <EMPTY>
+  [408] setglobal 709 ........................... uniquePass = EMPTY
+  [411] pushcons 0 .............................. <EMPTY>
+  [413] setglobal 710 ........................... uniqueName = EMPTY
+  [416] pushint8 4 .............................. <4>
+  [418] setglobal 691 ........................... theInitPhase = 4
+  [421] jmp [689]
+  [424] peek 0
+  [426] pushint8 10 ............................. <10>
+  [428] eq
+  [429] jmpifz [514] ............................ (case) 10:
+  [432] pusharglistnoret 0 ...................... <>
+  [434] localcall 4 ............................. specialStartTime()
+  [436] pushint8 9 .............................. <9>
+  [438] pusharglist 1 ........................... <9>
+  [440] extcall 429 ............................. <sprite(9)>
+  [443] pushcons 19 ............................. <"fromDirectorPuzzlePhase">
+  [445] pushint8 40 ............................. <40>
+  [447] pusharglist 1 ........................... <40>
+  [449] extcall 334 ............................. <string(40)>
+  [452] pusharglistnoret 3 ...................... <sprite(9), "fromDirectorPuzzlePhase", string(40)>
+  [454] objcall 439 ............................. sprite(9).setVariable("fromDirectorPuzzlePhase", string(40))
+  [457] pushint8 9 .............................. <9>
+  [459] pusharglist 1 ........................... <9>
+  [461] extcall 429 ............................. <sprite(9)>
+  [464] pushcons 24 ............................. <"fromDirectorName">
+  [466] getglobal 710 ........................... <uniqueName>
+  [469] pusharglist 1 ........................... <uniqueName>
+  [471] extcall 334 ............................. <string(uniqueName)>
+  [474] pusharglistnoret 3 ...................... <sprite(9), "fromDirectorName", string(uniqueName)>
+  [476] objcall 439 ............................. sprite(9).setVariable("fromDirectorName", string(uniqueName))
+  [479] getglobal 157 ........................... <prefChunk>
+  [481] getglobal 257 ........................... <prefTotal>
+  [484] pusharglist 2 ........................... <prefChunk, prefTotal>
+  [486] objcall 17 .............................. <prefChunk[prefTotal]>
+  [488] pushcons 15 ............................. <"---">
+  [490] eq ...................................... <prefChunk[prefTotal] = "---">
+  [491] jmpifz [506] ............................ if prefChunk[prefTotal] = "---" then
+  [494] getglobal 157 ........................... <prefChunk>
+  [496] getglobal 257 ........................... <prefTotal>
+  [499] getglobal 710 ........................... <uniqueName>
+  [502] pusharglistnoret 3 ...................... <prefChunk, prefTotal, uniqueName>
+  [504] objcall 35 .............................. prefChunk[prefTotal] = uniqueName
+  [506] pushint8 11 ............................. <11>
+  [508] setglobal 691 ........................... theInitPhase = 11
+  [511] jmp [689]
+  [514] peek 0
+  [516] pushint8 11 ............................. <11>
+  [518] eq
+  [519] jmpifz [562] ............................ (case) 11:
+  [522] pushint8 9 .............................. <9>
+  [524] pusharglist 1 ........................... <9>
+  [526] extcall 429 ............................. <sprite(9)>
+  [529] pushcons 25 ............................. <"fromFlashPuzzlePhase">
+  [531] pusharglist 2 ........................... <sprite(9), "fromFlashPuzzlePhase">
+  [533] objcall 440 ............................. <sprite(9).getVariable("fromFlashPuzzlePhase")>
+  [536] setlocal 0 .............................. N = sprite(9).getVariable("fromFlashPuzzlePhase")
+  [538] getlocal 0 .............................. <N>
+  [540] pusharglist 1 ........................... <N>
+  [542] extcall 42 .............................. <integer(N)>
+  [544] setlocal 0 .............................. N = integer(N)
+  [546] getlocal 0 .............................. <N>
+  [548] pushint8 100 ............................ <100>
+  [550] eq ...................................... <N = 100>
+  [551] jmpifz [559] ............................ if N = 100 then
+  [554] pushint8 12 ............................. <12>
+  [556] setglobal 691 ........................... theInitPhase = 12
+  [559] jmp [689]
+  [562] peek 0
+  [564] pushint8 12 ............................. <12>
+  [566] eq
+  [567] jmpifz [617] ............................ (case) 12:
+  [570] pushcons 0 .............................. <EMPTY>
+  [572] pushint8 3 .............................. <3>
+  [574] set 0 ................................... set the keyDownScript to EMPTY
+  [576] pusharglistnoret 0 ...................... <>
+  [578] extcall 636 ............................. init_StartGame()
+  [581] getglobal 710 ........................... <uniqueName>
+  [584] pushcons 26 ............................. <"^DR$_GMlsLT~ydL">
+  [586] pusharglist 1 ........................... <"^DR$_GMlsLT~ydL">
+  [588] localcall 11 ............................ <decodeZip("^DR$_GMlsLT~ydL")>
+  [590] eq ...................................... <uniqueName = decodeZip("^DR$_GMlsLT~ydL")>
+  [591] jmpifz [609] ............................ if uniqueName = decodeZip("^DR$_GMlsLT~ydL") then
+  [594] pushint8 1 .............................. <1>
+  [596] setglobal 745 ........................... theDataStatus = 1
+  [599] pushcons 27 ............................. <"]W<.r~H5dcd">
+  [601] pusharglist 1 ........................... <"]W<.r~H5dcd">
+  [603] localcall 11 ............................ <decodeZip("]W<.r~H5dcd")>
+  [605] pusharglistnoret 1 ...................... <decodeZip("]W<.r~H5dcd")>
+  [607] extcall 174 ............................. _PUT(decodeZip("]W<.r~H5dcd"))
+  [609] pushint8 13 ............................. <13>
+  [611] setglobal 691 ........................... theInitPhase = 13
+  [614] jmp [689]
+  [617] peek 0
+  [619] pushint8 13 ............................. <13>
+  [621] eq
+  [622] jmpifz [689] ............................ (case) 13:
+  [625] pusharglist 0 ........................... <>
+  [627] localcall 5 ............................. <specialFinishTime()>
+  [629] pushint8 1 .............................. <1>
+  [631] eq ...................................... <specialFinishTime() = 1>
+  [632] jmpifz [689] ............................ if specialFinishTime() = 1 then
+  [635] getglobal 745 ........................... <theDataStatus>
+  [638] pushint8 1 .............................. <1>
+  [640] eq ...................................... <theDataStatus = 1>
+  [641] jmpifz [665] ............................ if theDataStatus = 1 then
+  [644] pusharglistnoret 0 ...................... <>
+  [646] extcall 500 ............................. setPrefList()
+  [649] pusharglistnoret 0 ...................... <>
+  [651] extcall 637 ............................. init_LaunchGame()
+  [654] pushint8 14 ............................. <14>
+  [656] setglobal 691 ........................... theInitPhase = 14
+  [659] pop 1
+  [661] pusharglistnoret 0 ...................... <>
+  [663] extcall 137 ............................. return 
+  [665] pusharglistnoret 0 ...................... <>
+  [667] extcall 500 ............................. setPrefList()
+  [670] pushzero ................................ <0>
+  [671] pushint8 1 .............................. <1>
+  [673] pusharglistnoret 2 ...................... <0, 1>
+  [675] extcall 490 ............................. _Launch_Tokens(0, 1)
+  [678] pushint8 14 ............................. <14>
+  [680] setglobal 691 ........................... theInitPhase = 14
+  [683] pop 1
+  [685] pusharglistnoret 0 ...................... <>
+  [687] extcall 137 ............................. return 
+  [689] pop 1 ................................... end case
+  [691] gettoplevelprop 14 ...................... <_movie>
+  [693] pushint8 3 .............................. <3>
+  [695] pusharglistnoret 2 ...................... <_movie, 3>
+  [697] objcall 18 .............................. _movie.go(3)
+  [699] ret
+end
+
+on special_Frame_4
+  [  0] gettoplevelprop 14 ...................... <_movie>
+  [  2] pushint8 4 .............................. <4>
+  [  4] pusharglistnoret 2 ...................... <_movie, 4>
+  [  6] objcall 18 .............................. _movie.go(4)
+  [  8] ret
+end
+
+on specialStartTime
+  [  0] getglobal 695 ........................... <theGameStartTime>
+  [  3] pushzero ................................ <0>
+  [  4] eq ...................................... <theGameStartTime = 0>
+  [  5] jmpifz [ 19] ............................ if theGameStartTime = 0 then
+  [  8] gettoplevelprop 702 ..................... <_system>
+  [ 11] pusharglist 1 ........................... <_system>
+  [ 13] objcall 469 ............................. <_system.ticks()>
+  [ 16] setglobal 695 ........................... theGameStartTime = _system.ticks()
+  [ 19] ret
+end
+
+on specialFinishTime
+  [  0] gettoplevelprop 702 ..................... <_system>
+  [  3] pusharglist 1 ........................... <_system>
+  [  5] objcall 469 ............................. <_system.ticks()>
+  [  8] getglobal 695 ........................... <theGameStartTime>
+  [ 11] sub ..................................... <_system.ticks() - theGameStartTime>
+  [ 12] setlocal 0 .............................. T = _system.ticks() - theGameStartTime
+  [ 14] getlocal 0 .............................. <T>
+  [ 16] pushint16 240 ........................... <240>
+  [ 19] gt ...................................... <T > 240>
+  [ 20] jmpifz [ 29] ............................ if T > 240 then
+  [ 23] pushint8 1 .............................. <1>
+  [ 25] pusharglistnoret 1 ...................... <1>
+  [ 27] extcall 137 ............................. return 1
+  [ 29] pushzero ................................ <0>
+  [ 30] pusharglistnoret 1 ...................... <0>
+  [ 32] extcall 137 ............................. return 0
+  [ 34] ret
+end
+
+on special_Prefs
+  [  0] pusharglist 0 ........................... <>
+  [  2] extcall 313 ............................. <list()>
+  [  5] setglobal 157 ........................... prefChunk = list()
+  [  7] pusharglist 0 ........................... <>
+  [  9] extcall 313 ............................. <list()>
+  [ 12] setglobal 158 ........................... prefNumber = list()
+  [ 14] pushint8 14 ............................. <14>
+  [ 16] setglobal 257 ........................... prefTotal = 14
+  [ 19] pushint8 1 .............................. <1>
+  [ 21] setlocal 0
+  [ 23] getlocal 0
+  [ 25] pushint8 12 ............................. <12>
+  [ 27] lteq
+  [ 28] jmpifz [ 75] ............................ repeat with x = 1 to 12
+  [ 31] getglobal 158 ........................... <prefNumber>
+  [ 33] getlocal 0 .............................. <x>
+  [ 35] getlocal 0 .............................. <x>
+  [ 37] pushzero ................................ <0>
+  [ 38] pushzero ................................ <0>
+  [ 39] pusharglist 3 ........................... <x, 0, 0>
+  [ 41] extcall 16 .............................. <misc_PadNumber(x, 0, 0)>
+  [ 43] pushcons 28 ............................. <".txt">
+  [ 45] joinstr ................................. <misc_PadNumber(x, 0, 0) & ".txt">
+  [ 46] pusharglistnoret 3 ...................... <prefNumber, x, misc_PadNumber(x, 0, 0) & ".txt">
+  [ 48] objcall 35 .............................. prefNumber[x] = misc_PadNumber(x, 0, 0) & ".txt"
+  [ 50] getglobal 157 ........................... <prefChunk>
+  [ 52] getlocal 0 .............................. <x>
+  [ 54] getglobal 158 ........................... <prefNumber>
+  [ 56] getlocal 0 .............................. <x>
+  [ 58] pusharglist 2 ........................... <prefNumber, x>
+  [ 60] objcall 17 .............................. <prefNumber[x]>
+  [ 62] pusharglistnoret 3 ...................... <prefChunk, x, prefNumber[x]>
+  [ 64] objcall 35 .............................. prefChunk[x] = prefNumber[x]
+  [ 66] pushint8 1
+  [ 68] getlocal 0
+  [ 70] add
+  [ 71] setlocal 0
+  [ 73] endrepeat [ 23]
+  [ 75] getglobal 157 ........................... <prefChunk>
+  [ 77] getglobal 257 ........................... <prefTotal>
+  [ 80] pushint8 1 .............................. <1>
+  [ 82] sub ..................................... <prefTotal - 1>
+  [ 83] pushcons 29 ............................. <"00">
+  [ 85] pusharglistnoret 3 ...................... <prefChunk, prefTotal - 1, "00">
+  [ 87] objcall 35 .............................. prefChunk[prefTotal - 1] = "00"
+  [ 89] getglobal 157 ........................... <prefChunk>
+  [ 91] getglobal 257 ........................... <prefTotal>
+  [ 94] pushcons 15 ............................. <"---">
+  [ 96] pusharglistnoret 3 ...................... <prefChunk, prefTotal, "---">
+  [ 98] objcall 35 .............................. prefChunk[prefTotal] = "---"
+  [100] pushcons 30 ............................. <"zip-code">
+  [102] pusharglist 1 ........................... <"zip-code">
+  [104] extcall 612 ............................. <member("zip-code")>
+  [107] getobjprop 657 .......................... <member("zip-code").text>
+  [110] setlocal 1 .............................. S = member("zip-code").text
+  [112] pusharglist 0 ........................... <>
+  [114] extcall 313 ............................. <list()>
+  [117] setglobal 663 ........................... zipCode = list()
+  [120] pushint8 1 .............................. <1>
+  [122] setlocal 0
+  [124] getlocal 0
+  [126] pushint8 94 ............................. <94>
+  [128] lteq
+  [129] jmpifz [167] ............................ repeat with x = 1 to 94
+  [132] getglobal 663 ........................... <zipCode>
+  [135] getlocal 0 .............................. <x>
+  [137] getlocal 1 .............................. <S>
+  [139] pushsymb 135 ............................ <#char>
+  [141] getlocal 0 .............................. <x>
+  [143] pusharglist 3 ........................... <S, #char, x>
+  [145] objcall 136 ............................. <S.char[x]>
+  [147] pusharglist 1 ........................... <S.char[x]>
+  [149] extcall 86 .............................. <charToNum(S.char[x])>
+  [151] pushint8 32 ............................. <32>
+  [153] sub ..................................... <charToNum(S.char[x]) - 32>
+  [154] pusharglistnoret 3 ...................... <zipCode, x, charToNum(S.char[x]) - 32>
+  [156] objcall 35 .............................. zipCode[x] = charToNum(S.char[x]) - 32
+  [158] pushint8 1
+  [160] getlocal 0
+  [162] add
+  [163] setlocal 0
+  [165] endrepeat [124]
+  [167] pusharglistnoret 0 ...................... <>
+  [169] extcall 499 ............................. getPrefList()
+  [172] gettoplevelprop 52 ...................... <_key>
+  [174] getobjprop 53 ........................... <_key.shiftDown>
+  [176] pushint8 1 .............................. <1>
+  [178] eq ...................................... <_key.shiftDown = 1>
+  [179] jmpifz [193] ............................ if _key.shiftDown = 1 then
+  [182] getglobal 157 ........................... <prefChunk>
+  [184] getglobal 257 ........................... <prefTotal>
+  [187] pushcons 15 ............................. <"---">
+  [189] pusharglistnoret 3 ...................... <prefChunk, prefTotal, "---">
+  [191] objcall 35 .............................. prefChunk[prefTotal] = "---"
+  [193] getglobal 157 ........................... <prefChunk>
+  [195] getglobal 257 ........................... <prefTotal>
+  [198] pusharglist 2 ........................... <prefChunk, prefTotal>
+  [200] objcall 17 .............................. <prefChunk[prefTotal]>
+  [202] pushcons 15 ............................. <"---">
+  [204] eq ...................................... <prefChunk[prefTotal] = "---">
+  [205] jmpifz [256] ............................ if prefChunk[prefTotal] = "---" then
+  [208] pushint8 8 .............................. <8>
+  [210] pusharglist 1 ........................... <8>
+  [212] extcall 429 ............................. <sprite(8)>
+  [215] pushcons 19 ............................. <"fromDirectorPuzzlePhase">
+  [217] pushint8 40 ............................. <40>
+  [219] pusharglist 1 ........................... <40>
+  [221] extcall 334 ............................. <string(40)>
+  [224] pusharglistnoret 3 ...................... <sprite(8), "fromDirectorPuzzlePhase", string(40)>
+  [226] objcall 439 ............................. sprite(8).setVariable("fromDirectorPuzzlePhase", string(40))
+  [229] pushint8 8 .............................. <8>
+  [231] pusharglist 1 ........................... <8>
+  [233] extcall 429 ............................. <sprite(8)>
+  [236] pushcons 24 ............................. <"fromDirectorName">
+  [238] getglobal 157 ........................... <prefChunk>
+  [240] getglobal 257 ........................... <prefTotal>
+  [243] pusharglist 2 ........................... <prefChunk, prefTotal>
+  [245] objcall 17 .............................. <prefChunk[prefTotal]>
+  [247] pusharglistnoret 3 ...................... <sprite(8), "fromDirectorName", prefChunk[prefTotal]>
+  [249] objcall 439 ............................. sprite(8).setVariable("fromDirectorName", prefChunk[prefTotal])
+  [252] pusharglistnoret 0 ...................... <>
+  [254] localcall 4 ............................. specialStartTime()
+  [256] ret
+end
+
+on special_ReadDataChunk
+  [  0] getglobal 707 ........................... <theDataChunk>
+  [  3] getobjprop 134 .......................... <theDataChunk.length>
+  [  5] setlocal 0 .............................. len = theDataChunk.length
+  [  7] getglobal 707 ........................... <theDataChunk>
+  [ 10] pushsymb 135 ............................ <#char>
+  [ 12] pushint8 1 .............................. <1>
+  [ 14] pushint8 13 ............................. <13>
+  [ 16] pusharglist 4 ........................... <theDataChunk, #char, 1, 13>
+  [ 18] objcall 136 ............................. <theDataChunk.char[1..13]>
+  [ 20] setlocal 1 .............................. N = theDataChunk.char[1..13]
+  [ 22] getlocal 1 .............................. <N>
+  [ 24] pusharglist 1 ........................... <N>
+  [ 26] localcall 11 ............................ <decodeZip(N)>
+  [ 28] setlocal 1 .............................. N = decodeZip(N)
+  [ 30] getlocal 1 .............................. <N>
+  [ 32] pusharglist 1 ........................... <N>
+  [ 34] extcall 42 .............................. <integer(N)>
+  [ 36] setlocal 2 .............................. totalLong = integer(N)
+  [ 38] getglobal 707 ........................... <theDataChunk>
+  [ 41] pushsymb 135 ............................ <#char>
+  [ 43] pushint8 14 ............................. <14>
+  [ 45] pushint8 26 ............................. <26>
+  [ 47] pusharglist 4 ........................... <theDataChunk, #char, 14, 26>
+  [ 49] objcall 136 ............................. <theDataChunk.char[14..26]>
+  [ 51] setlocal 1 .............................. N = theDataChunk.char[14..26]
+  [ 53] getlocal 1 .............................. <N>
+  [ 55] pusharglist 1 ........................... <N>
+  [ 57] localcall 11 ............................ <decodeZip(N)>
+  [ 59] setlocal 1 .............................. N = decodeZip(N)
+  [ 61] getlocal 1 .............................. <N>
+  [ 63] pusharglist 1 ........................... <N>
+  [ 65] extcall 42 .............................. <integer(N)>
+  [ 67] setlocal 3 .............................. totalName = integer(N)
+  [ 69] getglobal 707 ........................... <theDataChunk>
+  [ 72] pushsymb 135 ............................ <#char>
+  [ 74] pushint8 27 ............................. <27>
+  [ 76] getglobal 707 ........................... <theDataChunk>
+  [ 79] getobjprop 134 .......................... <theDataChunk.length>
+  [ 81] pusharglist 4 ........................... <theDataChunk, #char, 27, theDataChunk.length>
+  [ 83] objcall 136 ............................. <theDataChunk.char[27..theDataChunk.length]>
+  [ 85] setglobal 707 ........................... theDataChunk = theDataChunk.char[27..theDataChunk.length]
+  [ 88] getglobal 707 ........................... <theDataChunk>
+  [ 91] pushsymb 135 ............................ <#char>
+  [ 93] pushint8 1 .............................. <1>
+  [ 95] getlocal 2 .............................. <totalLong>
+  [ 97] pusharglist 4 ........................... <theDataChunk, #char, 1, totalLong>
+  [ 99] objcall 136 ............................. <theDataChunk.char[1..totalLong]>
+  [101] setlocal 4 .............................. chunkLong = theDataChunk.char[1..totalLong]
+  [103] getglobal 707 ........................... <theDataChunk>
+  [106] pushsymb 135 ............................ <#char>
+  [108] getlocal 2 .............................. <totalLong>
+  [110] pushint8 1 .............................. <1>
+  [112] add ..................................... <totalLong + 1>
+  [113] getglobal 707 ........................... <theDataChunk>
+  [116] getobjprop 134 .......................... <theDataChunk.length>
+  [118] pusharglist 4 ........................... <theDataChunk, #char, totalLong + 1, theDataChunk.length>
+  [120] objcall 136 ............................. <theDataChunk.char[totalLong + 1..theDataChunk.length]>
+  [122] setlocal 5 .............................. chunkName = theDataChunk.char[totalLong + 1..theDataChunk.length]
+  [124] getlocal 4 .............................. <chunkLong>
+  [126] pusharglist 1 ........................... <chunkLong>
+  [128] localcall 11 ............................ <decodeZip(chunkLong)>
+  [130] setlocal 4 .............................. chunkLong = decodeZip(chunkLong)
+  [132] pushcons 17 ............................. <"|">
+  [134] getlocal 4 .............................. <chunkLong>
+  [136] pusharglist 2 ........................... <"|", chunkLong>
+  [138] extcall 211 ............................. <offset("|", chunkLong)>
+  [140] setlocal 6 .............................. pos = offset("|", chunkLong)
+  [142] getlocal 4 .............................. <chunkLong>
+  [144] pushsymb 135 ............................ <#char>
+  [146] pushint8 1 .............................. <1>
+  [148] getlocal 6 .............................. <pos>
+  [150] pushint8 1 .............................. <1>
+  [152] sub ..................................... <pos - 1>
+  [153] pusharglist 4 ........................... <chunkLong, #char, 1, pos - 1>
+  [155] objcall 136 ............................. <chunkLong.char[1..pos - 1]>
+  [157] setlocal 1 .............................. N = chunkLong.char[1..pos - 1]
+  [159] getlocal 1 .............................. <N>
+  [161] pusharglist 1 ........................... <N>
+  [163] extcall 42 .............................. <integer(N)>
+  [165] setglobal 746 ........................... theDataTotal = integer(N)
+  [168] getlocal 4 .............................. <chunkLong>
+  [170] pushsymb 135 ............................ <#char>
+  [172] getlocal 6 .............................. <pos>
+  [174] pushint8 1 .............................. <1>
+  [176] add ..................................... <pos + 1>
+  [177] getlocal 4 .............................. <chunkLong>
+  [179] getobjprop 134 .......................... <chunkLong.length>
+  [181] pusharglist 4 ........................... <chunkLong, #char, pos + 1, chunkLong.length>
+  [183] objcall 136 ............................. <chunkLong.char[pos + 1..chunkLong.length]>
+  [185] setlocal 4 .............................. chunkLong = chunkLong.char[pos + 1..chunkLong.length]
+  [187] pusharglist 0 ........................... <>
+  [189] extcall 313 ............................. <list()>
+  [192] setlocal 7 .............................. arrayLong = list()
+  [194] pushint8 1 .............................. <1>
+  [196] setlocal 8
+  [198] getlocal 8
+  [200] getglobal 746 ........................... <theDataTotal>
+  [203] lteq
+  [204] jmpifz [276] ............................ repeat with x = 1 to theDataTotal
+  [207] pushcons 17 ............................. <"|">
+  [209] getlocal 4 .............................. <chunkLong>
+  [211] pusharglist 2 ........................... <"|", chunkLong>
+  [213] extcall 211 ............................. <offset("|", chunkLong)>
+  [215] setlocal 6 .............................. pos = offset("|", chunkLong)
+  [217] getlocal 4 .............................. <chunkLong>
+  [219] pushsymb 135 ............................ <#char>
+  [221] pushint8 1 .............................. <1>
+  [223] getlocal 6 .............................. <pos>
+  [225] pushint8 1 .............................. <1>
+  [227] sub ..................................... <pos - 1>
+  [228] pusharglist 4 ........................... <chunkLong, #char, 1, pos - 1>
+  [230] objcall 136 ............................. <chunkLong.char[1..pos - 1]>
+  [232] setlocal 1 .............................. N = chunkLong.char[1..pos - 1]
+  [234] getlocal 7 .............................. <arrayLong>
+  [236] getlocal 8 .............................. <x>
+  [238] getlocal 1 .............................. <N>
+  [240] pusharglist 1 ........................... <N>
+  [242] extcall 42 .............................. <integer(N)>
+  [244] pusharglistnoret 3 ...................... <arrayLong, x, integer(N)>
+  [246] objcall 35 .............................. arrayLong[x] = integer(N)
+  [248] getlocal 4 .............................. <chunkLong>
+  [250] pushsymb 135 ............................ <#char>
+  [252] getlocal 6 .............................. <pos>
+  [254] pushint8 1 .............................. <1>
+  [256] add ..................................... <pos + 1>
+  [257] getlocal 4 .............................. <chunkLong>
+  [259] getobjprop 134 .......................... <chunkLong.length>
+  [261] pusharglist 4 ........................... <chunkLong, #char, pos + 1, chunkLong.length>
+  [263] objcall 136 ............................. <chunkLong.char[pos + 1..chunkLong.length]>
+  [265] setlocal 4 .............................. chunkLong = chunkLong.char[pos + 1..chunkLong.length]
+  [267] pushint8 1
+  [269] getlocal 8
+  [271] add
+  [272] setlocal 8
+  [274] endrepeat [198]
+  [276] pusharglist 0 ........................... <>
+  [278] extcall 313 ............................. <list()>
+  [281] setglobal 747 ........................... theDataName = list()
+  [284] pusharglist 0 ........................... <>
+  [286] extcall 313 ............................. <list()>
+  [289] setglobal 748 ........................... theDataTrue = list()
+  [292] pushint8 1 .............................. <1>
+  [294] setlocal 8
+  [296] getlocal 8
+  [298] getglobal 746 ........................... <theDataTotal>
+  [301] lteq
+  [302] jmpifz [403] ............................ repeat with x = 1 to theDataTotal
+  [305] getglobal 747 ........................... <theDataName>
+  [308] getlocal 8 .............................. <x>
+  [310] getlocal 5 .............................. <chunkName>
+  [312] pushsymb 135 ............................ <#char>
+  [314] pushint8 1 .............................. <1>
+  [316] getlocal 7 .............................. <arrayLong>
+  [318] getlocal 8 .............................. <x>
+  [320] pusharglist 2 ........................... <arrayLong, x>
+  [322] objcall 17 .............................. <arrayLong[x]>
+  [324] pusharglist 4 ........................... <chunkName, #char, 1, arrayLong[x]>
+  [326] objcall 136 ............................. <chunkName.char[1..arrayLong[x]]>
+  [328] pusharglistnoret 3 ...................... <theDataName, x, chunkName.char[1..arrayLong[x]]>
+  [330] objcall 35 .............................. theDataName[x] = chunkName.char[1..arrayLong[x]]
+  [332] getlocal 5 .............................. <chunkName>
+  [334] pushsymb 135 ............................ <#char>
+  [336] getlocal 7 .............................. <arrayLong>
+  [338] getlocal 8 .............................. <x>
+  [340] pusharglist 2 ........................... <arrayLong, x>
+  [342] objcall 17 .............................. <arrayLong[x]>
+  [344] pushint8 1 .............................. <1>
+  [346] add ..................................... <arrayLong[x] + 1>
+  [347] getlocal 5 .............................. <chunkName>
+  [349] getobjprop 134 .......................... <chunkName.length>
+  [351] pusharglist 4 ........................... <chunkName, #char, arrayLong[x] + 1, chunkName.length>
+  [353] objcall 136 ............................. <chunkName.char[arrayLong[x] + 1..chunkName.length]>
+  [355] setlocal 5 .............................. chunkName = chunkName.char[arrayLong[x] + 1..chunkName.length]
+  [357] getglobal 748 ........................... <theDataTrue>
+  [360] getlocal 8 .............................. <x>
+  [362] getlocal 5 .............................. <chunkName>
+  [364] pushsymb 135 ............................ <#char>
+  [366] pushint8 1 .............................. <1>
+  [368] pushint8 10 ............................. <10>
+  [370] pusharglist 4 ........................... <chunkName, #char, 1, 10>
+  [372] objcall 136 ............................. <chunkName.char[1..10]>
+  [374] pusharglistnoret 3 ...................... <theDataTrue, x, chunkName.char[1..10]>
+  [376] objcall 35 .............................. theDataTrue[x] = chunkName.char[1..10]
+  [378] getlocal 5 .............................. <chunkName>
+  [380] pushsymb 135 ............................ <#char>
+  [382] pushint8 11 ............................. <11>
+  [384] getlocal 5 .............................. <chunkName>
+  [386] getobjprop 134 .......................... <chunkName.length>
+  [388] pusharglist 4 ........................... <chunkName, #char, 11, chunkName.length>
+  [390] objcall 136 ............................. <chunkName.char[11..chunkName.length]>
+  [392] setlocal 5 .............................. chunkName = chunkName.char[11..chunkName.length]
+  [394] pushint8 1
+  [396] getlocal 8
+  [398] add
+  [399] setlocal 8
+  [401] endrepeat [296]
+  [403] getglobal 160 ........................... <theDirectorVersion>
+  [405] pushint8 10 ............................. <10>
+  [407] eq ...................................... <theDirectorVersion = 10>
+  [408] jmpifz [472] ............................ if theDirectorVersion = 10 then
+  [411] getglobal 748 ........................... <theDataTrue>
+  [414] getglobal 746 ........................... <theDataTotal>
+  [417] pusharglist 1 ........................... <theDataTotal>
+  [419] extcall 314 ............................. <random(theDataTotal)>
+  [422] pusharglist 2 ........................... <theDataTrue, random(theDataTotal)>
+  [424] objcall 17 .............................. <theDataTrue[random(theDataTotal)]>
+  [426] setlocal 9 .............................. S = theDataTrue[random(theDataTotal)]
+  [428] getlocal 9 .............................. <S>
+  [430] pusharglist 1 ........................... <S>
+  [432] localcall 11 ............................ <decodeZip(S)>
+  [434] setlocal 9 .............................. S = decodeZip(S)
+  [436] getlocal 9 .............................. <S>
+  [438] pusharglist 1 ........................... <S>
+  [440] localcall 8 ............................. <special_FindPassWordName(S)>
+  [442] setlocal 10 ............................. Q = special_FindPassWordName(S)
+  [444] getglobal 748 ........................... <theDataTrue>
+  [447] getglobal 746 ........................... <theDataTotal>
+  [450] pusharglist 2 ........................... <theDataTrue, theDataTotal>
+  [452] objcall 17 .............................. <theDataTrue[theDataTotal]>
+  [454] setlocal 9 .............................. S = theDataTrue[theDataTotal]
+  [456] getlocal 9 .............................. <S>
+  [458] pusharglist 1 ........................... <S>
+  [460] localcall 11 ............................ <decodeZip(S)>
+  [462] setlocal 9 .............................. S = decodeZip(S)
+  [464] getlocal 9 .............................. <S>
+  [466] pusharglist 1 ........................... <S>
+  [468] localcall 8 ............................. <special_FindPassWordName(S)>
+  [470] setlocal 10 ............................. Q = special_FindPassWordName(S)
+  [472] ret
+end
+
+on special_FindPassWordName S
+  [  0] pushcons 31 ............................. <"zip-mark">
+  [  2] pusharglist 1 ........................... <"zip-mark">
+  [  4] extcall 612 ............................. <member("zip-mark")>
+  [  7] getobjprop 657 .......................... <member("zip-mark").text>
+  [ 10] setlocal 0 .............................. ZM = member("zip-mark").text
+  [ 12] pusharglist 0 ........................... <>
+  [ 14] extcall 313 ............................. <list()>
+  [ 17] setlocal 1 .............................. find = list()
+  [ 19] pushint8 1 .............................. <1>
+  [ 21] setlocal 2
+  [ 23] getlocal 2
+  [ 25] getlocal 0 .............................. <ZM>
+  [ 27] getobjprop 134 .......................... <ZM.length>
+  [ 29] lteq
+  [ 30] jmpifz [ 58] ............................ repeat with x = 1 to ZM.length
+  [ 33] getlocal 1 .............................. <find>
+  [ 35] getlocal 2 .............................. <x>
+  [ 37] getparam 0 .............................. <S>
+  [ 39] getlocal 2 .............................. <x>
+  [ 41] pusharglist 2 ........................... <S, x>
+  [ 43] localcall 12 ............................ <encodeZipNum(S, x)>
+  [ 45] pusharglistnoret 3 ...................... <find, x, encodeZipNum(S, x)>
+  [ 47] objcall 35 .............................. find[x] = encodeZipNum(S, x)
+  [ 49] pushint8 1
+  [ 51] getlocal 2
+  [ 53] add
+  [ 54] setlocal 2
+  [ 56] endrepeat [ 23]
+  [ 58] pushzero ................................ <0>
+  [ 59] setlocal 3 .............................. found = 0
+  [ 61] pushint8 1 .............................. <1>
+  [ 63] setlocal 4
+  [ 65] getlocal 4
+  [ 67] getglobal 746 ........................... <theDataTotal>
+  [ 70] lteq
+  [ 71] jmpifz [205] ............................ repeat with y = 1 to theDataTotal
+  [ 74] pushint8 1 .............................. <1>
+  [ 76] setlocal 2
+  [ 78] getlocal 2
+  [ 80] getlocal 0 .............................. <ZM>
+  [ 82] getobjprop 134 .......................... <ZM.length>
+  [ 84] lteq
+  [ 85] jmpifz [185] ............................ repeat with x = 1 to ZM.length
+  [ 88] getlocal 1 .............................. <find>
+  [ 90] getlocal 2 .............................. <x>
+  [ 92] pusharglist 2 ........................... <find, x>
+  [ 94] objcall 17 .............................. <find[x]>
+  [ 96] getglobal 748 ........................... <theDataTrue>
+  [ 99] getlocal 4 .............................. <y>
+  [101] pusharglist 2 ........................... <theDataTrue, y>
+  [103] objcall 17 .............................. <theDataTrue[y]>
+  [105] eq ...................................... <find[x] = theDataTrue[y]>
+  [106] jmpifz [165] ............................ if find[x] = theDataTrue[y] then
+  [109] getglobal 747 ........................... <theDataName>
+  [112] getlocal 4 .............................. <y>
+  [114] pusharglist 2 ........................... <theDataName, y>
+  [116] objcall 17 .............................. <theDataName[y]>
+  [118] pusharglist 1 ........................... <theDataName[y]>
+  [120] localcall 11 ............................ <decodeZip(theDataName[y])>
+  [122] setlocal 5 .............................. S1 = decodeZip(theDataName[y])
+  [124] getglobal 748 ........................... <theDataTrue>
+  [127] getlocal 4 .............................. <y>
+  [129] pusharglist 2 ........................... <theDataTrue, y>
+  [131] objcall 17 .............................. <theDataTrue[y]>
+  [133] pusharglist 1 ........................... <theDataTrue[y]>
+  [135] localcall 11 ............................ <decodeZip(theDataTrue[y])>
+  [137] setlocal 6 .............................. s2 = decodeZip(theDataTrue[y])
+  [139] getlocal 5 .............................. <S1>
+  [141] pushsymb 135 ............................ <#char>
+  [143] pushint8 1 .............................. <1>
+  [145] pushint8 4 .............................. <4>
+  [147] pusharglist 4 ........................... <S1, #char, 1, 4>
+  [149] objcall 136 ............................. <S1.char[1..4]>
+  [151] setlocal 7 .............................. s3 = S1.char[1..4]
+  [153] getlocal 7 .............................. <s3>
+  [155] pusharglist 1 ........................... <s3>
+  [157] extcall 42 .............................. <integer(s3)>
+  [159] setlocal 8 .............................. N = integer(s3)
+  [161] pushint8 1 .............................. <1>
+  [163] setlocal 3 .............................. found = 1
+  [165] getlocal 3 .............................. <found>
+  [167] pushint8 1 .............................. <1>
+  [169] eq ...................................... <found = 1>
+  [170] jmpifz [176] ............................ if found = 1 then
+  [173] jmp [185] ............................... exit repeat
+  [176] pushint8 1
+  [178] getlocal 2
+  [180] add
+  [181] setlocal 2
+  [183] endrepeat [ 78]
+  [185] getlocal 3 .............................. <found>
+  [187] pushint8 1 .............................. <1>
+  [189] eq ...................................... <found = 1>
+  [190] jmpifz [196] ............................ if found = 1 then
+  [193] jmp [205] ............................... exit repeat
+  [196] pushint8 1
+  [198] getlocal 4
+  [200] add
+  [201] setlocal 4
+  [203] endrepeat [ 65]
+  [205] getlocal 3 .............................. <found>
+  [207] pushzero ................................ <0>
+  [208] eq ...................................... <found = 0>
+  [209] jmpifz [221] ............................ if found = 0 then / else
+  [212] pushcons 0 .............................. <EMPTY>
+  [214] pusharglistnoret 1 ...................... <EMPTY>
+  [216] extcall 137 ............................. return EMPTY
+  [218] jmp [243]
+  [221] getlocal 5 .............................. <S1>
+  [223] pushsymb 135 ............................ <#char>
+  [225] pushint8 5 .............................. <5>
+  [227] getlocal 5 .............................. <S1>
+  [229] getobjprop 134 .......................... <S1.length>
+  [231] pusharglist 4 ........................... <S1, #char, 5, S1.length>
+  [233] objcall 136 ............................. <S1.char[5..S1.length]>
+  [235] setlocal 5 .............................. S1 = S1.char[5..S1.length]
+  [237] getlocal 5 .............................. <S1>
+  [239] pusharglistnoret 1 ...................... <S1>
+  [241] extcall 137 ............................. return S1
+  [243] ret
+end
+
+on getFileKeyWord
+  [  0] pushcons 32 ............................. <"Wise men make proverbs, but fools repeat them.">
+  [  2] pusharglistnoret 1 ...................... <"Wise men make proverbs, but fools repeat them.">
+  [  4] extcall 137 ............................. return "Wise men make proverbs, but fools repeat them."
+  [  6] ret
+end
+
+on encodeZip S
+  [  0] pushcons 31 ............................. <"zip-mark">
+  [  2] pusharglist 1 ........................... <"zip-mark">
+  [  4] extcall 612 ............................. <member("zip-mark")>
+  [  7] getobjprop 657 .......................... <member("zip-mark").text>
+  [ 10] setlocal 0 .............................. ZM = member("zip-mark").text
+  [ 12] getlocal 0 .............................. <ZM>
+  [ 14] getobjprop 134 .......................... <ZM.length>
+  [ 16] pusharglist 1 ........................... <ZM.length>
+  [ 18] extcall 314 ............................. <random(ZM.length)>
+  [ 21] setlocal 1 .............................. ct = random(ZM.length)
+  [ 23] getlocal 0 .............................. <ZM>
+  [ 25] pushsymb 135 ............................ <#char>
+  [ 27] getlocal 1 .............................. <ct>
+  [ 29] pusharglist 3 ........................... <ZM, #char, ct>
+  [ 31] objcall 136 ............................. <ZM.char[ct]>
+  [ 33] setlocal 2 .............................. SS = ZM.char[ct]
+  [ 35] pushint8 1 .............................. <1>
+  [ 37] setlocal 3
+  [ 39] getlocal 3
+  [ 41] getparam 0 .............................. <S>
+  [ 43] getobjprop 134 .......................... <S.length>
+  [ 45] lteq
+  [ 46] jmpifz [178] ............................ repeat with x = 1 to S.length
+  [ 49] getparam 0 .............................. <S>
+  [ 51] pushsymb 135 ............................ <#char>
+  [ 53] getlocal 3 .............................. <x>
+  [ 55] pusharglist 3 ........................... <S, #char, x>
+  [ 57] objcall 136 ............................. <S.char[x]>
+  [ 59] pusharglist 1 ........................... <S.char[x]>
+  [ 61] extcall 86 .............................. <charToNum(S.char[x])>
+  [ 63] setlocal 4 .............................. N = charToNum(S.char[x])
+  [ 65] getlocal 4 .............................. <N>
+  [ 67] pushint8 32 ............................. <32>
+  [ 69] gteq .................................... <N >= 32>
+  [ 70] getlocal 4 .............................. <N>
+  [ 72] pushint8 126 ............................ <126>
+  [ 74] lteq .................................... <N <= 126>
+  [ 75] and ..................................... <(N >= 32) and (N <= 126)>
+  [ 76] jmpifz [154] ............................ if (N >= 32) and (N <= 126) then
+  [ 79] getlocal 1 .............................. <ct>
+  [ 81] pushint8 1 .............................. <1>
+  [ 83] add ..................................... <ct + 1>
+  [ 84] setlocal 1 .............................. ct = ct + 1
+  [ 86] getlocal 1 .............................. <ct>
+  [ 88] pushint8 94 ............................. <94>
+  [ 90] gt ...................................... <ct > 94>
+  [ 91] jmpifz [ 98] ............................ if ct > 94 then
+  [ 94] pushint8 1 .............................. <1>
+  [ 96] setlocal 1 .............................. ct = 1
+  [ 98] getparam 0 .............................. <S>
+  [100] pushsymb 135 ............................ <#char>
+  [102] getlocal 3 .............................. <x>
+  [104] pusharglist 3 ........................... <S, #char, x>
+  [106] objcall 136 ............................. <S.char[x]>
+  [108] pusharglist 1 ........................... <S.char[x]>
+  [110] extcall 86 .............................. <charToNum(S.char[x])>
+  [112] getglobal 663 ........................... <zipCode>
+  [115] getlocal 1 .............................. <ct>
+  [117] pusharglist 2 ........................... <zipCode, ct>
+  [119] objcall 17 .............................. <zipCode[ct]>
+  [121] add ..................................... <charToNum(S.char[x]) + zipCode[ct]>
+  [122] setlocal 4 .............................. N = charToNum(S.char[x]) + zipCode[ct]
+  [124] getlocal 4 .............................. <N>
+  [126] pushint8 126 ............................ <126>
+  [128] gt ...................................... <N > 126>
+  [129] jmpifz [139] ............................ if N > 126 then
+  [132] getlocal 4 .............................. <N>
+  [134] pushint8 94 ............................. <94>
+  [136] sub ..................................... <N - 94>
+  [137] setlocal 4 .............................. N = N - 94
+  [139] getlocal 2 .............................. <SS>
+  [141] getlocal 4 .............................. <N>
+  [143] pusharglist 1 ........................... <N>
+  [145] extcall 611 ............................. <numToChar(N)>
+  [148] joinstr ................................. <SS & numToChar(N)>
+  [149] setlocal 2 .............................. SS = SS & numToChar(N)
+  [151] jmp [169] ............................... next repeat
+  [154] getlocal 2 .............................. <SS>
+  [156] getparam 0 .............................. <S>
+  [158] pushsymb 135 ............................ <#char>
+  [160] getlocal 3 .............................. <x>
+  [162] pusharglist 3 ........................... <S, #char, x>
+  [164] objcall 136 ............................. <S.char[x]>
+  [166] joinstr ................................. <SS & S.char[x]>
+  [167] setlocal 2 .............................. SS = SS & S.char[x]
+  [169] pushint8 1
+  [171] getlocal 3
+  [173] add
+  [174] setlocal 3
+  [176] endrepeat [ 39]
+  [178] getlocal 2 .............................. <SS>
+  [180] pusharglistnoret 1 ...................... <SS>
+  [182] extcall 137 ............................. return SS
+  [184] ret
+end
+
+on decodeZip S
+  [  0] pushcons 31 ............................. <"zip-mark">
+  [  2] pusharglist 1 ........................... <"zip-mark">
+  [  4] extcall 612 ............................. <member("zip-mark")>
+  [  7] getobjprop 657 .......................... <member("zip-mark").text>
+  [ 10] setlocal 0 .............................. ZM = member("zip-mark").text
+  [ 12] pushzero ................................ <0>
+  [ 13] setlocal 1 .............................. ct = 0
+  [ 15] pushint8 1 .............................. <1>
+  [ 17] setlocal 2
+  [ 19] getlocal 2
+  [ 21] getlocal 0 .............................. <ZM>
+  [ 23] getobjprop 134 .......................... <ZM.length>
+  [ 25] lteq
+  [ 26] jmpifz [ 66] ............................ repeat with x = 1 to ZM.length
+  [ 29] getparam 0 .............................. <S>
+  [ 31] pushsymb 135 ............................ <#char>
+  [ 33] pushint8 1 .............................. <1>
+  [ 35] pusharglist 3 ........................... <S, #char, 1>
+  [ 37] objcall 136 ............................. <S.char[1]>
+  [ 39] getlocal 0 .............................. <ZM>
+  [ 41] pushsymb 135 ............................ <#char>
+  [ 43] getlocal 2 .............................. <x>
+  [ 45] pusharglist 3 ........................... <ZM, #char, x>
+  [ 47] objcall 136 ............................. <ZM.char[x]>
+  [ 49] eq ...................................... <S.char[1] = ZM.char[x]>
+  [ 50] jmpifz [ 57] ............................ if S.char[1] = ZM.char[x] then
+  [ 53] getlocal 2 .............................. <x>
+  [ 55] setlocal 1 .............................. ct = x
+  [ 57] pushint8 1
+  [ 59] getlocal 2
+  [ 61] add
+  [ 62] setlocal 2
+  [ 64] endrepeat [ 19]
+  [ 66] pushcons 0 .............................. <EMPTY>
+  [ 68] setlocal 3 .............................. SS = EMPTY
+  [ 70] pushint8 2 .............................. <2>
+  [ 72] setlocal 2
+  [ 74] getlocal 2
+  [ 76] getparam 0 .............................. <S>
+  [ 78] getobjprop 134 .......................... <S.length>
+  [ 80] lteq
+  [ 81] jmpifz [213] ............................ repeat with x = 2 to S.length
+  [ 84] getparam 0 .............................. <S>
+  [ 86] pushsymb 135 ............................ <#char>
+  [ 88] getlocal 2 .............................. <x>
+  [ 90] pusharglist 3 ........................... <S, #char, x>
+  [ 92] objcall 136 ............................. <S.char[x]>
+  [ 94] pusharglist 1 ........................... <S.char[x]>
+  [ 96] extcall 86 .............................. <charToNum(S.char[x])>
+  [ 98] setlocal 4 .............................. N = charToNum(S.char[x])
+  [100] getlocal 4 .............................. <N>
+  [102] pushint8 32 ............................. <32>
+  [104] gteq .................................... <N >= 32>
+  [105] getlocal 4 .............................. <N>
+  [107] pushint8 126 ............................ <126>
+  [109] lteq .................................... <N <= 126>
+  [110] and ..................................... <(N >= 32) and (N <= 126)>
+  [111] jmpifz [189] ............................ if (N >= 32) and (N <= 126) then
+  [114] getlocal 1 .............................. <ct>
+  [116] pushint8 1 .............................. <1>
+  [118] add ..................................... <ct + 1>
+  [119] setlocal 1 .............................. ct = ct + 1
+  [121] getlocal 1 .............................. <ct>
+  [123] pushint8 94 ............................. <94>
+  [125] gt ...................................... <ct > 94>
+  [126] jmpifz [133] ............................ if ct > 94 then
+  [129] pushint8 1 .............................. <1>
+  [131] setlocal 1 .............................. ct = 1
+  [133] getparam 0 .............................. <S>
+  [135] pushsymb 135 ............................ <#char>
+  [137] getlocal 2 .............................. <x>
+  [139] pusharglist 3 ........................... <S, #char, x>
+  [141] objcall 136 ............................. <S.char[x]>
+  [143] pusharglist 1 ........................... <S.char[x]>
+  [145] extcall 86 .............................. <charToNum(S.char[x])>
+  [147] getglobal 663 ........................... <zipCode>
+  [150] getlocal 1 .............................. <ct>
+  [152] pusharglist 2 ........................... <zipCode, ct>
+  [154] objcall 17 .............................. <zipCode[ct]>
+  [156] sub ..................................... <charToNum(S.char[x]) - zipCode[ct]>
+  [157] setlocal 4 .............................. N = charToNum(S.char[x]) - zipCode[ct]
+  [159] getlocal 4 .............................. <N>
+  [161] pushint8 32 ............................. <32>
+  [163] lt ...................................... <N < 32>
+  [164] jmpifz [174] ............................ if N < 32 then
+  [167] getlocal 4 .............................. <N>
+  [169] pushint8 94 ............................. <94>
+  [171] add ..................................... <N + 94>
+  [172] setlocal 4 .............................. N = N + 94
+  [174] getlocal 3 .............................. <SS>
+  [176] getlocal 4 .............................. <N>
+  [178] pusharglist 1 ........................... <N>
+  [180] extcall 611 ............................. <numToChar(N)>
+  [183] joinstr ................................. <SS & numToChar(N)>
+  [184] setlocal 3 .............................. SS = SS & numToChar(N)
+  [186] jmp [204] ............................... next repeat
+  [189] getlocal 3 .............................. <SS>
+  [191] getparam 0 .............................. <S>
+  [193] pushsymb 135 ............................ <#char>
+  [195] getlocal 2 .............................. <x>
+  [197] pusharglist 3 ........................... <S, #char, x>
+  [199] objcall 136 ............................. <S.char[x]>
+  [201] joinstr ................................. <SS & S.char[x]>
+  [202] setlocal 3 .............................. SS = SS & S.char[x]
+  [204] pushint8 1
+  [206] getlocal 2
+  [208] add
+  [209] setlocal 2
+  [211] endrepeat [ 74]
+  [213] getlocal 3 .............................. <SS>
+  [215] pusharglistnoret 1 ...................... <SS>
+  [217] extcall 137 ............................. return SS
+  [219] ret
+end
+
+on encodeZipNum S, ct
+  [  0] pushcons 31 ............................. <"zip-mark">
+  [  2] pusharglist 1 ........................... <"zip-mark">
+  [  4] extcall 612 ............................. <member("zip-mark")>
+  [  7] getobjprop 657 .......................... <member("zip-mark").text>
+  [ 10] setlocal 0 .............................. ZM = member("zip-mark").text
+  [ 12] getlocal 0 .............................. <ZM>
+  [ 14] pushsymb 135 ............................ <#char>
+  [ 16] getparam 1 .............................. <ct>
+  [ 18] pusharglist 3 ........................... <ZM, #char, ct>
+  [ 20] objcall 136 ............................. <ZM.char[ct]>
+  [ 22] setlocal 1 .............................. SS = ZM.char[ct]
+  [ 24] pushint8 1 .............................. <1>
+  [ 26] setlocal 2
+  [ 28] getlocal 2
+  [ 30] getparam 0 .............................. <S>
+  [ 32] getobjprop 134 .......................... <S.length>
+  [ 34] lteq
+  [ 35] jmpifz [167] ............................ repeat with x = 1 to S.length
+  [ 38] getparam 0 .............................. <S>
+  [ 40] pushsymb 135 ............................ <#char>
+  [ 42] getlocal 2 .............................. <x>
+  [ 44] pusharglist 3 ........................... <S, #char, x>
+  [ 46] objcall 136 ............................. <S.char[x]>
+  [ 48] pusharglist 1 ........................... <S.char[x]>
+  [ 50] extcall 86 .............................. <charToNum(S.char[x])>
+  [ 52] setlocal 3 .............................. N = charToNum(S.char[x])
+  [ 54] getlocal 3 .............................. <N>
+  [ 56] pushint8 32 ............................. <32>
+  [ 58] gteq .................................... <N >= 32>
+  [ 59] getlocal 3 .............................. <N>
+  [ 61] pushint8 126 ............................ <126>
+  [ 63] lteq .................................... <N <= 126>
+  [ 64] and ..................................... <(N >= 32) and (N <= 126)>
+  [ 65] jmpifz [143] ............................ if (N >= 32) and (N <= 126) then
+  [ 68] getparam 1 .............................. <ct>
+  [ 70] pushint8 1 .............................. <1>
+  [ 72] add ..................................... <ct + 1>
+  [ 73] setparam 1 .............................. ct = ct + 1
+  [ 75] getparam 1 .............................. <ct>
+  [ 77] pushint8 94 ............................. <94>
+  [ 79] gt ...................................... <ct > 94>
+  [ 80] jmpifz [ 87] ............................ if ct > 94 then
+  [ 83] pushint8 1 .............................. <1>
+  [ 85] setparam 1 .............................. ct = 1
+  [ 87] getparam 0 .............................. <S>
+  [ 89] pushsymb 135 ............................ <#char>
+  [ 91] getlocal 2 .............................. <x>
+  [ 93] pusharglist 3 ........................... <S, #char, x>
+  [ 95] objcall 136 ............................. <S.char[x]>
+  [ 97] pusharglist 1 ........................... <S.char[x]>
+  [ 99] extcall 86 .............................. <charToNum(S.char[x])>
+  [101] getglobal 663 ........................... <zipCode>
+  [104] getparam 1 .............................. <ct>
+  [106] pusharglist 2 ........................... <zipCode, ct>
+  [108] objcall 17 .............................. <zipCode[ct]>
+  [110] add ..................................... <charToNum(S.char[x]) + zipCode[ct]>
+  [111] setlocal 3 .............................. N = charToNum(S.char[x]) + zipCode[ct]
+  [113] getlocal 3 .............................. <N>
+  [115] pushint8 126 ............................ <126>
+  [117] gt ...................................... <N > 126>
+  [118] jmpifz [128] ............................ if N > 126 then
+  [121] getlocal 3 .............................. <N>
+  [123] pushint8 94 ............................. <94>
+  [125] sub ..................................... <N - 94>
+  [126] setlocal 3 .............................. N = N - 94
+  [128] getlocal 1 .............................. <SS>
+  [130] getlocal 3 .............................. <N>
+  [132] pusharglist 1 ........................... <N>
+  [134] extcall 611 ............................. <numToChar(N)>
+  [137] joinstr ................................. <SS & numToChar(N)>
+  [138] setlocal 1 .............................. SS = SS & numToChar(N)
+  [140] jmp [158] ............................... next repeat
+  [143] getlocal 1 .............................. <SS>
+  [145] getparam 0 .............................. <S>
+  [147] pushsymb 135 ............................ <#char>
+  [149] getlocal 2 .............................. <x>
+  [151] pusharglist 3 ........................... <S, #char, x>
+  [153] objcall 136 ............................. <S.char[x]>
+  [155] joinstr ................................. <SS & S.char[x]>
+  [156] setlocal 1 .............................. SS = SS & S.char[x]
+  [158] pushint8 1
+  [160] getlocal 2
+  [162] add
+  [163] setlocal 2
+  [165] endrepeat [ 28]
+  [167] getlocal 1 .............................. <SS>
+  [169] pusharglistnoret 1 ...................... <SS>
+  [171] extcall 137 ............................. return SS
+  [173] ret
+end
+
+on zipTest chunk
+  [  0] pusharglist 0 ........................... <>
+  [  2] localcall 9 ............................. <getFileKeyWord()>
+  [  4] setlocal 0 .............................. S1 = getFileKeyWord()
+  [  6] getparam 0 .............................. <chunk>
+  [  8] pushsymb 135 ............................ <#char>
+  [ 10] pushint8 1 .............................. <1>
+  [ 12] getlocal 0 .............................. <S1>
+  [ 14] getobjprop 134 .......................... <S1.length>
+  [ 16] pushint8 1 .............................. <1>
+  [ 18] add ..................................... <S1.length + 1>
+  [ 19] pusharglist 4 ........................... <chunk, #char, 1, S1.length + 1>
+  [ 21] objcall 136 ............................. <chunk.char[1..S1.length + 1]>
+  [ 23] pusharglist 1 ........................... <chunk.char[1..S1.length + 1]>
+  [ 25] localcall 11 ............................ <decodeZip(chunk.char[1..S1.length + 1])>
+  [ 27] setlocal 1 .............................. s2 = decodeZip(chunk.char[1..S1.length + 1])
+  [ 29] getlocal 0 .............................. <S1>
+  [ 31] getlocal 1 .............................. <s2>
+  [ 33] nteq .................................... <S1 <> s2>
+  [ 34] jmpifz [ 42] ............................ if S1 <> s2 then
+  [ 37] pushzero ................................ <0>
+  [ 38] pusharglistnoret 1 ...................... <0>
+  [ 40] extcall 137 ............................. return 0
+  [ 42] pushint8 1 .............................. <1>
+  [ 44] pusharglistnoret 1 ...................... <1>
+  [ 46] extcall 137 ............................. return 1
+  [ 48] ret
+end
+
+on keyPassWord
+  [  0] pusharglist 0 ........................... <>
+  [  2] extcall 597 ............................. <poll_Quit_Keys()>
+  [  5] pushzero ................................ <0>
+  [  6] eq ...................................... <poll_Quit_Keys() = 0>
+  [  7] jmpifz [ 22] ............................ if poll_Quit_Keys() = 0 then / else
+  [ 10] gettoplevelprop 52 ...................... <_key>
+  [ 12] pusharglist 1 ........................... <_key>
+  [ 14] objcall 87 .............................. <_key.keyPressed()>
+  [ 16] setglobal 708 ........................... uniqueKey = _key.keyPressed()
+  [ 19] jmp [ 27]
+  [ 22] pusharglistnoret 0 ...................... <>
+  [ 24] extcall 462 ............................. finally_Quit()
+  [ 27] ret
+end
+
+on _Put_Start S
+  [  0] getglobal 689 ........................... <_Start_Comments>
+  [  3] pushint8 1 .............................. <1>
+  [  5] eq ...................................... <_Start_Comments = 1>
+  [  6] jmpifz [ 15] ............................ if _Start_Comments = 1 then
+  [  9] getparam 0 .............................. <S>
+  [ 11] pusharglistnoret 1 ...................... <S>
+  [ 13] extcall 174 ............................. _PUT(S)
+  [ 15] ret
+end

@@ -1,0 +1,11 @@
+on prepareFrame
+  [  0] pusharglistnoret 0 ...................... <>
+  [  2] extcall 2 ............................... token_PrepPlay()
+  [  4] ret
+end
+
+on exitFrame
+  [  0] pusharglistnoret 0 ...................... <>
+  [  2] extcall 3 ............................... token_ExitPlay()
+  [  4] ret
+end

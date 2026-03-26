@@ -1,0 +1,5 @@
+on exitFrame
+  [  0] pusharglistnoret 0 ...................... <>
+  [  2] extcall 2 ............................... comp_Main_ExitPlay()
+  [  4] ret
+end

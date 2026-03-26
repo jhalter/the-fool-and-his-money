@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>The Fool and his Money - PoC</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: #1a1a2e;
+            color: #eee;
+            font-family: Georgia, serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+        h1 {
+            margin: 20px 0 10px;
+            font-size: 24px;
+            color: #c9a84c;
+        }
+        #controls {
+            margin: 10px 0;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+            max-width: 820px;
+        }
+        select, button {
+            padding: 8px 16px;
+            font-size: 14px;
+            border: 1px solid #c9a84c;
+            background: #16213e;
+            color: #eee;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        select { max-width: 500px; }
+        button:hover { background: #1a1a4e; }
+        #player-container {
+            width: 800px;
+            height: 600px;
+            border: 2px solid #c9a84c;
+            background: #000;
+            margin: 10px 0;
+        }
+        #status {
+            color: #888;
+            font-size: 13px;
+            margin: 5px 0 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>The Fool and his Money - Proof of Concept</h1>
+    <div id="controls">
+        <select id="swf-select">
+            <option value="chunk_10_CDGF_0x018f2842_swf_025_v8.swf">chunk_10 - swf_025 (1.3M) - puzzle</option>
+            <option value="chunk_01_CDGF_0x00011ca6_swf_000_v8.swf">chunk_01 - swf_000 (2.6M)</option>
+            <option value="chunk_02_CDGF_0x0026ce60_swf_001_v8.swf">chunk_02 - swf_001 (444K)</option>
+            <option value="chunk_02_CDGF_0x0026ce60_swf_002_v8.swf">chunk_02 - swf_002 (2.4M)</option>
+            <option value="chunk_02_CDGF_0x0026ce60_swf_003_v8.swf">chunk_02 - swf_003 (4.1M)</option>
+            <option value="chunk_02_CDGF_0x0026ce60_swf_004_v8.swf">chunk_02 - swf_004 (300K)</option>
+            <option value="chunk_03_CDGF_0x007769d8_swf_005_v8.swf">chunk_03 - swf_005 (922K)</option>
+            <option value="chunk_04_CDGF_0x008369ca_swf_006_v8.swf">chunk_04 - swf_006 (2.4M)</option>
+            <option value="chunk_05_CDGF_0x00a7c7a8_swf_007_v8.swf">chunk_05 - swf_007 (23K) menu/UI</option>
+            <option value="chunk_05_CDGF_0x00a7c7a8_swf_010_v8.swf">chunk_05 - swf_010 (53K)</option>
+            <option value="chunk_05_CDGF_0x00a7c7a8_swf_011_v8.swf">chunk_05 - swf_011 (223K) help</option>
+            <option value="chunk_05_CDGF_0x00a7c7a8_swf_012_v8.swf">chunk_05 - swf_012 (355K)</option>
+            <option value="chunk_06_CDGF_0x00aa47f8_swf_013_v6.swf">chunk_06 - swf_013 v6 (33K)</option>
+            <option value="chunk_06_CDGF_0x00aa47f8_swf_014_v8.swf">chunk_06 - swf_014 (103K)</option>
+            <option value="chunk_06_CDGF_0x00aa47f8_swf_015_v8.swf">chunk_06 - swf_015 (11M) LARGEST</option>
+            <option value="chunk_06_CDGF_0x00aa47f8_swf_016_v8.swf">chunk_06 - swf_016 (153K)</option>
+            <option value="chunk_06_CDGF_0x00aa47f8_swf_017_v8.swf">chunk_06 - swf_017 (154K)</option>
+            <option value="chunk_07_CDGF_0x0137328c_swf_018_v8.swf">chunk_07 - swf_018 (305K)</option>
+            <option value="chunk_07_CDGF_0x0137328c_swf_019_v8.swf">chunk_07 - swf_019 (654K)</option>
+            <option value="chunk_08_CDGF_0x014566d6_swf_020_v8.swf">chunk_08 - swf_020 (6.5K) prologue</option>
+            <option value="chunk_08_CDGF_0x014566d6_swf_021_v8.swf">chunk_08 - swf_021 (110K)</option>
+            <option value="chunk_08_CDGF_0x014566d6_swf_022_v8.swf">chunk_08 - swf_022 (58K)</option>
+            <option value="chunk_08_CDGF_0x014566d6_swf_023_v8.swf">chunk_08 - swf_023 (930K)</option>
+            <option value="chunk_08_CDGF_0x014566d6_swf_024_v8.swf">chunk_08 - swf_024 (3.6M)</option>
+            <option value="chunk_11_CDGF_0x01a05d92_swf_026_v8.swf">chunk_11 - swf_026 (4.5M)</option>
+            <option value="chunk_12_CDGF_0x01e47f96_swf_027_v8.swf">chunk_12 - swf_027 (2.8M)</option>
+            <option value="chunk_13_CDGF_0x020ee5da_swf_028_v8.swf">chunk_13 - swf_028 (2.2M)</option>
+            <option value="chunk_14_CDGF_0x022f8aba_swf_029_v8.swf">chunk_14 - swf_029 (4.6M)</option>
+            <option value="chunk_15_CDGF_0x0270021e_swf_030_v8.swf">chunk_15 - swf_030 (2.0M)</option>
+            <option value="chunk_16_CDGF_0x028c64b2_swf_031_v8.swf">chunk_16 - swf_031 (1.5M)</option>
+            <option value="chunk_17_CDGF_0x02a085fc_swf_032_v8.swf">chunk_17 - swf_032 (2.5M)</option>
+            <option value="chunk_18_CDGF_0x02c51a72_swf_033_v8.swf">chunk_18 - swf_033 (2.0M)</option>
+            <option value="chunk_18_CDGF_0x02c51a72_swf_034_v8.swf">chunk_18 - swf_034 (917K)</option>
+            <option value="chunk_19_CDGF_0x02ee2282_swf_035_v8.swf">chunk_19 - swf_035 (4.4M)</option>
+            <option value="chunk_19_CDGF_0x02ee2282_swf_036_v8.swf">chunk_19 - swf_036 (3.8M)</option>
+            <option value="chunk_20_CDGF_0x036b565a_swf_037_v8.swf">chunk_20 - swf_037 (1.1M)</option>
+            <option value="chunk_21_CDGF_0x037b605e_swf_038_v8.swf">chunk_21 - swf_038 (1.6M)</option>
+            <option value="chunk_22_CDGF_0x0393ff56_swf_039_v8.swf">chunk_22 - swf_039 (2.3M)</option>
+            <option value="chunk_23_CDGF_0x03b5de28_swf_040_v8.swf">chunk_23 - swf_040 (3.1M)</option>
+            <option value="chunk_23_CDGF_0x03b5de28_swf_041_v8.swf">chunk_23 - swf_041 (1.0M)</option>
+            <option value="chunk_23_CDGF_0x03b5de28_swf_042_v8.swf">chunk_23 - swf_042 (1.0M)</option>
+            <option value="chunk_23_CDGF_0x03b5de28_swf_043_v8.swf">chunk_23 - swf_043 (2.2M)</option>
+            <option value="chunk_23_CDGF_0x03b5de28_swf_044_v8.swf">chunk_23 - swf_044 (1.0M)</option>
+            <option value="chunk_23_CDGF_0x03b5de28_swf_045_v8.swf">chunk_23 - swf_045 (3.4M)</option>
+            <option value="chunk_23_CDGF_0x03b5de28_swf_046_v8.swf">chunk_23 - swf_046 (1.4M)</option>
+            <option value="chunk_24_CDGF_0x04800914_swf_047_v8.swf">chunk_24 - swf_047 (2.4M)</option>
+            <option value="chunk_25_CDGF_0x049e162c_swf_048_v8.swf">chunk_25 - swf_048 (2.7M)</option>
+            <option value="chunk_26_CDGF_0x04c85ea2_swf_049_v8.swf">chunk_26 - swf_049 (2.5M)</option>
+            <option value="chunk_27_CDGF_0x04ebd710_swf_050_v8.swf">chunk_27 - swf_050 (3.1M)</option>
+            <option value="chunk_28_CDGF_0x0518cec2_swf_051_v8.swf">chunk_28 - swf_051 (1.7M)</option>
+            <option value="chunk_29_CDGF_0x052fcff0_swf_052_v8.swf">chunk_29 - swf_052 (2.8M)</option>
+            <option value="chunk_30_CDGF_0x0558b056_swf_053_v8.swf">chunk_30 - swf_053 (1.7M)</option>
+            <option value="chunk_31_CDGF_0x05711c76_swf_054_v8.swf">chunk_31 - swf_054 (3.1M)</option>
+            <option value="chunk_32_CDGF_0x059ec06c_swf_055_v8.swf">chunk_32 - swf_055 (3.0M)</option>
+            <option value="chunk_33_CDGF_0x05cb3be6_swf_056_v8.swf">chunk_33 - swf_056 (1.0M)</option>
+            <option value="chunk_34_CDGF_0x05d9f3b8_swf_057_v8.swf">chunk_34 - swf_057 (2.9M)</option>
+            <option value="chunk_35_CDGF_0x060358b0_swf_058_v8.swf">chunk_35 - swf_058 (5.2M)</option>
+            <option value="chunk_35_CDGF_0x060358b0_swf_059_v8.swf">chunk_35 - swf_059 (4.5M)</option>
+            <option value="chunk_36_CDGF_0x069a0bc4_swf_060_v8.swf">chunk_36 - swf_060 (5.2M)</option>
+            <option value="chunk_37_CDGF_0x06e9124e_swf_061_v8.swf">chunk_37 - swf_061 (2.8M)</option>
+            <option value="chunk_38_CDGF_0x0712e0cc_swf_062_v8.swf">chunk_38 - swf_062 (2.9M)</option>
+            <option value="chunk_39_CDGF_0x073e5a36_swf_063_v8.swf">chunk_39 - swf_063 (2.8M)</option>
+            <option value="chunk_40_CDGF_0x07682ae6_swf_064_v8.swf">chunk_40 - swf_064 (2.2M)</option>
+            <option value="chunk_41_CDGF_0x0788e9e6_swf_065_v8.swf">chunk_41 - swf_065 (4.1M)</option>
+            <option value="chunk_42_CDGF_0x07c93878_swf_066_v8.swf">chunk_42 - swf_066 (5.2M)</option>
+            <option value="chunk_43_CDGF_0x081976a2_swf_067_v8.swf">chunk_43 - swf_067 (3.8M)</option>
+        </select>
+        <button onclick="loadSWF()">Load SWF</button>
+    </div>
+    <div id="player-container"></div>
+    <div id="status">Select a SWF and click "Load". Puzzles run in standalone mode (no Director) with native mouse/keyboard input.</div>
+
+    <script src="node_modules/@ruffle-rs/ruffle/ruffle.js"></script>
+    <script>
+        let player = null;
+
+        async function loadSWF() {
+            const container = document.getElementById('player-container');
+            const status = document.getElementById('status');
+            const swfFile = document.getElementById('swf-select').value;
+
+            container.innerHTML = '';
+            status.textContent = 'Loading ' + swfFile + '...';
+
+            try {
+                const ruffle = window.RufflePlayer.newest();
+                player = ruffle.createPlayer();
+                player.style.width = '100%';
+                player.style.height = '100%';
+                container.appendChild(player);
+
+                // Do NOT set DirectorInControl - leave it undefined
+                // so the SWF enters standalone mode with native mouse/keyboard listeners
+                await player.load({
+                    url: swfFile,
+                    allowScriptAccess: true,
+                    autoplay: "on",
+                    unmuteOverlay: "hidden",
+                    logLevel: "warn",
+                    letterbox: "on",
+                    // Only pass puzzle number - let DirectorInControl stay undefined
+                    parameters: {
+                        pNum: "1"
+                    }
+                });
+
+                status.textContent = 'Loaded: ' + swfFile + ' | Standalone mode (DirectorInControl=undefined) | Click inside to interact';
+            } catch (e) {
+                status.textContent = 'Error: ' + e.message;
+                console.error(e);
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            loadSWF();
+        });
+    </script>
+</body>
+</html>

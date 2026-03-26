@@ -1,0 +1,5 @@
+on exitFrame me
+  [  0] pusharglistnoret 0 ...................... <>
+  [  2] extcall 4 ............................... pro_Activate()
+  [  4] ret
+end

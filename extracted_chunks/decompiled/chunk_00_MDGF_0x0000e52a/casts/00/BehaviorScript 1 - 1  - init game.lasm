@@ -1,0 +1,5 @@
+on enterFrame
+  [  0] pusharglistnoret 0 ...................... <>
+  [  2] extcall 1 ............................... special_Frame_1()
+  [  4] ret
+end

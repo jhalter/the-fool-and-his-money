@@ -1,0 +1,1189 @@
+global cMoneySN, pData, _Save_Type, currPuzzle, currGame, cTypeCurrPuzzle, tokenCurrGame, cGameDirectory, cWork, cLink, playMode, pmZero, pmPlay, pmHelp, pmClick, pmSave, pmDeActivate, pmActivate, pClickToContinue, _StartUp_Switched, _Window_Switched, status_Quit_The_Game
+
+on money_Init
+  [  0] getglobal 601 ........................... <cMoneySN>
+  [  3] pusharglist 1 ........................... <cMoneySN>
+  [  5] extcall 429 ............................. <sprite(cMoneySN)>
+  [  8] getobjprop 438 .......................... <sprite(cMoneySN).memberNum>
+  [ 11] pushzero ................................ <0>
+  [ 12] gt ...................................... <sprite(cMoneySN).memberNum > 0>
+  [ 13] jmpifz [ 52] ............................ if sprite(cMoneySN).memberNum > 0 then
+  [ 16] getglobal 601 ........................... <cMoneySN>
+  [ 19] pusharglist 1 ........................... <cMoneySN>
+  [ 21] extcall 429 ............................. <sprite(cMoneySN)>
+  [ 24] pushint8 55 ............................. <55>
+  [ 26] setobjprop 445 .......................... sprite(cMoneySN).locH = 55
+  [ 29] getglobal 601 ........................... <cMoneySN>
+  [ 32] pusharglist 1 ........................... <cMoneySN>
+  [ 34] extcall 429 ............................. <sprite(cMoneySN)>
+  [ 37] pushint16 585 ........................... <585>
+  [ 40] setobjprop 447 .......................... sprite(cMoneySN).locV = 585
+  [ 43] getglobal 601 ........................... <cMoneySN>
+  [ 46] pushzero ................................ <0>
+  [ 47] pusharglistnoret 2 ...................... <cMoneySN, 0>
+  [ 49] extcall 397 ............................. misc_VisStaticSprite(cMoneySN, 0)
+  [ 52] ret
+end
+
+on deactivateApplication
+  [  0] pushcons 0 .............................. <"app">
+  [  2] pusharglistnoret 1 ...................... <"app">
+  [  4] localcall 4 ............................. _Game_DeActivate("app")
+  [  6] ret
+end
+
+on deactivateWindow
+  [  0] pushcons 1 .............................. <"sys">
+  [  2] pusharglistnoret 1 ...................... <"sys">
+  [  4] localcall 4 ............................. _Game_DeActivate("sys")
+  [  6] ret
+end
+
+on _Check_for_StartUp_Switched
+  [  0] getglobal 602 ........................... <_StartUp_Switched>
+  [  3] pushint8 1 .............................. <1>
+  [  5] eq ...................................... <_StartUp_Switched = 1>
+  [  6] jmpifz [ 19] ............................ if _StartUp_Switched = 1 then
+  [  9] pushzero ................................ <0>
+  [ 10] setglobal 602 ........................... _StartUp_Switched = 0
+  [ 13] pushcons 2 .............................. <"_Switch">
+  [ 15] pusharglistnoret 1 ...................... <"_Switch">
+  [ 17] localcall 4 ............................. _Game_DeActivate("_Switch")
+  [ 19] ret
+end
+
+on _Game_DeActivate S
+  [  0] pushint8 1 .............................. <1>
+  [  2] setglobal 570 ........................... _Window_Switched = 1
+  [  5] pushzero ................................ <0>
+  [  6] setglobal 603 ........................... status_Quit_The_Game = 0
+  [  9] gettoplevelprop 14 ...................... <_movie>
+  [ 11] getobjprop 44 ........................... <_movie.frame>
+  [ 13] pushint8 5 .............................. <5>
+  [ 15] lt ...................................... <_movie.frame < 5>
+  [ 16] jmpifz [ 25] ............................ if _movie.frame < 5 then
+  [ 19] pushint8 1 .............................. <1>
+  [ 21] setglobal 602 ........................... _StartUp_Switched = 1
+  [ 24] ret ..................................... exit
+  [ 25] pushcons 3 .............................. <"De-Activate">
+  [ 27] getparam 0 .............................. <S>
+  [ 29] joinpadstr .............................. <"De-Activate" && S>
+  [ 30] pusharglistnoret 1 ...................... <"De-Activate" && S>
+  [ 32] extcall 174 ............................. _PUT("De-Activate" && S)
+  [ 34] getglobal 75 ............................ <pmDeActivate>
+  [ 36] setglobal 45 ............................ playMode = pmDeActivate
+  [ 38] pusharglistnoret 0 ...................... <>
+  [ 40] localcall 5 ............................. deActivateInterface()
+  [ 42] pushzero ................................ <0>
+  [ 43] pusharglistnoret 1 ...................... <0>
+  [ 45] extcall 250 ............................. _Set_Ticks(0)
+  [ 47] pushcons 4 .............................. <"gSwitchWindows">
+  [ 49] pushint8 1 .............................. <1>
+  [ 51] pusharglist 1 ........................... <1>
+  [ 53] extcall 334 ............................. <string(1)>
+  [ 56] pusharglistnoret 2 ...................... <"gSwitchWindows", string(1)>
+  [ 58] extcall 51 .............................. misc_SetFlash("gSwitchWindows", string(1))
+  [ 60] ret
+end
+
+on deActivateInterface
+  [  0] gettoplevelprop 81 ...................... <_player>
+  [  2] pusharglistnoret 1 ...................... <_player>
+  [  4] objcall 82 .............................. _player.flushInputEvents()
+  [  6] pushcons 5 .............................. <"deActivate_MouseDown">
+  [  8] pushint8 1 .............................. <1>
+  [ 10] set 0 ................................... set the mouseDownScript to "deActivate_MouseDown"
+  [ 12] pushcons 6 .............................. <EMPTY>
+  [ 14] pushint8 2 .............................. <2>
+  [ 16] set 0 ................................... set the mouseUpScript to EMPTY
+  [ 18] pushcons 7 .............................. <"deActivate_KeyDown">
+  [ 20] pushint8 3 .............................. <3>
+  [ 22] set 0 ................................... set the keyDownScript to "deActivate_KeyDown"
+  [ 24] pushcons 6 .............................. <EMPTY>
+  [ 26] pushint8 4 .............................. <4>
+  [ 28] set 0 ................................... set the keyUpScript to EMPTY
+  [ 30] gettoplevelprop 81 ...................... <_player>
+  [ 32] pushint8 1 .............................. <1>
+  [ 34] inv ..................................... <-1>
+  [ 35] pusharglistnoret 2 ...................... <_player, -1>
+  [ 37] objcall 83 .............................. _player.cursor(-1)
+  [ 39] ret
+end
+
+on check_DeActivate_Interface
+  [  0] pushint8 1 .............................. <1>
+  [  2] get 0 ................................... <the mouseDownScript>
+  [  4] pushcons 5 .............................. <"deActivate_MouseDown">
+  [  6] nteq .................................... <the mouseDownScript <> "deActivate_MouseDown">
+  [  7] jmpifz [ 14] ............................ if the mouseDownScript <> "deActivate_MouseDown" then
+  [ 10] pusharglistnoret 0 ...................... <>
+  [ 12] localcall 5 ............................. deActivateInterface()
+  [ 14] ret
+end
+
+on deActivate_MouseDown
+  [  0] getglobal 570 ........................... <_Window_Switched>
+  [  3] pushint8 1 .............................. <1>
+  [  5] eq ...................................... <_Window_Switched = 1>
+  [  6] jmpifz [ 15] ............................ if _Window_Switched = 1 then
+  [  9] pushcons 8 .............................. <"click">
+  [ 11] pusharglistnoret 1 ...................... <"click">
+  [ 13] localcall 11 ............................ _Game_Activate("click")
+  [ 15] ret
+end
+
+on deActivate_KeyDown
+  [  0] pushcons 9 .............................. <"ESC ignore">
+  [  2] pusharglist 1 ........................... <"ESC ignore">
+  [  4] extcall 414 ............................. <escapeKey("ESC ignore")>
+  [  7] pushint8 1 .............................. <1>
+  [  9] eq ...................................... <escapeKey("ESC ignore") = 1>
+  [ 10] jmpifz [ 14] ............................ if escapeKey("ESC ignore") = 1 then
+  [ 13] ret ..................................... exit
+  [ 14] getglobal 570 ........................... <_Window_Switched>
+  [ 17] pushint8 1 .............................. <1>
+  [ 19] eq ...................................... <_Window_Switched = 1>
+  [ 20] jmpifz [ 29] ............................ if _Window_Switched = 1 then
+  [ 23] pushcons 10 ............................. <"key">
+  [ 25] pusharglistnoret 1 ...................... <"key">
+  [ 27] localcall 11 ............................ _Game_Activate("key")
+  [ 29] ret
+end
+
+on activateApplication
+  [  0] pushcons 0 .............................. <"app">
+  [  2] pusharglistnoret 1 ...................... <"app">
+  [  4] localcall 11 ............................ _Game_Activate("app")
+  [  6] ret
+end
+
+on activateWindow
+  [  0] pushcons 1 .............................. <"sys">
+  [  2] pusharglistnoret 1 ...................... <"sys">
+  [  4] localcall 11 ............................ _Game_Activate("sys")
+  [  6] ret
+end
+
+on _Game_Activate S
+  [  0] pushzero ................................ <0>
+  [  1] setglobal 570 ........................... _Window_Switched = 0
+  [  4] pushzero ................................ <0>
+  [  5] setglobal 603 ........................... status_Quit_The_Game = 0
+  [  8] gettoplevelprop 14 ...................... <_movie>
+  [ 10] getobjprop 44 ........................... <_movie.frame>
+  [ 12] pushint8 5 .............................. <5>
+  [ 14] lt ...................................... <_movie.frame < 5>
+  [ 15] jmpifz [ 23] ............................ if _movie.frame < 5 then
+  [ 18] pushzero ................................ <0>
+  [ 19] setglobal 602 ........................... _StartUp_Switched = 0
+  [ 22] ret ..................................... exit
+  [ 23] pushcons 11 ............................. <"Activate">
+  [ 25] getparam 0 .............................. <S>
+  [ 27] joinpadstr .............................. <"Activate" && S>
+  [ 28] pusharglistnoret 1 ...................... <"Activate" && S>
+  [ 30] extcall 174 ............................. _PUT("Activate" && S)
+  [ 32] pushint8 1 .............................. <1>
+  [ 34] setlocal 0 .............................. cActiveSN = 1
+  [ 36] pushzero ................................ <0>
+  [ 37] pusharglistnoret 1 ...................... <0>
+  [ 39] extcall 41 .............................. misc_ClearQueue(0)
+  [ 41] pushcons 12 ............................. <"gMouseX">
+  [ 43] pushint8 10 ............................. <10>
+  [ 45] inv ..................................... <-10>
+  [ 46] pusharglistnoret 2 ...................... <"gMouseX", -10>
+  [ 48] extcall 51 .............................. misc_SetFlash("gMouseX", -10)
+  [ 50] pushcons 13 ............................. <"gMouseY">
+  [ 52] pushint8 10 ............................. <10>
+  [ 54] inv ..................................... <-10>
+  [ 55] pusharglistnoret 2 ...................... <"gMouseY", -10>
+  [ 57] extcall 51 .............................. misc_SetFlash("gMouseY", -10)
+  [ 59] pushcons 14 ............................. <"gIdleX">
+  [ 61] pushint8 10 ............................. <10>
+  [ 63] inv ..................................... <-10>
+  [ 64] pusharglistnoret 2 ...................... <"gIdleX", -10>
+  [ 66] extcall 51 .............................. misc_SetFlash("gIdleX", -10)
+  [ 68] pushcons 15 ............................. <"gIdleY">
+  [ 70] pushint8 10 ............................. <10>
+  [ 72] inv ..................................... <-10>
+  [ 73] pusharglistnoret 2 ...................... <"gIdleY", -10>
+  [ 75] extcall 51 .............................. misc_SetFlash("gIdleY", -10)
+  [ 77] pushcons 16 ............................. <"gShiftKey">
+  [ 79] pushzero ................................ <0>
+  [ 80] pusharglistnoret 2 ...................... <"gShiftKey", 0>
+  [ 82] extcall 51 .............................. misc_SetFlash("gShiftKey", 0)
+  [ 84] pushcons 17 ............................. <"gMouseDown">
+  [ 86] pushzero ................................ <0>
+  [ 87] pusharglistnoret 2 ...................... <"gMouseDown", 0>
+  [ 89] extcall 51 .............................. misc_SetFlash("gMouseDown", 0)
+  [ 91] pushcons 18 ............................. <"gMouseUp">
+  [ 93] pushzero ................................ <0>
+  [ 94] pusharglistnoret 2 ...................... <"gMouseUp", 0>
+  [ 96] extcall 51 .............................. misc_SetFlash("gMouseUp", 0)
+  [ 98] pushcons 4 .............................. <"gSwitchWindows">
+  [100] pushzero ................................ <0>
+  [101] pusharglist 1 ........................... <0>
+  [103] extcall 334 ............................. <string(0)>
+  [106] pusharglistnoret 2 ...................... <"gSwitchWindows", string(0)>
+  [108] extcall 51 .............................. misc_SetFlash("gSwitchWindows", string(0))
+  [110] pushzero ................................ <0>
+  [111] setlocal 1 .............................. c_Interface_MouseDown = 0
+  [113] pusharglistnoret 0 ...................... <>
+  [115] extcall 415 ............................. zero_DoubleClick()
+  [118] pushzero ................................ <0>
+  [119] setlocal 2 .............................. c_Interface_KeyDown = 0
+  [121] pushzero ................................ <0>
+  [122] pusharglistnoret 1 ...................... <0>
+  [124] extcall 250 ............................. _Set_Ticks(0)
+  [126] getglobal 78 ............................ <pmActivate>
+  [128] setglobal 45 ............................ playMode = pmActivate
+  [130] ret
+end
+
+on _Test_Activate S, notTokens
+  [  0] pushint8 1 .............................. <1>
+  [  2] get 0 ................................... <the mouseDownScript>
+  [  4] getparam 0 .............................. <S>
+  [  6] eq ...................................... <the mouseDownScript = S>
+  [  7] jmpifz [ 72] ............................ if the mouseDownScript = S then
+  [ 10] pushcons 4 .............................. <"gSwitchWindows">
+  [ 12] pushzero ................................ <0>
+  [ 13] pusharglist 1 ........................... <0>
+  [ 15] extcall 334 ............................. <string(0)>
+  [ 18] pusharglistnoret 2 ...................... <"gSwitchWindows", string(0)>
+  [ 20] extcall 51 .............................. misc_SetFlash("gSwitchWindows", string(0))
+  [ 22] getparam 1 .............................. <notTokens>
+  [ 24] pushzero ................................ <0>
+  [ 25] eq ...................................... <notTokens = 0>
+  [ 26] jmpifz [ 36] ............................ if notTokens = 0 then / else
+  [ 29] getglobal 46 ............................ <pmPlay>
+  [ 31] setglobal 45 ............................ playMode = pmPlay
+  [ 33] jmp [ 72]
+  [ 36] getglobal 254 ........................... <pClickToContinue>
+  [ 38] pushzero ................................ <0>
+  [ 39] eq ...................................... <pClickToContinue = 0>
+  [ 40] jmpifz [ 64] ............................ if pClickToContinue = 0 then / else
+  [ 43] getglobal 241 ........................... <_Save_Type>
+  [ 45] pushzero ................................ <0>
+  [ 46] eq ...................................... <_Save_Type = 0>
+  [ 47] jmpifz [ 57] ............................ if _Save_Type = 0 then / else
+  [ 50] getglobal 46 ............................ <pmPlay>
+  [ 52] setglobal 45 ............................ playMode = pmPlay
+  [ 54] jmp [ 61]
+  [ 57] getglobal 72 ............................ <pmSave>
+  [ 59] setglobal 45 ............................ playMode = pmSave
+  [ 61] jmp [ 72]
+  [ 64] pusharglistnoret 0 ...................... <>
+  [ 66] extcall 255 ............................. menu_SetFlashProperty_ClickToContinue()
+  [ 68] getglobal 69 ............................ <pmClick>
+  [ 70] setglobal 45 ............................ playMode = pmClick
+  [ 72] ret
+end
+
+on closeRequest
+  [  0] gettoplevelprop 14 ...................... <_movie>
+  [  2] getobjprop 44 ........................... <_movie.frame>
+  [  4] pushint8 4 .............................. <4>
+  [  6] lt ...................................... <_movie.frame < 4>
+  [  7] jmpifz [ 17] ............................ if _movie.frame < 4 then / else
+  [ 10] pusharglistnoret 0 ...................... <>
+  [ 12] localcall 19 ............................ finally_Quit()
+  [ 14] jmp [ 51]
+  [ 17] pushint8 1 .............................. <1>
+  [ 19] get 0 ................................... <the mouseDownScript>
+  [ 21] pushcons 19 ............................. <"token_MouseDown">
+  [ 23] nteq .................................... <the mouseDownScript <> "token_MouseDown">
+  [ 24] jmpifz [ 36] ............................ if the mouseDownScript <> "token_MouseDown" then / else
+  [ 27] pushcons 20 ............................. <"close">
+  [ 29] pusharglistnoret 1 ...................... <"close">
+  [ 31] localcall 16 ............................ trigger_Quit_Game("close")
+  [ 33] jmp [ 51]
+  [ 36] pushcons 21 ............................. <"gKeyDown">
+  [ 38] pushint8 113 ............................ <113>
+  [ 40] pusharglistnoret 2 ...................... <"gKeyDown", 113>
+  [ 42] extcall 51 .............................. misc_SetFlash("gKeyDown", 113)
+  [ 44] pushcons 22 ............................. <"gKeyUp">
+  [ 46] pushzero ................................ <0>
+  [ 47] pusharglistnoret 2 ...................... <"gKeyUp", 0>
+  [ 49] extcall 51 .............................. misc_SetFlash("gKeyUp", 0)
+  [ 51] ret
+end
+
+on poll_Quit_Keys
+  [  0] gettoplevelprop 52 ...................... <_key>
+  [  2] getobjprop 450 .......................... <_key.commandDown>
+  [  5] pushint8 1 .............................. <1>
+  [  7] eq ...................................... <_key.commandDown = 1>
+  [  8] jmpifz [ 57] ............................ if _key.commandDown = 1 then
+  [ 11] gettoplevelprop 52 ...................... <_key>
+  [ 13] getobjprop 566 .......................... <_key.key>
+  [ 16] pushcons 23 ............................. <"q">
+  [ 18] eq ...................................... <_key.key = "q">
+  [ 19] jmpifz [ 34] ............................ if _key.key = "q" then
+  [ 22] pushcons 24 ............................. <"QUIT - CTRL q">
+  [ 24] pusharglistnoret 1 ...................... <"QUIT - CTRL q">
+  [ 26] extcall 174 ............................. _PUT("QUIT - CTRL q")
+  [ 28] pushint8 1 .............................. <1>
+  [ 30] pusharglistnoret 1 ...................... <1>
+  [ 32] extcall 137 ............................. return 1
+  [ 34] gettoplevelprop 52 ...................... <_key>
+  [ 36] getobjprop 566 .......................... <_key.key>
+  [ 39] pushcons 25 ............................. <"w">
+  [ 41] eq ...................................... <_key.key = "w">
+  [ 42] jmpifz [ 57] ............................ if _key.key = "w" then
+  [ 45] pushcons 26 ............................. <"QUIT - CTRL w">
+  [ 47] pusharglistnoret 1 ...................... <"QUIT - CTRL w">
+  [ 49] extcall 174 ............................. _PUT("QUIT - CTRL w")
+  [ 51] pushint8 1 .............................. <1>
+  [ 53] pusharglistnoret 1 ...................... <1>
+  [ 55] extcall 137 ............................. return 1
+  [ 57] pushcons 27 ............................. <"ESC - Quit">
+  [ 59] pusharglist 1 ........................... <"ESC - Quit">
+  [ 61] extcall 414 ............................. <escapeKey("ESC - Quit")>
+  [ 64] pushint8 1 .............................. <1>
+  [ 66] eq ...................................... <escapeKey("ESC - Quit") = 1>
+  [ 67] jmpifz [ 76] ............................ if escapeKey("ESC - Quit") = 1 then
+  [ 70] pushint8 1 .............................. <1>
+  [ 72] pusharglistnoret 1 ...................... <1>
+  [ 74] extcall 137 ............................. return 1
+  [ 76] pushzero ................................ <0>
+  [ 77] pusharglistnoret 1 ...................... <0>
+  [ 79] extcall 137 ............................. return 0
+  [ 81] ret
+end
+
+on check_Quit_Keys_from_Interface b
+  [  0] pusharglist 0 ........................... <>
+  [  2] localcall 14 ............................ <poll_Quit_Keys()>
+  [  4] pushint8 1 .............................. <1>
+  [  6] eq ...................................... <poll_Quit_Keys() = 1>
+  [  7] jmpifz [ 30] ............................ if poll_Quit_Keys() = 1 then
+  [ 10] getparam 0 .............................. <b>
+  [ 12] pushint8 1 .............................. <1>
+  [ 14] eq ...................................... <b = 1>
+  [ 15] jmpifz [ 24] ............................ if b = 1 then
+  [ 18] pushcons 28 ............................. <"keys">
+  [ 20] pusharglistnoret 1 ...................... <"keys">
+  [ 22] localcall 16 ............................ trigger_Quit_Game("keys")
+  [ 24] pushint8 1 .............................. <1>
+  [ 26] pusharglistnoret 1 ...................... <1>
+  [ 28] extcall 137 ............................. return 1
+  [ 30] pushzero ................................ <0>
+  [ 31] pusharglistnoret 1 ...................... <0>
+  [ 33] extcall 137 ............................. return 0
+  [ 35] ret
+end
+
+on trigger_Quit_Game S
+  [  0] pushcons 29 ............................. <"QUIT">
+  [  2] getparam 0 .............................. <S>
+  [  4] joinpadstr .............................. <"QUIT" && S>
+  [  5] pusharglistnoret 1 ...................... <"QUIT" && S>
+  [  7] extcall 174 ............................. _PUT("QUIT" && S)
+  [  9] pushint8 1 .............................. <1>
+  [ 11] setglobal 603 ........................... status_Quit_The_Game = 1
+  [ 14] pushint8 3 .............................. <3>
+  [ 16] pushzero ................................ <0>
+  [ 17] pusharglistnoret 2 ...................... <3, 0>
+  [ 19] extcall 132 ............................. _Set_Save_Mode(3, 0)
+  [ 21] ret
+end
+
+on check_Save_Before_Quit
+  [  0] pusharglist 0 ........................... <>
+  [  2] extcall 131 ............................. <compareLastSavedGameData()>
+  [  4] pushint8 1 .............................. <1>
+  [  6] eq ...................................... <compareLastSavedGameData() = 1>
+  [  7] jmpifz [ 17] ............................ if compareLastSavedGameData() = 1 then / else
+  [ 10] pusharglistnoret 0 ...................... <>
+  [ 12] localcall 18 ............................ update_Double_Secret()
+  [ 14] jmp [ 25]
+  [ 17] pushint8 1 .............................. <1>
+  [ 19] pushzero ................................ <0>
+  [ 20] pusharglistnoret 2 ...................... <1, 0>
+  [ 22] extcall 490 ............................. _Launch_Tokens(1, 0)
+  [ 25] ret
+end
+
+on update_Double_Secret
+  [  0] getglobal 503 ........................... <cTypeCurrPuzzle>
+  [  3] pushint8 1 .............................. <1>
+  [  5] eq ...................................... <cTypeCurrPuzzle = 1>
+  [  6] jmpifz [ 34] ............................ if cTypeCurrPuzzle = 1 then
+  [  9] pushcons 30 ............................. <"currentGame">
+  [ 11] pushint8 1 .............................. <1>
+  [ 13] pusharglist 2 ........................... <"currentGame", 1>
+  [ 15] extcall 43 .............................. <misc_GetFlash("currentGame", 1)>
+  [ 17] setglobal 606 ........................... tokenCurrGame = misc_GetFlash("currentGame", 1)
+  [ 20] getglobal 606 ........................... <tokenCurrGame>
+  [ 23] getglobal 168 ........................... <currGame>
+  [ 25] nteq .................................... <tokenCurrGame <> currGame>
+  [ 26] jmpifz [ 34] ............................ if tokenCurrGame <> currGame then
+  [ 29] getglobal 606 ........................... <tokenCurrGame>
+  [ 32] setglobal 168 ........................... currGame = tokenCurrGame
+  [ 34] getglobal 168 ........................... <currGame>
+  [ 36] pusharglistnoret 1 ...................... <currGame>
+  [ 38] extcall 180 ............................. putLastGamePref(currGame)
+  [ 40] pusharglistnoret 0 ...................... <>
+  [ 42] localcall 19 ............................ finally_Quit()
+  [ 44] ret
+end
+
+on finally_Quit
+  [  0] pushcons 31 ............................. <"QUIT Game">
+  [  2] pusharglistnoret 1 ...................... <"QUIT Game">
+  [  4] extcall 174 ............................. _PUT("QUIT Game")
+  [  6] getglobal 260 ........................... <cGameDirectory>
+  [  9] getglobal 607 ........................... <cWork>
+  [ 12] eq ...................................... <cGameDirectory = cWork>
+  [ 13] getglobal 260 ........................... <cGameDirectory>
+  [ 16] getglobal 608 ........................... <cLink>
+  [ 19] eq ...................................... <cGameDirectory = cLink>
+  [ 20] or ...................................... <(cGameDirectory = cWork) or (cGameDirectory = cLink)>
+  [ 21] jmpifz [ 34] ............................ if (cGameDirectory = cWork) or (cGameDirectory = cLink) then / else
+  [ 24] gettoplevelprop 14 ...................... <_movie>
+  [ 26] pusharglistnoret 1 ...................... <_movie>
+  [ 28] objcall 609 ............................. _movie.halt()
+  [ 31] jmp [ 41]
+  [ 34] gettoplevelprop 81 ...................... <_player>
+  [ 36] pusharglistnoret 1 ...................... <_player>
+  [ 38] objcall 610 ............................. _player.quit()
+  [ 41] ret
+end
+
+on special_CheckCastMembers
+  [  0] getglobal 260 ........................... <cGameDirectory>
+  [  3] getglobal 607 ........................... <cWork>
+  [  6] nteq .................................... <cGameDirectory <> cWork>
+  [  7] getglobal 260 ........................... <cGameDirectory>
+  [ 10] getglobal 608 ........................... <cLink>
+  [ 13] nteq .................................... <cGameDirectory <> cLink>
+  [ 14] and ..................................... <(cGameDirectory <> cWork) and (cGameDirectory <> cLink)>
+  [ 15] jmpifz [ 19] ............................ if (cGameDirectory <> cWork) and (cGameDirectory <> cLink) then
+  [ 18] ret ..................................... exit
+  [ 19] pushzero ................................ <0>
+  [ 20] pushint16 666 ........................... <666>
+  [ 23] eq ...................................... <0 = 666>
+  [ 24] jmpifz [413] ............................ if 0 = 666 then
+  [ 27] pushint8 34 ............................. <34>
+  [ 29] pusharglist 1 ........................... <34>
+  [ 31] extcall 611 ............................. <numToChar(34)>
+  [ 34] setlocal 0 .............................. Q = numToChar(34)
+  [ 36] pushint8 1 .............................. <1>
+  [ 38] pushint8 2 .............................. <2>
+  [ 40] pushint8 3 .............................. <3>
+  [ 42] pushint8 10 ............................. <10>
+  [ 44] pushint8 15 ............................. <15>
+  [ 46] pushint8 16 ............................. <16>
+  [ 48] pushint8 20 ............................. <20>
+  [ 50] pushint8 21 ............................. <21>
+  [ 52] pushint8 30 ............................. <30>
+  [ 54] pushint8 31 ............................. <31>
+  [ 56] pushint8 32 ............................. <32>
+  [ 58] pushint8 40 ............................. <40>
+  [ 60] pushint8 41 ............................. <41>
+  [ 62] pushint8 43 ............................. <43>
+  [ 64] pushint8 45 ............................. <45>
+  [ 66] pushint8 50 ............................. <50>
+  [ 68] pushint8 51 ............................. <51>
+  [ 70] pushint8 52 ............................. <52>
+  [ 72] pushint8 60 ............................. <60>
+  [ 74] pushint8 65 ............................. <65>
+  [ 76] pushint8 72 ............................. <72>
+  [ 78] pushint8 75 ............................. <75>
+  [ 80] pushint8 76 ............................. <76>
+  [ 82] pushint8 77 ............................. <77>
+  [ 84] pushint8 78 ............................. <78>
+  [ 86] pushint8 80 ............................. <80>
+  [ 88] pushint8 81 ............................. <81>
+  [ 90] pushint8 82 ............................. <82>
+  [ 92] pushint8 89 ............................. <89>
+  [ 94] pusharglist 29 .......................... <1, 2, 3, 10, 15, 16, 20, 21, 30, 31, 32, 40, 41, 43, 45, 50, 51, 52, 60, 65, 72, 75, 76, 77, 78, 80, 81, 82, 89>
+  [ 96] extcall 313 ............................. <list(1, 2, 3, 10, 15, 16, 20, 21, 30, 31, 32, 40, 41, 43, 45, 50, 51, 52, 60, 65, 72, 75, 76, 77, 78, 80, 81, 82, 89)>
+  [ 99] setlocal 1 .............................. c1 = list(1, 2, 3, 10, 15, 16, 20, 21, 30, 31, 32, 40, 41, 43, 45, 50, 51, 52, 60, 65, 72, 75, 76, 77, 78, 80, 81, 82, 89)
+  [101] pushint8 90 ............................. <90>
+  [103] pushint8 91 ............................. <91>
+  [105] pushint8 92 ............................. <92>
+  [107] pushint8 93 ............................. <93>
+  [109] pushint8 94 ............................. <94>
+  [111] pushint8 97 ............................. <97>
+  [113] pushint8 98 ............................. <98>
+  [115] pushint8 99 ............................. <99>
+  [117] pushint8 100 ............................ <100>
+  [119] pushint8 101 ............................ <101>
+  [121] pushint8 102 ............................ <102>
+  [123] pushint8 103 ............................ <103>
+  [125] pushint8 104 ............................ <104>
+  [127] pusharglist 13 .......................... <90, 91, 92, 93, 94, 97, 98, 99, 100, 101, 102, 103, 104>
+  [129] extcall 313 ............................. <list(90, 91, 92, 93, 94, 97, 98, 99, 100, 101, 102, 103, 104)>
+  [132] setlocal 2 .............................. c2 = list(90, 91, 92, 93, 94, 97, 98, 99, 100, 101, 102, 103, 104)
+  [134] pushint8 1 .............................. <1>
+  [136] setlocal 3
+  [138] getlocal 3
+  [140] getlocal 1 .............................. <c1>
+  [142] pusharglist 1 ........................... <c1>
+  [144] extcall 334 ............................. <string(c1)>
+  [147] pushint8 2 .............................. <2>
+  [149] get 1 ................................... <the number of words in string(c1)>
+  [151] lteq
+  [152] jmpifz [271] ............................ repeat with y = 1 to the number of words in string(c1)
+  [155] pushcons 6 .............................. <EMPTY>
+  [157] getlocal 1 .............................. <c1>
+  [159] getlocal 3 .............................. <y>
+  [161] pusharglist 2 ........................... <c1, y>
+  [163] objcall 17 .............................. <c1[y]>
+  [165] joinstr ................................. <EMPTY & c1[y]>
+  [166] setlocal 4 .............................. CC = EMPTY & c1[y]
+  [168] getlocal 1 .............................. <c1>
+  [170] getlocal 3 .............................. <y>
+  [172] pusharglist 2 ........................... <c1, y>
+  [174] objcall 17 .............................. <c1[y]>
+  [176] pushint8 10 ............................. <10>
+  [178] lt ...................................... <c1[y] < 10>
+  [179] jmpifz [189] ............................ if c1[y] < 10 then
+  [182] pushcons 32 ............................. <"0">
+  [184] getlocal 4 .............................. <CC>
+  [186] joinstr ................................. <"0" & CC>
+  [187] setlocal 4 .............................. CC = "0" & CC
+  [189] pushint8 1 .............................. <1>
+  [191] setlocal 5
+  [193] getlocal 5
+  [195] pushint8 100 ............................ <100>
+  [197] lteq
+  [198] jmpifz [262] ............................ repeat with x = 1 to 100
+  [201] getlocal 5 .............................. <x>
+  [203] getlocal 4 .............................. <CC>
+  [205] pusharglist 2 ........................... <x, CC>
+  [207] extcall 612 ............................. <member(x, CC)>
+  [210] getobjprop 613 .......................... <member(x, CC).name>
+  [213] setlocal 6 .............................. S = member(x, CC).name
+  [215] getlocal 6 .............................. <S>
+  [217] pushcons 6 .............................. <EMPTY>
+  [219] nteq .................................... <S <> EMPTY>
+  [220] jmpifz [253] ............................ if S <> EMPTY then
+  [223] pushcons 33 ............................. <"special_VerifyCast(">
+  [225] getlocal 0 .............................. <Q>
+  [227] joinstr ................................. <"special_VerifyCast(" & Q>
+  [228] getlocal 4 .............................. <CC>
+  [230] joinstr ................................. <"special_VerifyCast(" & Q & CC>
+  [231] getlocal 0 .............................. <Q>
+  [233] joinstr ................................. <"special_VerifyCast(" & Q & CC & Q>
+  [234] pushcons 34 ............................. <",">
+  [236] joinstr ................................. <"special_VerifyCast(" & Q & CC & Q & ",">
+  [237] getlocal 0 .............................. <Q>
+  [239] joinpadstr .............................. <"special_VerifyCast(" & Q & CC & Q & "," && Q>
+  [240] getlocal 6 .............................. <S>
+  [242] joinstr ................................. <"special_VerifyCast(" & Q & CC & Q & "," && Q & S>
+  [243] getlocal 0 .............................. <Q>
+  [245] joinstr ................................. <"special_VerifyCast(" & Q & CC & Q & "," && Q & S & Q>
+  [246] pushcons 35 ............................. <")">
+  [248] joinstr ................................. <"special_VerifyCast(" & Q & CC & Q & "," && Q & S & Q & ")">
+  [249] pusharglistnoret 1 ...................... <"special_VerifyCast(" & Q & CC & Q & "," && Q & S & Q & ")">
+  [251] extcall 174 ............................. _PUT("special_VerifyCast(" & Q & CC & Q & "," && Q & S & Q & ")")
+  [253] pushint8 1
+  [255] getlocal 5
+  [257] add
+  [258] setlocal 5
+  [260] endrepeat [193]
+  [262] pushint8 1
+  [264] getlocal 3
+  [266] add
+  [267] setlocal 3
+  [269] endrepeat [138]
+  [271] pushint8 1 .............................. <1>
+  [273] setlocal 3
+  [275] getlocal 3
+  [277] getlocal 2 .............................. <c2>
+  [279] pusharglist 1 ........................... <c2>
+  [281] extcall 334 ............................. <string(c2)>
+  [284] pushint8 2 .............................. <2>
+  [286] get 1 ................................... <the number of words in string(c2)>
+  [288] lteq
+  [289] jmpifz [408] ............................ repeat with y = 1 to the number of words in string(c2)
+  [292] pushcons 6 .............................. <EMPTY>
+  [294] getlocal 2 .............................. <c2>
+  [296] getlocal 3 .............................. <y>
+  [298] pusharglist 2 ........................... <c2, y>
+  [300] objcall 17 .............................. <c2[y]>
+  [302] joinstr ................................. <EMPTY & c2[y]>
+  [303] setlocal 4 .............................. CC = EMPTY & c2[y]
+  [305] getlocal 2 .............................. <c2>
+  [307] getlocal 3 .............................. <y>
+  [309] pusharglist 2 ........................... <c2, y>
+  [311] objcall 17 .............................. <c2[y]>
+  [313] pushint8 10 ............................. <10>
+  [315] lt ...................................... <c2[y] < 10>
+  [316] jmpifz [326] ............................ if c2[y] < 10 then
+  [319] pushcons 32 ............................. <"0">
+  [321] getlocal 4 .............................. <CC>
+  [323] joinstr ................................. <"0" & CC>
+  [324] setlocal 4 .............................. CC = "0" & CC
+  [326] pushint8 1 .............................. <1>
+  [328] setlocal 5
+  [330] getlocal 5
+  [332] pushint8 100 ............................ <100>
+  [334] lteq
+  [335] jmpifz [399] ............................ repeat with x = 1 to 100
+  [338] getlocal 5 .............................. <x>
+  [340] getlocal 4 .............................. <CC>
+  [342] pusharglist 2 ........................... <x, CC>
+  [344] extcall 612 ............................. <member(x, CC)>
+  [347] getobjprop 613 .......................... <member(x, CC).name>
+  [350] setlocal 6 .............................. S = member(x, CC).name
+  [352] getlocal 6 .............................. <S>
+  [354] pushcons 6 .............................. <EMPTY>
+  [356] nteq .................................... <S <> EMPTY>
+  [357] jmpifz [390] ............................ if S <> EMPTY then
+  [360] pushcons 33 ............................. <"special_VerifyCast(">
+  [362] getlocal 0 .............................. <Q>
+  [364] joinstr ................................. <"special_VerifyCast(" & Q>
+  [365] getlocal 4 .............................. <CC>
+  [367] joinstr ................................. <"special_VerifyCast(" & Q & CC>
+  [368] getlocal 0 .............................. <Q>
+  [370] joinstr ................................. <"special_VerifyCast(" & Q & CC & Q>
+  [371] pushcons 34 ............................. <",">
+  [373] joinstr ................................. <"special_VerifyCast(" & Q & CC & Q & ",">
+  [374] getlocal 0 .............................. <Q>
+  [376] joinpadstr .............................. <"special_VerifyCast(" & Q & CC & Q & "," && Q>
+  [377] getlocal 6 .............................. <S>
+  [379] joinstr ................................. <"special_VerifyCast(" & Q & CC & Q & "," && Q & S>
+  [380] getlocal 0 .............................. <Q>
+  [382] joinstr ................................. <"special_VerifyCast(" & Q & CC & Q & "," && Q & S & Q>
+  [383] pushcons 35 ............................. <")">
+  [385] joinstr ................................. <"special_VerifyCast(" & Q & CC & Q & "," && Q & S & Q & ")">
+  [386] pusharglistnoret 1 ...................... <"special_VerifyCast(" & Q & CC & Q & "," && Q & S & Q & ")">
+  [388] extcall 174 ............................. _PUT("special_VerifyCast(" & Q & CC & Q & "," && Q & S & Q & ")")
+  [390] pushint8 1
+  [392] getlocal 5
+  [394] add
+  [395] setlocal 5
+  [397] endrepeat [330]
+  [399] pushint8 1
+  [401] getlocal 3
+  [403] add
+  [404] setlocal 3
+  [406] endrepeat [275]
+  [408] pusharglistnoret 0 ...................... <>
+  [410] extcall 609 ............................. halt()
+  [413] pushcons 36 ............................. <"00">
+  [415] pushcons 37 ............................. <"zip-code">
+  [417] pusharglistnoret 2 ...................... <"00", "zip-code">
+  [419] localcall 21 ............................ special_VerifyCast("00", "zip-code")
+  [421] pushcons 36 ............................. <"00">
+  [423] pushcons 38 ............................. <"zip-mark">
+  [425] pusharglistnoret 2 ...................... <"00", "zip-mark">
+  [427] localcall 21 ............................ special_VerifyCast("00", "zip-mark")
+  [429] pushcons 39 ............................. <"01">
+  [431] pushcons 40 ............................. <"_prologue1">
+  [433] pusharglistnoret 2 ...................... <"01", "_prologue1">
+  [435] localcall 21 ............................ special_VerifyCast("01", "_prologue1")
+  [437] pushcons 39 ............................. <"01">
+  [439] pushcons 41 ............................. <"_prologue2">
+  [441] pusharglistnoret 2 ...................... <"01", "_prologue2">
+  [443] localcall 21 ............................ special_VerifyCast("01", "_prologue2")
+  [445] pushcons 39 ............................. <"01">
+  [447] pushcons 42 ............................. <"_scroll-1">
+  [449] pusharglistnoret 2 ...................... <"01", "_scroll-1">
+  [451] localcall 21 ............................ special_VerifyCast("01", "_scroll-1")
+  [453] pushcons 39 ............................. <"01">
+  [455] pushcons 43 ............................. <"_scroll-2">
+  [457] pusharglistnoret 2 ...................... <"01", "_scroll-2">
+  [459] localcall 21 ............................ special_VerifyCast("01", "_scroll-2")
+  [461] pushcons 39 ............................. <"01">
+  [463] pushcons 44 ............................. <"_P-Focus">
+  [465] pusharglistnoret 2 ...................... <"01", "_P-Focus">
+  [467] localcall 21 ............................ special_VerifyCast("01", "_P-Focus")
+  [469] pushcons 39 ............................. <"01">
+  [471] pushcons 45 ............................. <"1 - play prologue">
+  [473] pusharglistnoret 2 ...................... <"01", "1 - play prologue">
+  [475] localcall 21 ............................ special_VerifyCast("01", "1 - play prologue")
+  [477] pushcons 39 ............................. <"01">
+  [479] pushcons 46 ............................. <"2 - wait then advance">
+  [481] pusharglistnoret 2 ...................... <"01", "2 - wait then advance">
+  [483] localcall 21 ............................ special_VerifyCast("01", "2 - wait then advance")
+  [485] pushcons 39 ............................. <"01">
+  [487] pushcons 47 ............................. <"3 - wait then advance">
+  [489] pusharglistnoret 2 ...................... <"01", "3 - wait then advance">
+  [491] localcall 21 ............................ special_VerifyCast("01", "3 - wait then advance")
+  [493] pushcons 39 ............................. <"01">
+  [495] pushcons 48 ............................. <"4 - set DTS">
+  [497] pusharglistnoret 2 ...................... <"01", "4 - set DTS">
+  [499] localcall 21 ............................ special_VerifyCast("01", "4 - set DTS")
+  [501] pushcons 39 ............................. <"01">
+  [503] pushcons 49 ............................. <"5 - 1st shot ends">
+  [505] pusharglistnoret 2 ...................... <"01", "5 - 1st shot ends">
+  [507] localcall 21 ............................ special_VerifyCast("01", "5 - 1st shot ends")
+  [509] pushcons 39 ............................. <"01">
+  [511] pushcons 50 ............................. <"6 - hands up">
+  [513] pusharglistnoret 2 ...................... <"01", "6 - hands up">
+  [515] localcall 21 ............................ special_VerifyCast("01", "6 - hands up")
+  [517] pushcons 39 ............................. <"01">
+  [519] pushcons 51 ............................. <"7 - wait then end">
+  [521] pusharglistnoret 2 ...................... <"01", "7 - wait then end">
+  [523] localcall 21 ............................ special_VerifyCast("01", "7 - wait then end")
+  [525] pushcons 39 ............................. <"01">
+  [527] pushcons 52 ............................. <"8 - P-Focus">
+  [529] pusharglistnoret 2 ...................... <"01", "8 - P-Focus">
+  [531] localcall 21 ............................ special_VerifyCast("01", "8 - P-Focus")
+  [533] pushcons 53 ............................. <"02">
+  [535] pushcons 54 ............................. <"_4x4">
+  [537] pusharglistnoret 2 ...................... <"02", "_4x4">
+  [539] localcall 21 ............................ special_VerifyCast("02", "_4x4")
+  [541] pushcons 55 ............................. <"03">
+  [543] pushcons 56 ............................. <"_jumble">
+  [545] pusharglistnoret 2 ...................... <"03", "_jumble">
+  [547] localcall 21 ............................ special_VerifyCast("03", "_jumble")
+  [549] pushcons 57 ............................. <"10">
+  [551] pushcons 58 ............................. <"_code-grid">
+  [553] pusharglistnoret 2 ...................... <"10", "_code-grid">
+  [555] localcall 21 ............................ special_VerifyCast("10", "_code-grid")
+  [557] pushcons 59 ............................. <"15">
+  [559] pushcons 60 ............................. <"_phrase">
+  [561] pusharglistnoret 2 ...................... <"15", "_phrase">
+  [563] localcall 21 ............................ special_VerifyCast("15", "_phrase")
+  [565] pushcons 61 ............................. <"16">
+  [567] pushcons 62 ............................. <"_concat">
+  [569] pusharglistnoret 2 ...................... <"16", "_concat">
+  [571] localcall 21 ............................ special_VerifyCast("16", "_concat")
+  [573] pushcons 63 ............................. <"20">
+  [575] pushcons 64 ............................. <"_crossSlide">
+  [577] pusharglistnoret 2 ...................... <"20", "_crossSlide">
+  [579] localcall 21 ............................ special_VerifyCast("20", "_crossSlide")
+  [581] pushcons 65 ............................. <"21">
+  [583] pushcons 66 ............................. <"_fill-in">
+  [585] pusharglistnoret 2 ...................... <"21", "_fill-in">
+  [587] localcall 21 ............................ special_VerifyCast("21", "_fill-in")
+  [589] pushcons 67 ............................. <"30">
+  [591] pushcons 68 ............................. <"_patchwork">
+  [593] pusharglistnoret 2 ...................... <"30", "_patchwork">
+  [595] localcall 21 ............................ special_VerifyCast("30", "_patchwork")
+  [597] pushcons 69 ............................. <"31">
+  [599] pushcons 70 ............................. <"_stamp">
+  [601] pusharglistnoret 2 ...................... <"31", "_stamp">
+  [603] localcall 21 ............................ special_VerifyCast("31", "_stamp")
+  [605] pushcons 71 ............................. <"32">
+  [607] pushcons 72 ............................. <"_slider">
+  [609] pusharglistnoret 2 ...................... <"32", "_slider">
+  [611] localcall 21 ............................ special_VerifyCast("32", "_slider")
+  [613] pushcons 73 ............................. <"40">
+  [615] pushcons 74 ............................. <"_morph">
+  [617] pusharglistnoret 2 ...................... <"40", "_morph">
+  [619] localcall 21 ............................ special_VerifyCast("40", "_morph")
+  [621] pushcons 75 ............................. <"41">
+  [623] pushcons 76 ............................. <"_morph-text">
+  [625] pusharglistnoret 2 ...................... <"41", "_morph-text">
+  [627] localcall 21 ............................ special_VerifyCast("41", "_morph-text")
+  [629] pushcons 77 ............................. <"43">
+  [631] pushcons 78 ............................. <"_herbs">
+  [633] pusharglistnoret 2 ...................... <"43", "_herbs">
+  [635] localcall 21 ............................ special_VerifyCast("43", "_herbs")
+  [637] pushcons 79 ............................. <"44">
+  [639] pushcons 80 ............................. <"_tracer">
+  [641] pusharglistnoret 2 ...................... <"44", "_tracer">
+  [643] localcall 21 ............................ special_VerifyCast("44", "_tracer")
+  [645] pushcons 81 ............................. <"45">
+  [647] pushcons 82 ............................. <"_market">
+  [649] pusharglistnoret 2 ...................... <"45", "_market">
+  [651] localcall 21 ............................ special_VerifyCast("45", "_market")
+  [653] pushcons 83 ............................. <"50">
+  [655] pushcons 84 ............................. <"_coins">
+  [657] pusharglistnoret 2 ...................... <"50", "_coins">
+  [659] localcall 21 ............................ special_VerifyCast("50", "_coins")
+  [661] pushcons 85 ............................. <"51">
+  [663] pushcons 86 ............................. <"_inventory">
+  [665] pusharglistnoret 2 ...................... <"51", "_inventory">
+  [667] localcall 21 ............................ special_VerifyCast("51", "_inventory")
+  [669] pushcons 87 ............................. <"52">
+  [671] pushcons 88 ............................. <"_halves">
+  [673] pusharglistnoret 2 ...................... <"52", "_halves">
+  [675] localcall 21 ............................ special_VerifyCast("52", "_halves")
+  [677] pushcons 89 ............................. <"60">
+  [679] pushcons 90 ............................. <"_sevens">
+  [681] pusharglistnoret 2 ...................... <"60", "_sevens">
+  [683] localcall 21 ............................ special_VerifyCast("60", "_sevens")
+  [685] pushcons 91 ............................. <"65">
+  [687] pushcons 92 ............................. <"_auction">
+  [689] pusharglistnoret 2 ...................... <"65", "_auction">
+  [691] localcall 21 ............................ special_VerifyCast("65", "_auction")
+  [693] pushcons 93 ............................. <"72">
+  [695] pushcons 94 ............................. <"_pre-Finale">
+  [697] pusharglistnoret 2 ...................... <"72", "_pre-Finale">
+  [699] localcall 21 ............................ special_VerifyCast("72", "_pre-Finale")
+  [701] pushcons 95 ............................. <"75">
+  [703] pushcons 96 ............................. <"_passwords">
+  [705] pusharglistnoret 2 ...................... <"75", "_passwords">
+  [707] localcall 21 ............................ special_VerifyCast("75", "_passwords")
+  [709] pushcons 95 ............................. <"75">
+  [711] pushcons 97 ............................. <"_DEL-stub">
+  [713] pusharglistnoret 2 ...................... <"75", "_DEL-stub">
+  [715] localcall 21 ............................ special_VerifyCast("75", "_DEL-stub")
+  [717] pushcons 98 ............................. <"76">
+  [719] pushcons 99 ............................. <"_hex-words">
+  [721] pusharglistnoret 2 ...................... <"76", "_hex-words">
+  [723] localcall 21 ............................ special_VerifyCast("76", "_hex-words")
+  [725] pushcons 98 ............................. <"76">
+  [727] pushcons 100 ............................ <"_HEX-stub">
+  [729] pusharglistnoret 2 ...................... <"76", "_HEX-stub">
+  [731] localcall 21 ............................ special_VerifyCast("76", "_HEX-stub")
+  [733] pushcons 101 ............................ <"77">
+  [735] pushcons 102 ............................ <"_unnecessary">
+  [737] pusharglistnoret 2 ...................... <"77", "_unnecessary">
+  [739] localcall 21 ............................ special_VerifyCast("77", "_unnecessary")
+  [741] pushcons 101 ............................ <"77">
+  [743] pushcons 103 ............................ <"_REM-stub">
+  [745] pusharglistnoret 2 ...................... <"77", "_REM-stub">
+  [747] localcall 21 ............................ special_VerifyCast("77", "_REM-stub")
+  [749] pushcons 104 ............................ <"78">
+  [751] pushcons 105 ............................ <"_connects">
+  [753] pusharglistnoret 2 ...................... <"78", "_connects">
+  [755] localcall 21 ............................ special_VerifyCast("78", "_connects")
+  [757] pushcons 106 ............................ <"80">
+  [759] pushcons 107 ............................ <"_pre-HP">
+  [761] pusharglistnoret 2 ...................... <"80", "_pre-HP">
+  [763] localcall 21 ............................ special_VerifyCast("80", "_pre-HP")
+  [765] pushcons 106 ............................ <"80">
+  [767] pushcons 108 ............................ <"_end-HP">
+  [769] pusharglistnoret 2 ...................... <"80", "_end-HP">
+  [771] localcall 21 ............................ special_VerifyCast("80", "_end-HP")
+  [773] pushcons 109 ............................ <"81">
+  [775] pushcons 110 ............................ <"_HP">
+  [777] pusharglistnoret 2 ...................... <"81", "_HP">
+  [779] localcall 21 ............................ special_VerifyCast("81", "_HP")
+  [781] pushcons 111 ............................ <"82">
+  [783] pushcons 112 ............................ <"_seven-cups">
+  [785] pusharglistnoret 2 ...................... <"82", "_seven-cups">
+  [787] localcall 21 ............................ special_VerifyCast("82", "_seven-cups")
+  [789] pushcons 113 ............................ <"89">
+  [791] pushcons 114 ............................ <"_wager">
+  [793] pusharglistnoret 2 ...................... <"89", "_wager">
+  [795] localcall 21 ............................ special_VerifyCast("89", "_wager")
+  [797] pushcons 115 ............................ <"90">
+  [799] pushcons 116 ............................ <"_tarot-1">
+  [801] pusharglistnoret 2 ...................... <"90", "_tarot-1">
+  [803] localcall 21 ............................ special_VerifyCast("90", "_tarot-1")
+  [805] pushcons 117 ............................ <"91">
+  [807] pushcons 118 ............................ <"_tarot-2">
+  [809] pusharglistnoret 2 ...................... <"91", "_tarot-2">
+  [811] localcall 21 ............................ special_VerifyCast("91", "_tarot-2")
+  [813] pushcons 119 ............................ <"92">
+  [815] pushcons 120 ............................ <"_tarot-3">
+  [817] pusharglistnoret 2 ...................... <"92", "_tarot-3">
+  [819] localcall 21 ............................ special_VerifyCast("92", "_tarot-3")
+  [821] pushcons 121 ............................ <"93">
+  [823] pushcons 122 ............................ <"_tarot-4">
+  [825] pusharglistnoret 2 ...................... <"93", "_tarot-4">
+  [827] localcall 21 ............................ special_VerifyCast("93", "_tarot-4")
+  [829] pushcons 123 ............................ <"94">
+  [831] pushcons 124 ............................ <"_tarot-5">
+  [833] pusharglistnoret 2 ...................... <"94", "_tarot-5">
+  [835] localcall 21 ............................ special_VerifyCast("94", "_tarot-5")
+  [837] pushcons 125 ............................ <"97">
+  [839] pushcons 126 ............................ <"_map-puzzles">
+  [841] pusharglistnoret 2 ...................... <"97", "_map-puzzles">
+  [843] localcall 21 ............................ special_VerifyCast("97", "_map-puzzles")
+  [845] pushcons 127 ............................ <"98">
+  [847] pushcons 128 ............................ <"_map">
+  [849] pusharglistnoret 2 ...................... <"98", "_map">
+  [851] localcall 21 ............................ special_VerifyCast("98", "_map")
+  [853] pushcons 129 ............................ <"99">
+  [855] pushcons 130 ............................ <"_game-menu">
+  [857] pusharglistnoret 2 ...................... <"99", "_game-menu">
+  [859] localcall 21 ............................ special_VerifyCast("99", "_game-menu")
+  [861] pushcons 131 ............................ <"100">
+  [863] pushcons 132 ............................ <"_screen">
+  [865] pusharglistnoret 2 ...................... <"100", "_screen">
+  [867] localcall 21 ............................ special_VerifyCast("100", "_screen")
+  [869] pushcons 131 ............................ <"100">
+  [871] pushcons 133 ............................ <"_tokens">
+  [873] pusharglistnoret 2 ...................... <"100", "_tokens">
+  [875] localcall 21 ............................ special_VerifyCast("100", "_tokens")
+  [877] pushcons 131 ............................ <"100">
+  [879] pushcons 134 ............................ <"_tokens-help">
+  [881] pusharglistnoret 2 ...................... <"100", "_tokens-help">
+  [883] localcall 21 ............................ special_VerifyCast("100", "_tokens-help")
+  [885] pushcons 131 ............................ <"100">
+  [887] pushcons 135 ............................ <"_T-Focus">
+  [889] pusharglistnoret 2 ...................... <"100", "_T-Focus">
+  [891] localcall 21 ............................ special_VerifyCast("100", "_T-Focus")
+  [893] pushcons 131 ............................ <"100">
+  [895] pushcons 136 ............................ <"1 - tokens-load">
+  [897] pusharglistnoret 2 ...................... <"100", "1 - tokens-load">
+  [899] localcall 21 ............................ special_VerifyCast("100", "1 - tokens-load")
+  [901] pushcons 131 ............................ <"100">
+  [903] pushcons 137 ............................ <"2 - tokens-loop">
+  [905] pusharglistnoret 2 ...................... <"100", "2 - tokens-loop">
+  [907] localcall 21 ............................ special_VerifyCast("100", "2 - tokens-loop")
+  [909] pushcons 131 ............................ <"100">
+  [911] pushcons 138 ............................ <"3 - help-load">
+  [913] pusharglistnoret 2 ...................... <"100", "3 - help-load">
+  [915] localcall 21 ............................ special_VerifyCast("100", "3 - help-load")
+  [917] pushcons 131 ............................ <"100">
+  [919] pushcons 139 ............................ <"4 - help-loop">
+  [921] pusharglistnoret 2 ...................... <"100", "4 - help-loop">
+  [923] localcall 21 ............................ special_VerifyCast("100", "4 - help-loop")
+  [925] pushcons 131 ............................ <"100">
+  [927] pushcons 140 ............................ <"5 - T-Focus">
+  [929] pusharglistnoret 2 ...................... <"100", "5 - T-Focus">
+  [931] localcall 21 ............................ special_VerifyCast("100", "5 - T-Focus")
+  [933] pushcons 141 ............................ <"101">
+  [935] pushcons 142 ............................ <"_drown">
+  [937] pusharglistnoret 2 ...................... <"101", "_drown">
+  [939] localcall 21 ............................ special_VerifyCast("101", "_drown")
+  [941] pushcons 141 ............................ <"101">
+  [943] pushcons 143 ............................ <"_list">
+  [945] pusharglistnoret 2 ...................... <"101", "_list">
+  [947] localcall 21 ............................ special_VerifyCast("101", "_list")
+  [949] pushcons 141 ............................ <"101">
+  [951] pushcons 144 ............................ <"_roll">
+  [953] pusharglistnoret 2 ...................... <"101", "_roll">
+  [955] localcall 21 ............................ special_VerifyCast("101", "_roll")
+  [957] pushcons 141 ............................ <"101">
+  [959] pushcons 145 ............................ <"_splash">
+  [961] pusharglistnoret 2 ...................... <"101", "_splash">
+  [963] localcall 21 ............................ special_VerifyCast("101", "_splash")
+  [965] pushcons 141 ............................ <"101">
+  [967] pushcons 146 ............................ <"_C-Focus">
+  [969] pusharglistnoret 2 ...................... <"101", "_C-Focus">
+  [971] localcall 21 ............................ special_VerifyCast("101", "_C-Focus")
+  [973] pushcons 141 ............................ <"101">
+  [975] pushcons 147 ............................ <"1 - COMP - init">
+  [977] pusharglistnoret 2 ...................... <"101", "1 - COMP - init">
+  [979] localcall 21 ............................ special_VerifyCast("101", "1 - COMP - init")
+  [981] pushcons 141 ............................ <"101">
+  [983] pushcons 148 ............................ <"2 - COMP - loop">
+  [985] pusharglistnoret 2 ...................... <"101", "2 - COMP - loop">
+  [987] localcall 21 ............................ special_VerifyCast("101", "2 - COMP - loop")
+  [989] pushcons 141 ............................ <"101">
+  [991] pushcons 149 ............................ <"3 - SPLASH - init">
+  [993] pusharglistnoret 2 ...................... <"101", "3 - SPLASH - init">
+  [995] localcall 21 ............................ special_VerifyCast("101", "3 - SPLASH - init")
+  [997] pushcons 141 ............................ <"101">
+  [999] pushcons 150 ............................ <"4 - SPLASH - loop">
+  [1001] pusharglistnoret 2 ..................... <"101", "4 - SPLASH - loop">
+  [1003] localcall 21 ........................... special_VerifyCast("101", "4 - SPLASH - loop")
+  [1005] pushcons 141 ........................... <"101">
+  [1007] pushcons 151 ........................... <"5 - DROWN - init">
+  [1009] pusharglistnoret 2 ..................... <"101", "5 - DROWN - init">
+  [1011] localcall 21 ........................... special_VerifyCast("101", "5 - DROWN - init")
+  [1013] pushcons 141 ........................... <"101">
+  [1015] pushcons 152 ........................... <"6 - DROWN - loop">
+  [1017] pusharglistnoret 2 ..................... <"101", "6 - DROWN - loop">
+  [1019] localcall 21 ........................... special_VerifyCast("101", "6 - DROWN - loop")
+  [1021] pushcons 141 ........................... <"101">
+  [1023] pushcons 153 ........................... <"7 - C-Focus">
+  [1025] pusharglistnoret 2 ..................... <"101", "7 - C-Focus">
+  [1027] localcall 21 ........................... special_VerifyCast("101", "7 - C-Focus")
+  [1029] pushcons 141 ........................... <"101">
+  [1031] pushcons 154 ........................... <"compendium">
+  [1033] pusharglistnoret 2 ..................... <"101", "compendium">
+  [1035] localcall 21 ........................... special_VerifyCast("101", "compendium")
+  [1037] pushcons 141 ........................... <"101">
+  [1039] pushcons 155 ........................... <"miscellaneous">
+  [1041] pusharglistnoret 2 ..................... <"101", "miscellaneous">
+  [1043] localcall 21 ........................... special_VerifyCast("101", "miscellaneous")
+  [1045] pushcons 156 ........................... <"102">
+  [1047] pushcons 157 ........................... <"_arrow-F">
+  [1049] pusharglistnoret 2 ..................... <"102", "_arrow-F">
+  [1051] localcall 21 ........................... special_VerifyCast("102", "_arrow-F")
+  [1053] pushcons 156 ........................... <"102">
+  [1055] pushcons 158 ........................... <"_arrow-R">
+  [1057] pusharglistnoret 2 ..................... <"102", "_arrow-R">
+  [1059] localcall 21 ........................... special_VerifyCast("102", "_arrow-R")
+  [1061] pushcons 156 ........................... <"102">
+  [1063] pushcons 159 ........................... <"_help">
+  [1065] pusharglistnoret 2 ..................... <"102", "_help">
+  [1067] localcall 21 ........................... special_VerifyCast("102", "_help")
+  [1069] pushcons 156 ........................... <"102">
+  [1071] pushcons 160 ........................... <"_menu">
+  [1073] pusharglistnoret 2 ..................... <"102", "_menu">
+  [1075] localcall 21 ........................... special_VerifyCast("102", "_menu")
+  [1077] pushcons 156 ........................... <"102">
+  [1079] pushcons 161 ........................... <"_money">
+  [1081] pusharglistnoret 2 ..................... <"102", "_money">
+  [1083] localcall 21 ........................... special_VerifyCast("102", "_money")
+  [1085] pushcons 156 ........................... <"102">
+  [1087] pushcons 162 ........................... <"_scroll">
+  [1089] pusharglistnoret 2 ..................... <"102", "_scroll">
+  [1091] localcall 21 ........................... special_VerifyCast("102", "_scroll")
+  [1093] pushcons 156 ........................... <"102">
+  [1095] pushcons 163 ........................... <"1 - load">
+  [1097] pusharglistnoret 2 ..................... <"102", "1 - load">
+  [1099] localcall 21 ........................... special_VerifyCast("102", "1 - load")
+  [1101] pushcons 156 ........................... <"102">
+  [1103] pushcons 164 ........................... <"2 - loop">
+  [1105] pusharglistnoret 2 ..................... <"102", "2 - loop">
+  [1107] localcall 21 ........................... special_VerifyCast("102", "2 - loop")
+  [1109] pushcons 165 ........................... <"103">
+  [1111] pushcons 166 ........................... <"01-Initialization">
+  [1113] pusharglistnoret 2 ..................... <"103", "01-Initialization">
+  [1115] localcall 21 ........................... special_VerifyCast("103", "01-Initialization")
+  [1117] pushcons 165 ........................... <"103">
+  [1119] pushcons 167 ........................... <"02-Misc">
+  [1121] pusharglistnoret 2 ..................... <"103", "02-Misc">
+  [1123] localcall 21 ........................... special_VerifyCast("103", "02-Misc")
+  [1125] pushcons 165 ........................... <"103">
+  [1127] pushcons 168 ........................... <"03-Launch">
+  [1129] pusharglistnoret 2 ..................... <"103", "03-Launch">
+  [1131] localcall 21 ........................... special_VerifyCast("103", "03-Launch")
+  [1133] pushcons 165 ........................... <"103">
+  [1135] pushcons 169 ........................... <"04-Read/Write">
+  [1137] pusharglistnoret 2 ..................... <"103", "04-Read/Write">
+  [1139] localcall 21 ........................... special_VerifyCast("103", "04-Read/Write")
+  [1141] pushcons 165 ........................... <"103">
+  [1143] pushcons 170 ........................... <"05-Requests">
+  [1145] pusharglistnoret 2 ..................... <"103", "05-Requests">
+  [1147] localcall 21 ........................... special_VerifyCast("103", "05-Requests")
+  [1149] pushcons 165 ........................... <"103">
+  [1151] pushcons 171 ........................... <"06-Update-Stats">
+  [1153] pusharglistnoret 2 ..................... <"103", "06-Update-Stats">
+  [1155] localcall 21 ........................... special_VerifyCast("103", "06-Update-Stats")
+  [1157] pushcons 165 ........................... <"103">
+  [1159] pushcons 172 ........................... <"07-Data">
+  [1161] pusharglistnoret 2 ..................... <"103", "07-Data">
+  [1163] localcall 21 ........................... special_VerifyCast("103", "07-Data")
+  [1165] pushcons 165 ........................... <"103">
+  [1167] pushcons 173 ........................... <"08-StartUp">
+  [1169] pusharglistnoret 2 ..................... <"103", "08-StartUp">
+  [1171] localcall 21 ........................... special_VerifyCast("103", "08-StartUp")
+  [1173] pushcons 165 ........................... <"103">
+  [1175] pushcons 174 ........................... <"09-Special">
+  [1177] pusharglistnoret 2 ..................... <"103", "09-Special">
+  [1179] localcall 21 ........................... special_VerifyCast("103", "09-Special")
+  [1181] pushcons 165 ........................... <"103">
+  [1183] pushcons 175 ........................... <"10-Menu">
+  [1185] pusharglistnoret 2 ..................... <"103", "10-Menu">
+  [1187] localcall 21 ........................... special_VerifyCast("103", "10-Menu")
+  [1189] pushcons 165 ........................... <"103">
+  [1191] pushcons 176 ........................... <"11-Arrows">
+  [1193] pusharglistnoret 2 ..................... <"103", "11-Arrows">
+  [1195] localcall 21 ........................... special_VerifyCast("103", "11-Arrows")
+  [1197] pushcons 165 ........................... <"103">
+  [1199] pushcons 177 ........................... <"12-Help">
+  [1201] pusharglistnoret 2 ..................... <"103", "12-Help">
+  [1203] localcall 21 ........................... special_VerifyCast("103", "12-Help")
+  [1205] pushcons 165 ........................... <"103">
+  [1207] pushcons 178 ........................... <"20-Tokens">
+  [1209] pusharglistnoret 2 ..................... <"103", "20-Tokens">
+  [1211] localcall 21 ........................... special_VerifyCast("103", "20-Tokens")
+  [1213] pushcons 165 ........................... <"103">
+  [1215] pushcons 179 ........................... <"21-Compendium">
+  [1217] pusharglistnoret 2 ..................... <"103", "21-Compendium">
+  [1219] localcall 21 ........................... special_VerifyCast("103", "21-Compendium")
+  [1221] pushcons 165 ........................... <"103">
+  [1223] pushcons 180 ........................... <"22-Prologue">
+  [1225] pusharglistnoret 2 ..................... <"103", "22-Prologue">
+  [1227] localcall 21 ........................... special_VerifyCast("103", "22-Prologue")
+  [1229] pushcons 165 ........................... <"103">
+  [1231] pushcons 181 ........................... <"23-Puzzles">
+  [1233] pusharglistnoret 2 ..................... <"103", "23-Puzzles">
+  [1235] localcall 21 ........................... special_VerifyCast("103", "23-Puzzles")
+  [1237] pushcons 165 ........................... <"103">
+  [1239] pushcons 182 ........................... <"24-Finale">
+  [1241] pusharglistnoret 2 ..................... <"103", "24-Finale">
+  [1243] localcall 21 ........................... special_VerifyCast("103", "24-Finale")
+  [1245] pushcons 183 ........................... <"104">
+  [1247] pushcons 184 ........................... <"_finale-01">
+  [1249] pusharglistnoret 2 ..................... <"104", "_finale-01">
+  [1251] localcall 21 ........................... special_VerifyCast("104", "_finale-01")
+  [1253] pushcons 183 ........................... <"104">
+  [1255] pushcons 185 ........................... <"_finale-02">
+  [1257] pusharglistnoret 2 ..................... <"104", "_finale-02">
+  [1259] localcall 21 ........................... special_VerifyCast("104", "_finale-02")
+  [1261] pushcons 183 ........................... <"104">
+  [1263] pushcons 186 ........................... <"_finale-09">
+  [1265] pusharglistnoret 2 ..................... <"104", "_finale-09">
+  [1267] localcall 21 ........................... special_VerifyCast("104", "_finale-09")
+  [1269] pushcons 183 ........................... <"104">
+  [1271] pushcons 187 ........................... <"_finale-13">
+  [1273] pusharglistnoret 2 ..................... <"104", "_finale-13">
+  [1275] localcall 21 ........................... special_VerifyCast("104", "_finale-13")
+  [1277] pushcons 183 ........................... <"104">
+  [1279] pushcons 188 ........................... <"_finale-17">
+  [1281] pusharglistnoret 2 ..................... <"104", "_finale-17">
+  [1283] localcall 21 ........................... special_VerifyCast("104", "_finale-17")
+  [1285] pushcons 183 ........................... <"104">
+  [1287] pushcons 189 ........................... <"_finale-18">
+  [1289] pusharglistnoret 2 ..................... <"104", "_finale-18">
+  [1291] localcall 21 ........................... special_VerifyCast("104", "_finale-18")
+  [1293] pushcons 183 ........................... <"104">
+  [1295] pushcons 190 ........................... <"_finale-19">
+  [1297] pusharglistnoret 2 ..................... <"104", "_finale-19">
+  [1299] localcall 21 ........................... special_VerifyCast("104", "_finale-19")
+  [1301] pushcons 183 ........................... <"104">
+  [1303] pushcons 191 ........................... <"1 - f - load">
+  [1305] pusharglistnoret 2 ..................... <"104", "1 - f - load">
+  [1307] localcall 21 ........................... special_VerifyCast("104", "1 - f - load")
+  [1309] pushcons 183 ........................... <"104">
+  [1311] pushcons 192 ........................... <"2 - f - loop">
+  [1313] pusharglistnoret 2 ..................... <"104", "2 - f - loop">
+  [1315] localcall 21 ........................... special_VerifyCast("104", "2 - f - loop")
+  [1317] ret
+end
+
+on special_VerifyCast c, M
+  [  0] getparam 1 .............................. <M>
+  [  2] pushsymb 135 ............................ <#char>
+  [  4] pushint8 1 .............................. <1>
+  [  6] pusharglist 3 ........................... <M, #char, 1>
+  [  8] objcall 136 ............................. <M.char[1]>
+  [ 10] pushcons 193 ............................ <"_">
+  [ 12] eq ...................................... <M.char[1] = "_">
+  [ 13] jmpifz [ 77] ............................ if M.char[1] = "_" then
+  [ 16] getparam 1 .............................. <M>
+  [ 18] getparam 0 .............................. <c>
+  [ 20] pusharglist 2 ........................... <M, c>
+  [ 22] extcall 612 ............................. <member(M, c)>
+  [ 25] pushint8 1 .............................. <1>
+  [ 27] setobjprop 616 .......................... member(M, c).preload = 1
+  [ 30] getglobal 260 ........................... <cGameDirectory>
+  [ 33] getglobal 607 ........................... <cWork>
+  [ 36] eq ...................................... <cGameDirectory = cWork>
+  [ 37] jmpifz [ 54] ............................ if cGameDirectory = cWork then
+  [ 40] getparam 1 .............................. <M>
+  [ 42] getparam 0 .............................. <c>
+  [ 44] pusharglist 2 ........................... <M, c>
+  [ 46] extcall 612 ............................. <member(M, c)>
+  [ 49] pushint8 1 .............................. <1>
+  [ 51] setobjprop 617 .......................... member(M, c).linked = 1
+  [ 54] getglobal 260 ........................... <cGameDirectory>
+  [ 57] getglobal 608 ........................... <cLink>
+  [ 60] eq ...................................... <cGameDirectory = cLink>
+  [ 61] jmpifz [ 77] ............................ if cGameDirectory = cLink then
+  [ 64] getparam 1 .............................. <M>
+  [ 66] getparam 0 .............................. <c>
+  [ 68] pusharglist 2 ........................... <M, c>
+  [ 70] extcall 612 ............................. <member(M, c)>
+  [ 73] pushzero ................................ <0>
+  [ 74] setobjprop 617 .......................... member(M, c).linked = 0
+  [ 77] pushzero ................................ <0>
+  [ 78] pushzero ................................ <0>
+  [ 79] pushint8 2 .............................. <2>
+  [ 81] pushzero ................................ <0>
+  [ 82] pushzero ................................ <0>
+  [ 83] pushzero ................................ <0>
+  [ 84] pushzero ................................ <0>
+  [ 85] pushzero ................................ <0>
+  [ 86] getparam 1 .............................. <M>
+  [ 88] getparam 0 .............................. <c>
+  [ 90] pusharglist 2 ........................... <M, c>
+  [ 92] extcall 612 ............................. <member(M, c)>
+  [ 95] pusharglist 1 ........................... <member(M, c)>
+  [ 97] extcall 334 ............................. <string(member(M, c))>
+  [100] getchunk ................................ <word 2 of string(member M of castLib c)>
+  [101] pushcons 194 ............................ <"-1">
+  [103] eq ...................................... <word 2 of string(member M of castLib c) = "-1">
+  [104] jmpifz [124] ............................ if word 2 of string(member M of castLib c) = "-1" then
+  [107] pushcons 195 ............................ <"FALSE">
+  [109] getparam 0 .............................. <c>
+  [111] joinpadstr .............................. <"FALSE" && c>
+  [112] getparam 1 .............................. <M>
+  [114] joinpadstr .............................. <"FALSE" && c && M>
+  [115] pusharglistnoret 1 ...................... <"FALSE" && c && M>
+  [117] extcall 174 ............................. _PUT("FALSE" && c && M)
+  [119] pushzero ................................ <0>
+  [120] pusharglistnoret 1 ...................... <0>
+  [122] extcall 137 ............................. return 0
+  [124] pushint8 1 .............................. <1>
+  [126] pusharglistnoret 1 ...................... <1>
+  [128] extcall 137 ............................. return 1
+  [130] ret
+end

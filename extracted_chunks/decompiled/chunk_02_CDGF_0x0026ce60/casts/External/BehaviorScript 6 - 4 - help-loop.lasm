@@ -1,0 +1,20 @@
+on prepareFrame
+  [  0] pusharglistnoret 0 ...................... <>
+  [  2] extcall 7 ............................... tokenHelp_PrepPlay()
+  [  4] ret
+end
+
+on exitFrame
+  [  0] pusharglistnoret 0 ...................... <>
+  [  2] extcall 8 ............................... tokenHelp_ExitPlay()
+  [  4] ret
+end
+
+on idle
+  [  0] gettoplevelprop 9 ....................... <_movie>
+  [  2] pushint8 15 ............................. <15>
+  [  4] setobjprop 10 ........................... _movie.idleHandlerPeriod = 15
+  [  6] pushint8 1 .............................. <1>
+  [  8] setlocal 0 .............................. sleep = 1
+  [ 10] ret
+end

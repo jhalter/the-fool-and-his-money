@@ -1,0 +1,409 @@
+global cActiveSN, cScrollSN, cMenuSN, cForwardSN, cReverseSN, cPreFinale, cFinale, cGameMenus, c_Interface_Mode, currPuzzle, loadPuzzleCount, currRollOver, lastRollOver, nextPuzzle, requestBlock, currMenuDisplay, pFin_Count, pFin_Incre, pFin_Total, pFin_Menu, pStat, pPage, pMenu, pHelp, pTransition, menuStat, playMode, pmZero, pmPlay, pmHelp, pmClick, pmSave, pmDeActivate, pmActivate, F_Arrow_Active, R_Arrow_Active, _Finale_After_Click, fin_Before_Stat
+
+on fin_Play
+  [  0] pushzero ................................ <0>
+  [  1] setglobal 11 ............................ loadPuzzleCount = 0
+  [  3] pushint8 1 .............................. <1>
+  [  5] pushint8 2 .............................. <2>
+  [  7] pushint8 9 .............................. <9>
+  [  9] pushint8 13 ............................. <13>
+  [ 11] pushint8 17 ............................. <17>
+  [ 13] pushint8 18 ............................. <18>
+  [ 15] pushint8 19 ............................. <19>
+  [ 17] pusharglist 7 ........................... <[1, 2, 9, 13, 17, 18, 19]>
+  [ 19] pushlist ................................ <[1, 2, 9, 13, 17, 18, 19]>
+  [ 20] setlocal 0 .............................. presentation = [1, 2, 9, 13, 17, 18, 19]
+  [ 22] pushint8 7 .............................. <7>
+  [ 24] setglobal 12 ............................ pFin_Total = 7
+  [ 26] getglobal 13 ............................ <pFin_Count>
+  [ 28] pushint8 1 .............................. <1>
+  [ 30] add ..................................... <pFin_Count + 1>
+  [ 31] setglobal 13 ............................ pFin_Count = pFin_Count + 1
+  [ 33] getglobal 13 ............................ <pFin_Count>
+  [ 35] getglobal 12 ............................ <pFin_Total>
+  [ 37] lteq .................................... <pFin_Count <= pFin_Total>
+  [ 38] jmpifz [ 92] ............................ if pFin_Count <= pFin_Total then / else
+  [ 41] getglobal 13 ............................ <pFin_Count>
+  [ 43] getglobal 12 ............................ <pFin_Total>
+  [ 45] lt ...................................... <pFin_Count < pFin_Total>
+  [ 46] jmpifz [ 62] ............................ if pFin_Count < pFin_Total then
+  [ 49] gettoplevelprop 14 ...................... <_movie>
+  [ 51] pushint8 9 .............................. <9>
+  [ 53] pushint8 1 .............................. <1>
+  [ 55] pushint8 20 ............................. <20>
+  [ 57] pushzero ................................ <0>
+  [ 58] pusharglistnoret 5 ...................... <_movie, 9, 1, 20, 0>
+  [ 60] objcall 15 .............................. _movie.puppetTransition(9, 1, 20, 0)
+  [ 62] pushcons 0 .............................. <"F">
+  [ 64] getlocal 0 .............................. <presentation>
+  [ 66] getglobal 13 ............................ <pFin_Count>
+  [ 68] pusharglist 2 ........................... <presentation, pFin_Count>
+  [ 70] objcall 17 .............................. <presentation[pFin_Count]>
+  [ 72] pushzero ................................ <0>
+  [ 73] pushzero ................................ <0>
+  [ 74] pusharglist 3 ........................... <presentation[pFin_Count], 0, 0>
+  [ 76] extcall 16 .............................. <misc_PadNumber(presentation[pFin_Count], 0, 0)>
+  [ 78] joinstr ................................. <"F" & misc_PadNumber(presentation[pFin_Count], 0, 0)>
+  [ 79] setlocal 1 .............................. FR = "F" & misc_PadNumber(presentation[pFin_Count], 0, 0)
+  [ 81] gettoplevelprop 14 ...................... <_movie>
+  [ 83] getlocal 1 .............................. <FR>
+  [ 85] pusharglistnoret 2 ...................... <_movie, FR>
+  [ 87] objcall 18 .............................. _movie.go(FR)
+  [ 89] jmp [104]
+  [ 92] pushint8 9 .............................. <9>
+  [ 94] setglobal 19 ............................ pTransition = 9
+  [ 96] getglobal 21 ............................ <cGameMenus>
+  [ 98] pushint8 1 .............................. <1>
+  [100] pusharglistnoret 2 ...................... <cGameMenus, 1>
+  [102] extcall 20 .............................. initLaunch(cGameMenus, 1)
+  [104] ret
+end
+
+on fin_PrepInit
+  [  0] getglobal 11 ............................ <loadPuzzleCount>
+  [  2] pushzero ................................ <0>
+  [  3] eq ...................................... <loadPuzzleCount = 0>
+  [  4] jmpifz [ 94] ............................ if loadPuzzleCount = 0 then
+  [  7] getglobal 25 ............................ <cFinale>
+  [  9] setglobal 24 ............................ currPuzzle = cFinale
+  [ 11] pushcons 1 .............................. <"The Finale">
+  [ 13] pusharglistnoret 1 ...................... <"The Finale">
+  [ 15] extcall 26 .............................. init_Window_Title("The Finale")
+  [ 17] gettoplevelprop 14 ...................... <_movie>
+  [ 19] getobjprop 27 ........................... <_movie.frameLabel>
+  [ 21] pushcons 2 .............................. <"F01">
+  [ 23] eq ...................................... <_movie.frameLabel = "F01">
+  [ 24] jmpifz [ 36] ............................ if _movie.frameLabel = "F01" then
+  [ 27] pushint8 1 .............................. <1>
+  [ 29] setglobal 13 ............................ pFin_Count = 1
+  [ 31] pushzero ................................ <0>
+  [ 32] pusharglistnoret 1 ...................... <0>
+  [ 34] extcall 28 .............................. misc_CalcPage(0)
+  [ 36] pusharglistnoret 0 ...................... <>
+  [ 38] extcall 29 .............................. misc_InitPuzzle()
+  [ 40] pusharglistnoret 0 ...................... <>
+  [ 42] extcall 30 .............................. arrow_F_Init()
+  [ 44] pusharglistnoret 0 ...................... <>
+  [ 46] extcall 31 .............................. arrow_R_Init()
+  [ 48] pushzero ................................ <0>
+  [ 49] setglobal 32 ............................ F_Arrow_Active = 0
+  [ 51] pushzero ................................ <0>
+  [ 52] setglobal 33 ............................ R_Arrow_Active = 0
+  [ 54] getglobal 34 ............................ <pMenu>
+  [ 56] getglobal 25 ............................ <cFinale>
+  [ 58] pushcons 3 .............................. <"--------">
+  [ 60] pusharglistnoret 3 ...................... <pMenu, cFinale, "--------">
+  [ 62] objcall 35 .............................. pMenu[cFinale] = "--------"
+  [ 64] getglobal 13 ............................ <pFin_Count>
+  [ 66] pushint8 1 .............................. <1>
+  [ 68] eq ...................................... <pFin_Count = 1>
+  [ 69] jmpifz [ 80] ............................ if pFin_Count = 1 then / else
+  [ 72] pushzero ................................ <0>
+  [ 73] pusharglistnoret 1 ...................... <0>
+  [ 75] extcall 36 .............................. menu_Init(0)
+  [ 77] jmp [ 87]
+  [ 80] pushint16 666 ........................... <666>
+  [ 83] pusharglistnoret 1 ...................... <666>
+  [ 85] extcall 36 .............................. menu_Init(666)
+  [ 87] pusharglistnoret 0 ...................... <>
+  [ 89] extcall 37 .............................. misc_InitPage()
+  [ 91] pushzero ................................ <0>
+  [ 92] setglobal 38 ............................ _Finale_After_Click = 0
+  [ 94] pusharglistnoret 0 ...................... <>
+  [ 96] extcall 39 .............................. sendFlashData()
+  [ 98] ret
+end
+
+on fin_ExitInit
+  [  0] pusharglistnoret 0 ...................... <>
+  [  2] extcall 40 .............................. nullMouseChunk()
+  [  4] pushzero ................................ <0>
+  [  5] pusharglistnoret 1 ...................... <0>
+  [  7] extcall 41 .............................. misc_ClearQueue(0)
+  [  9] pushcons 4 .............................. <"gListener">
+  [ 11] pushint8 1 .............................. <1>
+  [ 13] pusharglist 2 ........................... <"gListener", 1>
+  [ 15] extcall 43 .............................. <misc_GetFlash("gListener", 1)>
+  [ 17] pusharglist 1 ........................... <misc_GetFlash("gListener", 1)>
+  [ 19] extcall 42 .............................. <integer(misc_GetFlash("gListener", 1))>
+  [ 21] setlocal 0 .............................. L = integer(misc_GetFlash("gListener", 1))
+  [ 23] getlocal 0 .............................. <L>
+  [ 25] pushint16 666 ........................... <666>
+  [ 28] nteq .................................... <L <> 666>
+  [ 29] jmpifz [ 45] ............................ if L <> 666 then / else
+  [ 32] gettoplevelprop 14 ...................... <_movie>
+  [ 34] gettoplevelprop 14 ...................... <_movie>
+  [ 36] getobjprop 44 ........................... <_movie.frame>
+  [ 38] pusharglistnoret 2 ...................... <_movie, _movie.frame>
+  [ 40] objcall 18 .............................. _movie.go(_movie.frame)
+  [ 42] jmp [ 59]
+  [ 45] getglobal 46 ............................ <pmPlay>
+  [ 47] setglobal 45 ............................ playMode = pmPlay
+  [ 49] pusharglistnoret 0 ...................... <>
+  [ 51] localcall 6 ............................. fin_Interface()
+  [ 53] getglobal 48 ............................ <cActiveSN>
+  [ 55] pusharglistnoret 1 ...................... <cActiveSN>
+  [ 57] extcall 47 .............................. setDirectToStage(cActiveSN)
+  [ 59] ret
+end
+
+on fin_PrepPlay
+  [  0] getglobal 38 ............................ <_Finale_After_Click>
+  [  2] pushint8 15 ............................. <15>
+  [  4] lt ...................................... <_Finale_After_Click < 15>
+  [  5] jmpifz [ 15] ............................ if _Finale_After_Click < 15 then
+  [  8] getglobal 38 ............................ <_Finale_After_Click>
+  [ 10] pushint8 1 .............................. <1>
+  [ 12] add ..................................... <_Finale_After_Click + 1>
+  [ 13] setglobal 38 ............................ _Finale_After_Click = _Finale_After_Click + 1
+  [ 15] getglobal 45 ............................ <playMode>
+  [ 17] getglobal 46 ............................ <pmPlay>
+  [ 19] eq ...................................... <playMode = pmPlay>
+  [ 20] jmpifz [139] ............................ if playMode = pmPlay then
+  [ 23] pusharglistnoret 0 ...................... <>
+  [ 25] extcall 50 .............................. setMouseIdle()
+  [ 27] pushcons 5 .............................. <"pShiftKey">
+  [ 29] gettoplevelprop 52 ...................... <_key>
+  [ 31] getobjprop 53 ........................... <_key.shiftDown>
+  [ 33] pusharglistnoret 2 ...................... <"pShiftKey", _key.shiftDown>
+  [ 35] extcall 51 .............................. misc_SetFlash("pShiftKey", _key.shiftDown)
+  [ 37] pusharglistnoret 0 ...................... <>
+  [ 39] extcall 54 .............................. sendMouseKeyChunk()
+  [ 41] gettoplevelprop 14 ...................... <_movie>
+  [ 43] pusharglist 1 ........................... <_movie>
+  [ 45] objcall 56 .............................. <_movie.rollover()>
+  [ 47] setglobal 55 ............................ currRollOver = _movie.rollover()
+  [ 49] getglobal 55 ............................ <currRollOver>
+  [ 51] peek 0 .................................. case currRollOver of
+  [ 53] getglobal 48 ............................ <cActiveSN>
+  [ 55] nteq
+  [ 56] jmpifz [ 83] ............................ (case) cActiveSN, ...
+  [ 59] peek 0
+  [ 61] getglobal 57 ............................ <cScrollSN>
+  [ 63] nteq
+  [ 64] jmpifz [ 83] ............................ (case) ..., cScrollSN, ...
+  [ 67] peek 0
+  [ 69] getglobal 58 ............................ <cForwardSN>
+  [ 71] nteq
+  [ 72] jmpifz [ 83] ............................ (case) ..., cForwardSN, ...
+  [ 75] peek 0
+  [ 77] getglobal 59 ............................ <cReverseSN>
+  [ 79] eq
+  [ 80] jmpifz [ 86] ............................ (case) ..., cReverseSN:
+  [ 83] jmp [113]
+  [ 86] peek 0
+  [ 88] getglobal 60 ............................ <cMenuSN>
+  [ 90] eq
+  [ 91] jmpifz [109] ............................ (case) cMenuSN:
+  [ 94] gettoplevelprop 62 ...................... <_mouse>
+  [ 96] getobjprop 63 ........................... <_mouse.mouseH>
+  [ 98] gettoplevelprop 62 ...................... <_mouse>
+  [100] getobjprop 64 ........................... <_mouse.mouseV>
+  [102] pusharglistnoret 2 ...................... <_mouse.mouseH, _mouse.mouseV>
+  [104] extcall 61 .............................. menu_MouseOver(_mouse.mouseH, _mouse.mouseV)
+  [106] jmp [113] ............................... (case) otherwise:
+  [109] getglobal 65 ............................ <lastRollOver>
+  [111] setglobal 55 ............................ currRollOver = lastRollOver
+  [113] pop 1 ................................... end case
+  [115] getglobal 65 ............................ <lastRollOver>
+  [117] getglobal 55 ............................ <currRollOver>
+  [119] nteq .................................... <lastRollOver <> currRollOver>
+  [120] jmpifz [135] ............................ if lastRollOver <> currRollOver then
+  [123] getglobal 65 ............................ <lastRollOver>
+  [125] getglobal 60 ............................ <cMenuSN>
+  [127] eq ...................................... <lastRollOver = cMenuSN>
+  [128] jmpifz [135] ............................ if lastRollOver = cMenuSN then
+  [131] pusharglistnoret 0 ...................... <>
+  [133] extcall 66 .............................. menu_ExitDisplay()
+  [135] getglobal 55 ............................ <currRollOver>
+  [137] setglobal 65 ............................ lastRollOver = currRollOver
+  [139] ret
+end
+
+on fin_ExitPlay
+  [  0] getglobal 45 ............................ <playMode>
+  [  2] peek 0 .................................. case playMode of
+  [  4] getglobal 46 ............................ <pmPlay>
+  [  6] eq
+  [  7] jmpifz [ 25] ............................ (case) pmPlay:
+  [ 10] pusharglistnoret 0 ...................... <>
+  [ 12] localcall 5 ............................. check_Fin_Interface()
+  [ 14] pusharglistnoret 0 ...................... <>
+  [ 16] extcall 67 .............................. pollFlashRequest()
+  [ 18] pusharglistnoret 0 ...................... <>
+  [ 20] extcall 68 .............................. menu_pmPlay_Poll_ClickToContinue()
+  [ 22] jmp [113]
+  [ 25] peek 0
+  [ 27] getglobal 69 ............................ <pmClick>
+  [ 29] eq
+  [ 30] jmpifz [ 48] ............................ (case) pmClick:
+  [ 33] pusharglistnoret 0 ...................... <>
+  [ 35] localcall 5 ............................. check_Fin_Interface()
+  [ 37] pusharglistnoret 0 ...................... <>
+  [ 39] extcall 70 .............................. puzz_RollOver()
+  [ 41] pusharglistnoret 0 ...................... <>
+  [ 43] extcall 71 .............................. checkRollOverStatus()
+  [ 45] jmp [113]
+  [ 48] peek 0
+  [ 50] getglobal 72 ............................ <pmSave>
+  [ 52] eq
+  [ 53] jmpifz [ 67] ............................ (case) pmSave:
+  [ 56] pusharglistnoret 0 ...................... <>
+  [ 58] extcall 73 .............................. check_No_Interface()
+  [ 60] pusharglistnoret 0 ...................... <>
+  [ 62] extcall 74 .............................. pollSaveStageStatus()
+  [ 64] jmp [113]
+  [ 67] peek 0
+  [ 69] getglobal 75 ............................ <pmDeActivate>
+  [ 71] eq
+  [ 72] jmpifz [ 86] ............................ (case) pmDeActivate:
+  [ 75] pusharglistnoret 0 ...................... <>
+  [ 77] extcall 76 .............................. check_DeActivate_Interface()
+  [ 79] pusharglistnoret 0 ...................... <>
+  [ 81] extcall 77 .............................. _valid_Save_Progress()
+  [ 83] jmp [113]
+  [ 86] peek 0
+  [ 88] getglobal 78 ............................ <pmActivate>
+  [ 90] eq
+  [ 91] jmpifz [109] ............................ (case) pmActivate:
+  [ 94] pusharglistnoret 0 ...................... <>
+  [ 96] localcall 6 ............................. fin_Interface()
+  [ 98] pushcons 6 .............................. <"fin_MouseDown">
+  [100] pushint8 1 .............................. <1>
+  [102] pusharglistnoret 2 ...................... <"fin_MouseDown", 1>
+  [104] extcall 79 .............................. _Test_Activate("fin_MouseDown", 1)
+  [106] jmp [113] ............................... (case) otherwise:
+  [109] getglobal 46 ............................ <pmPlay>
+  [111] setglobal 45 ............................ playMode = pmPlay
+  [113] pop 1 ................................... end case
+  [115] gettoplevelprop 14 ...................... <_movie>
+  [117] gettoplevelprop 14 ...................... <_movie>
+  [119] getobjprop 44 ........................... <_movie.frame>
+  [121] pusharglistnoret 2 ...................... <_movie, _movie.frame>
+  [123] objcall 18 .............................. _movie.go(_movie.frame)
+  [125] ret
+end
+
+on check_Fin_Interface
+  [  0] pushint8 1 .............................. <1>
+  [  2] get 0 ................................... <the mouseDownScript>
+  [  4] pushcons 6 .............................. <"fin_MouseDown">
+  [  6] nteq .................................... <the mouseDownScript <> "fin_MouseDown">
+  [  7] jmpifz [ 14] ............................ if the mouseDownScript <> "fin_MouseDown" then
+  [ 10] pusharglistnoret 0 ...................... <>
+  [ 12] localcall 6 ............................. fin_Interface()
+  [ 14] ret
+end
+
+on fin_Interface
+  [  0] pushint8 5 .............................. <5>
+  [  2] setglobal 80 ............................ c_Interface_Mode = 5
+  [  4] gettoplevelprop 81 ...................... <_player>
+  [  6] pusharglistnoret 1 ...................... <_player>
+  [  8] objcall 82 .............................. _player.flushInputEvents()
+  [ 10] pushcons 6 .............................. <"fin_MouseDown">
+  [ 12] pushint8 1 .............................. <1>
+  [ 14] set 0 ................................... set the mouseDownScript to "fin_MouseDown"
+  [ 16] pushcons 7 .............................. <EMPTY>
+  [ 18] pushint8 2 .............................. <2>
+  [ 20] set 0 ................................... set the mouseUpScript to EMPTY
+  [ 22] pushcons 8 .............................. <"fin_KeyDown">
+  [ 24] pushint8 3 .............................. <3>
+  [ 26] set 0 ................................... set the keyDownScript to "fin_KeyDown"
+  [ 28] pushcons 9 .............................. <"fin_KeyUp">
+  [ 30] pushint8 4 .............................. <4>
+  [ 32] set 0 ................................... set the keyUpScript to "fin_KeyUp"
+  [ 34] gettoplevelprop 81 ...................... <_player>
+  [ 36] pushint8 1 .............................. <1>
+  [ 38] inv ..................................... <-1>
+  [ 39] pusharglistnoret 2 ...................... <_player, -1>
+  [ 41] objcall 83 .............................. _player.cursor(-1)
+  [ 43] ret
+end
+
+on fin_MouseDown
+  [  0] getglobal 45 ............................ <playMode>
+  [  2] peek 0 .................................. case playMode of
+  [  4] getglobal 46 ............................ <pmPlay>
+  [  6] eq
+  [  7] jmpifz [ 17] ............................ (case) pmPlay:
+  [ 10] pusharglistnoret 0 ...................... <>
+  [ 12] localcall 10 ............................ _End_Finale()
+  [ 14] jmp [ 33]
+  [ 17] peek 0
+  [ 19] getglobal 69 ............................ <pmClick>
+  [ 21] eq
+  [ 22] jmpifz [ 33] ............................ (case) pmClick:
+  [ 25] pushzero ................................ <0>
+  [ 26] pusharglistnoret 1 ...................... <0>
+  [ 28] extcall 84 .............................. menu_ClickToContinue(0)
+  [ 30] pushzero ................................ <0>
+  [ 31] setglobal 38 ............................ _Finale_After_Click = 0
+  [ 33] pop 1 ................................... end case
+  [ 35] ret
+end
+
+on fin_KeyDown
+  [  0] pushint8 1 .............................. <1>
+  [  2] pusharglist 1 ........................... <1>
+  [  4] extcall 85 .............................. <check_Quit_Keys_from_Interface(1)>
+  [  6] pushint8 1 .............................. <1>
+  [  8] eq ...................................... <check_Quit_Keys_from_Interface(1) = 1>
+  [  9] jmpifz [ 21] ............................ if check_Quit_Keys_from_Interface(1) = 1 then
+  [ 12] getglobal 21 ............................ <cGameMenus>
+  [ 14] pushint8 1 .............................. <1>
+  [ 16] pusharglistnoret 2 ...................... <cGameMenus, 1>
+  [ 18] extcall 20 .............................. initLaunch(cGameMenus, 1)
+  [ 20] ret ..................................... exit
+  [ 21] gettoplevelprop 52 ...................... <_key>
+  [ 23] pusharglist 1 ........................... <_key>
+  [ 25] objcall 87 .............................. <_key.keyPressed()>
+  [ 27] pusharglist 1 ........................... <_key.keyPressed()>
+  [ 29] extcall 86 .............................. <charToNum(_key.keyPressed())>
+  [ 31] setlocal 0 .............................. K = charToNum(_key.keyPressed())
+  [ 33] getglobal 45 ............................ <playMode>
+  [ 35] peek 0 .................................. case playMode of
+  [ 37] getglobal 46 ............................ <pmPlay>
+  [ 39] eq
+  [ 40] jmpifz [ 50] ............................ (case) pmPlay:
+  [ 43] pusharglistnoret 0 ...................... <>
+  [ 45] localcall 10 ............................ _End_Finale()
+  [ 47] jmp [ 66]
+  [ 50] peek 0
+  [ 52] getglobal 69 ............................ <pmClick>
+  [ 54] eq
+  [ 55] jmpifz [ 66] ............................ (case) pmClick:
+  [ 58] pushzero ................................ <0>
+  [ 59] pusharglistnoret 1 ...................... <0>
+  [ 61] extcall 84 .............................. menu_ClickToContinue(0)
+  [ 63] pushzero ................................ <0>
+  [ 64] setglobal 38 ............................ _Finale_After_Click = 0
+  [ 66] pop 1 ................................... end case
+  [ 68] ret
+end
+
+on fin_KeyUp
+  [  0] pushzero ................................ <0>
+  [  1] setlocal 0 .............................. c_Interface_KeyDown = 0
+  [  3] pushcons 10 ............................. <"pKeyDown">
+  [  5] pushzero ................................ <0>
+  [  6] pusharglistnoret 2 ...................... <"pKeyDown", 0>
+  [  8] extcall 51 .............................. misc_SetFlash("pKeyDown", 0)
+  [ 10] pushcons 11 ............................. <"pKeyUp">
+  [ 12] pushint8 1 .............................. <1>
+  [ 14] pusharglistnoret 2 ...................... <"pKeyUp", 1>
+  [ 16] extcall 51 .............................. misc_SetFlash("pKeyUp", 1)
+  [ 18] ret
+end
+
+on _End_Finale
+  [  0] getglobal 38 ............................ <_Finale_After_Click>
+  [  2] pushint8 15 ............................. <15>
+  [  4] eq ...................................... <_Finale_After_Click = 15>
+  [  5] jmpifz [ 16] ............................ if _Finale_After_Click = 15 then
+  [  8] getglobal 21 ............................ <cGameMenus>
+  [ 10] pushint8 1 .............................. <1>
+  [ 12] pusharglistnoret 2 ...................... <cGameMenus, 1>
+  [ 14] extcall 20 .............................. initLaunch(cGameMenus, 1)
+  [ 16] ret
+end
