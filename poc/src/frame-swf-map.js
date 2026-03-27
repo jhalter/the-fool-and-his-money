@@ -1,5 +1,8 @@
 // Maps Director frame identifiers to SWF filenames.
 // Derived from special_VerifyCast() in 09-Special.ls and CASt binary extraction.
+// SWFs are served from the swf/ subdirectory (patched with ExternalInterface bridge).
+
+export const SWF_DIR = 'swf/';
 
 export const FRAME_TO_SWF = {
   // Puzzle SWFs (one SWF shared by multiple puzzles via pNum)

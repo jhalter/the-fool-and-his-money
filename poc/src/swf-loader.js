@@ -1,7 +1,7 @@
 // SWF loader wrapping Ruffle player instantiation.
-// Handles loading SWFs with FlashVars from game state.
+// Handles loading SWFs with FlashVars and ExternalInterface bridge.
 
-import { FRAME_TO_SWF } from './frame-swf-map.js';
+import { FRAME_TO_SWF, SWF_DIR } from './frame-swf-map.js';
 import { PUZZLES } from './puzzle-data.js';
 
 export class SwfLoader {
@@ -9,6 +9,7 @@ export class SwfLoader {
     this.container = containerEl;
     this.statusEl = statusEl;
     this.player = null;
+    this.ruffleApi = null;
     this.currentSwf = null;
   }
 
@@ -26,12 +27,13 @@ export class SwfLoader {
     }
 
     const flashVars = gameState.getFlashVars(puzzleIndex);
-    return this.loadSwf(swfFile, flashVars, puzzle.titleName);
+    return this.loadSwf(SWF_DIR + swfFile, flashVars, puzzle.titleName);
   }
 
-  async loadSwf(swfFile, parameters = {}, label = '') {
+  async loadSwf(swfUrl, parameters = {}, label = '') {
+    this.ruffleApi = null;
     this.container.innerHTML = '';
-    this.setStatus(`Loading ${label || swfFile}...`);
+    this.setStatus(`Loading ${label || swfUrl}...`);
 
     try {
       const ruffle = window.RufflePlayer.newest();
@@ -41,7 +43,7 @@ export class SwfLoader {
       this.container.appendChild(this.player);
 
       await this.player.load({
-        url: swfFile,
+        url: swfUrl,
         allowScriptAccess: true,
         autoplay: 'on',
         unmuteOverlay: 'hidden',
@@ -50,13 +52,46 @@ export class SwfLoader {
         parameters,
       });
 
-      this.currentSwf = swfFile;
-      this.setStatus(`${label || swfFile} | Standalone mode | Click inside to interact`);
+      this.ruffleApi = this.player.ruffle();
+      this.currentSwf = swfUrl;
+
+      // Force standalone mouse listeners for SWFs that hardcode DirectorInControl=1
+      // (e.g., Tokens hub). No-op for SWFs already in standalone mode.
+      setTimeout(() => this.enableStandaloneMode(), 200);
+
+      this.setStatus(`${label || swfUrl} | Click inside to interact`);
       return true;
     } catch (e) {
-      this.setStatus(`Error loading ${swfFile}: ${e.message}`);
+      this.setStatus(`Error loading ${swfUrl}: ${e.message}`);
       console.error(e);
       return false;
+    }
+  }
+
+  getVar(name) {
+    if (!this.ruffleApi) return undefined;
+    try {
+      return this.ruffleApi.callExternalInterface('getVar', name);
+    } catch (e) {
+      return undefined;
+    }
+  }
+
+  setVar(name, value) {
+    if (!this.ruffleApi) return;
+    try {
+      this.ruffleApi.callExternalInterface('setVar', name, String(value));
+    } catch (e) {
+      // Silently ignore — SWF may not have bridge
+    }
+  }
+
+  enableStandaloneMode() {
+    if (!this.ruffleApi) return;
+    try {
+      this.ruffleApi.callExternalInterface('enableStandaloneMode');
+    } catch (e) {
+      // Silently ignore
     }
   }
 

@@ -1,0 +1,151 @@
+#!/usr/bin/env bash
+# Batch-patch all SWFs with ExternalInterface bridge code.
+# Prepends getVar/setVar callbacks to frame_1/DoAction in each SWF.
+#
+# Usage: ./scripts/patch_swfs.sh
+# Requires: Java, JPEXS FFDec at ~/Downloads/ffdec/ffdec-cli.jar
+
+set -euo pipefail
+
+REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+FFDEC_JAR="$HOME/Downloads/ffdec/ffdec-cli.jar"
+SRC_DIR="$REPO_ROOT/extracted_media"
+OUT_DIR="$REPO_ROOT/poc/swf"
+TMPDIR="$(mktemp -d)"
+
+trap 'rm -rf "$TMPDIR"' EXIT
+
+if [ ! -f "$FFDEC_JAR" ]; then
+  echo "ERROR: FFDec not found at $FFDEC_JAR"
+  exit 1
+fi
+
+# Bridge code to prepend
+cat > "$TMPDIR/bridge.as" << 'BRIDGE'
+if(flash.external.ExternalInterface.available)
+{
+   flash.external.ExternalInterface.addCallback("setVar", null, function(name, value)
+   {
+      _root[name] = value;
+   });
+   flash.external.ExternalInterface.addCallback("getVar", null, function(name)
+   {
+      return String(_root[name]);
+   });
+   flash.external.ExternalInterface.addCallback("enableStandaloneMode", null, function()
+   {
+      if(typeof _root.initFlashEvents == "function")
+      {
+         _root.initFlashEvents(0, 0);
+      }
+      else
+      {
+         var mw = Stage.width;
+         var mh = Stage.height;
+         _root.pMouseChunk = Math.round(_root._xmouse) + "," + Math.round(_root._ymouse) + ",";
+         _root.pLastIdleX = Math.round(_root._xmouse);
+         _root.pLastIdleY = Math.round(_root._ymouse);
+         var mIdle = new Object();
+         mIdle.onMouseMove = function()
+         {
+            var cx = Math.round(_root._xmouse);
+            var cy = Math.round(_root._ymouse);
+            if(cx < 0) cx = 0;
+            if(cx > mw) cx = mw;
+            if(cy < 0) cy = 0;
+            if(cy > mh) cy = mh;
+            if(cx != _root.pLastIdleX || cy != _root.pLastIdleY || _root.pMouseChunk == "")
+            {
+               _root.pMouseChunk = cx + "," + cy + "," + _root.pMouseChunk;
+               _root.pLastIdleX = cx;
+               _root.pLastIdleY = cy;
+            }
+            _root.pShiftKey = Number(Key.isDown(16));
+         };
+         Mouse.addListener(mIdle);
+         var mDown = new Object();
+         mDown.onMouseDown = function()
+         {
+            _root.pMouseDown = 1;
+            _root.pMouseUp = 0;
+            _root.pShiftKey = Number(Key.isDown(16));
+         };
+         Mouse.addListener(mDown);
+         var mUp = new Object();
+         mUp.onMouseUp = function()
+         {
+            _root.pMouseDown = 0;
+            _root.pMouseUp = 1;
+            _root.pShiftKey = Number(Key.isDown(16));
+         };
+         Mouse.addListener(mUp);
+         var kDown = new Object();
+         kDown.onKeyDown = function()
+         {
+            _root.pKeyDown = Key.getAscii();
+            _root.pKeyCode = Key.getCode();
+            _root.pKeyUp = 0;
+            if(_root.pKeyDown > 0)
+            {
+               _root.pKeyChunk = _root.pKeyChunk + _root.pKeyDown + ",";
+            }
+         };
+         Key.addListener(kDown);
+         var kUp = new Object();
+         kUp.onKeyUp = function()
+         {
+            _root.pKeyUp = 1;
+            _root.pKeyDown = 0;
+            _root.pKeyCode = 0;
+         };
+         Key.addListener(kUp);
+      }
+   });
+}
+BRIDGE
+
+mkdir -p "$OUT_DIR"
+
+total=0
+patched=0
+failed=0
+skipped=0
+
+for swf in "$SRC_DIR"/*.swf; do
+  filename="$(basename "$swf")"
+  total=$((total + 1))
+
+  # Export scripts to find frame_1/DoAction
+  export_dir="$TMPDIR/export_$total"
+  mkdir -p "$export_dir"
+
+  java -jar "$FFDEC_JAR" -export script "$export_dir" "$swf" > /dev/null 2>&1 || true
+
+  doaction="$export_dir/scripts/frame_1/DoAction.as"
+  if [ ! -f "$doaction" ]; then
+    # No frame_1/DoAction — copy unpatched
+    echo "SKIP (no DoAction): $filename"
+    cp "$swf" "$OUT_DIR/$filename"
+    skipped=$((skipped + 1))
+    continue
+  fi
+
+  # Combine bridge + original DoAction
+  combined="$TMPDIR/combined_$total.as"
+  cat "$TMPDIR/bridge.as" "$doaction" > "$combined"
+
+  # Replace DoAction in SWF
+  out_swf="$OUT_DIR/$filename"
+  if java -jar "$FFDEC_JAR" -replace "$swf" "$out_swf" "/frame_1/DoAction" "$combined" 2>&1 | grep -q "^Replace"; then
+    echo "OK: $filename"
+    patched=$((patched + 1))
+  else
+    echo "FAIL: $filename"
+    cp "$swf" "$OUT_DIR/$filename"
+    failed=$((failed + 1))
+  fi
+done
+
+echo ""
+echo "Done. Total: $total | Patched: $patched | Skipped: $skipped | Failed: $failed"
+echo "Output: $OUT_DIR"

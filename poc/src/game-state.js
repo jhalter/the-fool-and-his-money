@@ -30,19 +30,66 @@ export class GameState {
   getFlashVars(puzzleIndex) {
     const puzzle = PUZZLES[puzzleIndex];
     if (!puzzle) return {};
+
+    // Tokens screen needs special pData (token strings, not puzzle state)
+    const pData = puzzleIndex === C.TOKENS
+      ? this.getTokenStrings()
+      : this.pData[puzzleIndex];
+
     return {
-      pNum: String(puzzle.pNum),
+      // Core puzzle identity
+      pNum: String(puzzleIndex === C.TOKENS ? this.currGame : puzzle.pNum),
       pGameNum: String(puzzleIndex),
       pStat: String(this.pStat[puzzleIndex]),
-      pData: this.pData[puzzleIndex],
+      pData: pData,
       pVolume: String(puzzle.volume),
+      // Suit progress for this puzzle
       pSwords: String(this.pSwords[puzzleIndex]),
       pWands: String(this.pWands[puzzleIndex]),
       pCups: String(this.pCups[puzzleIndex]),
       pPentacles: String(this.pPentacles[puzzleIndex]),
+      // Totals across all puzzles
+      pTotalSwords: '0',
+      pTotalWands: '0',
+      pTotalCups: '0',
+      pTotalPentacles: '0',
+      // Menu and miscellaneous
       pMenu: this.pMenu[puzzleIndex],
-      // Do NOT set DirectorInControl — standalone mode
+      pMisc: '',
+      pInfo: '',
+      pSeven: '-',
+      // Control flags
+      pClickToContinue: '0',
+      pTraceMenu: '0',
+      pStatusTest: '0',
+      pIdleX: '400',
+      pIdleY: '300',
+      // Set DirectorInControl=1 to prevent built-in _CHEAT() from activating.
+      // Mouse listeners are added separately via enableStandaloneMode bridge callback.
+      DirectorInControl: '1',
     };
+  }
+
+  // Generate pipe-delimited token strings for the Tokens hub screen.
+  // Format: token1|token2|token3| repeated for 15 slots
+  // (12 game slots + new game template + revert + open game)
+  // Mirrors getTokenStrings() from 03-Launch.ls
+  getTokenStrings() {
+    const parts = [];
+    for (let x = 1; x <= 15; x++) {
+      if (x <= 12) {
+        // Game slots — show progress summary
+        parts.push('77 Bewitchments remain');
+        parts.push("and the Moon's Map is a mystery.");
+        parts.push('1'); // 1 = new/fresh game
+      } else {
+        // Slots 13-15: new game template, revert, open
+        parts.push('77 Bewitchments remain');
+        parts.push("and the Moon's Map is a mystery.");
+        parts.push('1');
+      }
+    }
+    return parts.join('|') + '|';
   }
 
   markSolved(puzzleIndex) {
