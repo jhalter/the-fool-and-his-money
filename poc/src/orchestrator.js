@@ -3,27 +3,53 @@
 
 import { PUZZLES, SECTION_RANGES, C } from './puzzle-data.js';
 import { GameState } from './game-state.js';
-import { SwfLoader } from './swf-loader.js';
+import { SwfLoader, OverlayLoader } from './swf-loader.js';
 
 export class Orchestrator {
   constructor() {
     this.state = new GameState();
     this.loader = null;
+    this.menuLoader = null;
     this.navEl = null;
     this.pollTimer = null;
     this.lastGStat = null;
   }
 
-  init() {
+  async init() {
     this.loader = new SwfLoader(
       document.getElementById('player-container'),
       document.getElementById('status')
+    );
+    this.menuLoader = new OverlayLoader(
+      document.getElementById('menu-container')
+    );
+    this.helpLoader = new OverlayLoader(
+      document.getElementById('help-player')
     );
     this.navEl = document.getElementById('nav-list');
 
     this.state.load();
     this.buildNav();
     this.bindControls();
+
+    // Load the overlay SWFs
+    this.scrollFrame = new OverlayLoader(document.getElementById('scroll-frame'));
+    const scrollLeft = new OverlayLoader(document.getElementById('scroll-left'));
+    const scrollRight = new OverlayLoader(document.getElementById('scroll-right'));
+    await Promise.all([
+      this.menuLoader.load('chunk_05_CDGF_0x00a7c7a8_swf_010_v8.swf'),
+      this.helpLoader.load('chunk_05_CDGF_0x00a7c7a8_swf_011_v8.swf'),
+      scrollLeft.load('chunk_05_CDGF_0x00a7c7a8_swf_008_v8.swf'),
+      this.scrollFrame.load('chunk_05_CDGF_0x00a7c7a8_swf_012_v8.swf'),
+      scrollRight.load('chunk_05_CDGF_0x00a7c7a8_swf_009_v8.swf'),
+    ]);
+    // Hide menu text overlays after init
+    setTimeout(() => {
+      this.menuLoader.setVar('saveText._visible', 'false');
+      this.menuLoader.setVar('saveBG._visible', 'false');
+      this.menuLoader.setVar('clickText._visible', 'false');
+      this.menuLoader.setVar('clickBG._visible', 'false');
+    }, 500);
 
     // Load last puzzle or default to Tokens hub (the game's main screen)
     const startPuzzle = this.state.currPuzzle || C.TOKENS;
@@ -115,6 +141,22 @@ export class Orchestrator {
         }, 300);
       }
 
+      // Switch layout based on puzzle type
+      const playerContainer = document.getElementById('player-container');
+      const helpContainer = document.getElementById('help-container');
+      const menuContainer = document.getElementById('menu-container');
+      const isFullHeight = puzzleIndex === C.TOKENS || puzzleIndex === C.GAME_MENUS
+        || puzzleIndex === C.PROLOGUE;
+      if (isFullHeight) {
+        playerContainer.style.height = '600px';
+        helpContainer.style.display = 'none';
+        menuContainer.style.display = 'none';
+      } else {
+        playerContainer.style.height = '320px';
+        helpContainer.style.display = 'flex';
+        menuContainer.style.display = 'block';
+      }
+
       this.startPolling();
     }
   }
@@ -162,38 +204,70 @@ export class Orchestrator {
     console.log(`Puzzle ${puzzleIndex} solved (gStat=${gStat})`);
   }
 
+  // Parse and dispatch a gFlashRequest string which may contain multiple
+  // sequential codes: "13|0|14|30/1/|17|" = three requests (13, 14, 17)
   handleRequest(reqString) {
     const parts = reqString.split('|').filter(s => s !== '');
     if (parts.length === 0) return;
 
-    const code = parseInt(parts[0], 10);
-    console.log(`gFlashRequest: code=${code} parts=${JSON.stringify(parts)}`);
-
-    // Tokens screen sends requests as "100|subcode|params..."
-    if (code === 100) {
+    // Tokens screen sends "100|subcode|params..."
+    if (parseInt(parts[0], 10) === 100) {
       this.handleTokensRequest(parts);
       return;
     }
 
-    switch (code) {
-      case 1:  // launch puzzle from map (with transition)
-      case 2:  // launch puzzle from map (no transition)
-      case 8:  // launch specific puzzle
-      case 9:  // launch specific puzzle
-      case 10:
-        if (parts[1]) this.launchPuzzle(parseInt(parts[1], 10));
-        break;
-      case 17: // save current puzzle
-        this.saveCurrent();
-        break;
-      case 88: // go to game menus
-        this.launchPuzzle(C.GAME_MENUS);
-        break;
-      case 98: // go to Moon's Map
-        this.launchPuzzle(C.MOONS_MAP);
-        break;
-      default:
-        console.log(`Unhandled request code: ${code}`);
+    // Process sequential request codes
+    let i = 0;
+    while (i < parts.length) {
+      const code = parseInt(parts[i], 10);
+      i++;
+      if (isNaN(code)) continue;
+
+      switch (code) {
+        case 1: case 2: case 8: case 9: case 10: // launch puzzle
+          if (i < parts.length) {
+            this.launchPuzzle(parseInt(parts[i], 10));
+            i++;
+          }
+          break;
+        case 13: { // calc page — 1 param (page number)
+          if (i < parts.length) {
+            const page = parseInt(parts[i], 10) + 1;
+            const puzzleNum = String(this.state.currPuzzle).padStart(2, '0');
+            const chunkPage = puzzleNum + '/' + page + '/';
+            this.scrollFrame.setVar('chunkPage', chunkPage);
+            try {
+              this.scrollFrame.ruffleApi.callExternalInterface('processChunkPage');
+            } catch (e) { /* ignore */ }
+            i++;
+          }
+          break;
+        }
+        case 14: { // set help — 1 param (helpChunk like "30/1/")
+          if (i < parts.length) {
+            this.helpLoader.setVar('chunkHelp', parts[i]);
+            try {
+              this.helpLoader.ruffleApi.callExternalInterface('processChunkHelp');
+            } catch (e) { /* ignore */ }
+            i++;
+          }
+          break;
+        }
+        case 17: // save current puzzle
+          this.saveCurrent();
+          break;
+        case 88: // go to game menus
+          this.launchPuzzle(C.GAME_MENUS);
+          break;
+        case 98: // go to Moon's Map
+          this.launchPuzzle(C.MOONS_MAP);
+          break;
+        case 19: // update menu key — 1 param (menu string like "12345--8")
+          i++; // consume the menu key param
+          break;
+        default:
+          console.log(`Unhandled request code: ${code}`);
+      }
     }
   }
 
@@ -269,8 +343,68 @@ export class Orchestrator {
       if (confirm('Reset all game progress?')) {
         this.state.reset();
         this.buildNav();
-        this.launchPuzzle(2);
+        this.launchPuzzle(C.TOKENS);
       }
     });
+
+    // Menu bar click handling — the menu SWF is a passive display,
+    // so we detect clicks in JS based on x-position.
+    // Menu rects from Lingo misc_MakeRect calls in 01-Initialization.ls:
+    // Items are within y=571-599 in Director coords, but our menu container
+    // is the full menu SWF (800x20), so any click in it counts.
+    const menuRects = [
+      { x1: 57,  x2: 131, action: 'tokens' },   // 1: Tokens
+      { x1: 163, x2: 228, action: 'menus' },     // 2: Menus
+      { x1: 260, x2: 301, action: 'map' },       // 3: Map
+      { x1: 338, x2: 387, action: 'save' },      // 4: Save
+      { x1: 423, x2: 471, action: 'help' },      // 5: Help
+      { x1: 508, x2: 580, action: 'reset' },     // 6: Reset
+      { x1: 611, x2: 664, action: 'undo' },      // 7: Undo
+      { x1: 696, x2: 739, action: 'quit' },      // 8: Quit
+    ];
+
+    document.getElementById('menu-container').addEventListener('click', (e) => {
+      const rect = e.currentTarget.getBoundingClientRect();
+      const x = (e.clientX - rect.left) / rect.width * 800;
+      for (const item of menuRects) {
+        if (x >= item.x1 && x <= item.x2) {
+          this.handleMenuClick(item.action);
+          return;
+        }
+      }
+    });
+  }
+
+  handleMenuClick(action) {
+    console.log('Menu click:', action);
+    switch (action) {
+      case 'tokens':
+        this.launchPuzzle(C.TOKENS);
+        break;
+      case 'menus':
+        this.launchPuzzle(C.GAME_MENUS);
+        break;
+      case 'map':
+        this.launchPuzzle(C.MOONS_MAP);
+        break;
+      case 'save':
+        this.saveCurrent();
+        break;
+      case 'help': {
+        const helpEl = document.getElementById('help-player');
+        helpEl.style.display = helpEl.style.display === 'none' ? 'block' : 'none';
+        break;
+      }
+      case 'reset':
+        // Send reset command to active puzzle via gFlashCommand
+        this.loader.setVar('gFlashCommand', '6');
+        break;
+      case 'undo':
+        this.loader.setVar('gFlashCommand', '7');
+        break;
+      case 'quit':
+        this.launchPuzzle(C.TOKENS);
+        break;
+    }
   }
 }

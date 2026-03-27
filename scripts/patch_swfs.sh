@@ -26,11 +26,61 @@ if(flash.external.ExternalInterface.available)
 {
    flash.external.ExternalInterface.addCallback("setVar", null, function(name, value)
    {
-      _root[name] = value;
+      var parts = name.split(".");
+      var obj = _root;
+      var i = 0;
+      while(i < parts.length - 1)
+      {
+         obj = obj[parts[i]];
+         if(obj == undefined) return;
+         i++;
+      }
+      var prop = parts[parts.length - 1];
+      if(value === "true") value = true;
+      else if(value === "false") value = false;
+      else if(!isNaN(Number(value)) && value !== "") value = Number(value);
+      obj[prop] = value;
    });
    flash.external.ExternalInterface.addCallback("getVar", null, function(name)
    {
       return String(_root[name]);
+   });
+   flash.external.ExternalInterface.addCallback("gotoFrame", null, function(n)
+   {
+      _root.gotoAndStop(Number(n));
+   });
+   flash.external.ExternalInterface.addCallback("callFrame", null, function(n)
+   {
+      _root.gotoAndPlay(Number(n));
+   });
+   flash.external.ExternalInterface.addCallback("processChunkHelp", null, function()
+   {
+      if(typeof _root.readChunk == "function" && _root.chunkHelp != undefined && _root.chunkHelp.indexOf("/") > -1)
+      {
+         _root.readChunk();
+         _root.loadHelp(_root.fetchHelp);
+         if(eval("/help/0") != undefined)
+         {
+            eval("/help/0").gotoAndStop(_root.frameHelp);
+         }
+         _root.chunkHelp = "";
+      }
+   });
+   flash.external.ExternalInterface.addCallback("processChunkPage", null, function()
+   {
+      if(typeof _root.readChunk == "function" && _root.chunkPage != undefined && _root.chunkPage.indexOf("/") > -1)
+      {
+         _root.readChunk();
+         if(Math.floor(_root.fetchPage) >= 1 && Math.floor(_root.fetchPage) <= 80)
+         {
+            _root.loadPage(_root.fetchPage);
+            if(eval("/page/0") != undefined)
+            {
+               eval("/page/0").gotoAndStop(_root.framePage);
+            }
+         }
+         _root.chunkPage = "";
+      }
    });
    flash.external.ExternalInterface.addCallback("enableStandaloneMode", null, function()
    {

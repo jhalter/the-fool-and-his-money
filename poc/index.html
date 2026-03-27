@@ -87,10 +87,49 @@
             align-items: center;
             justify-content: center;
         }
-        #player-container {
+        #game-area {
             width: 800px;
             height: 600px;
             border: 2px solid #c9a84c;
+            position: relative;
+            overflow: hidden;
+        }
+        #player-container {
+            width: 800px;
+            height: 320px;
+            background: #000;
+        }
+        #help-container {
+            width: 800px;
+            height: 260px;
+            background: #000;
+            position: relative;
+        }
+        #scroll-left {
+            position: absolute;
+            left: 0; top: 0;
+            width: 24px; height: 260px;
+        }
+        #scroll-frame {
+            position: absolute;
+            left: 24px; top: 0;
+            width: 752px; height: 260px;
+        }
+        #scroll-right {
+            position: absolute;
+            right: 0; top: 0;
+            width: 24px; height: 260px;
+        }
+        #help-player {
+            position: absolute;
+            left: 100px; top: 22px;
+            width: 600px; height: 216px;
+            display: none;
+            z-index: 10;
+        }
+        #menu-container {
+            width: 800px;
+            height: 20px;
             background: #000;
         }
         #status {
@@ -116,7 +155,16 @@
         </div>
     </div>
     <div id="main">
-        <div id="player-container"></div>
+        <div id="game-area">
+            <div id="player-container"></div>
+            <div id="help-container">
+                <div id="scroll-left"></div>
+                <div id="scroll-frame"></div>
+                <div id="help-player"></div>
+                <div id="scroll-right"></div>
+            </div>
+            <div id="menu-container"></div>
+        </div>
         <div id="status">Loading...</div>
         <div id="hint">Right-click a puzzle in the sidebar to toggle solved/unsolved</div>
     </div>

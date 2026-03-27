@@ -101,3 +101,67 @@ export class SwfLoader {
     }
   }
 }
+
+// Lightweight loader for overlay SWFs (menu, help, scroll, arrows)
+export class OverlayLoader {
+  constructor(containerEl) {
+    this.container = containerEl;
+    this.player = null;
+    this.ruffleApi = null;
+  }
+
+  async load(swfFile) {
+    this.container.innerHTML = '';
+    try {
+      const ruffle = window.RufflePlayer.newest();
+      this.player = ruffle.createPlayer();
+      this.player.style.width = '100%';
+      this.player.style.height = '100%';
+      this.container.appendChild(this.player);
+      await this.player.load({
+        url: SWF_DIR + swfFile,
+        allowScriptAccess: true,
+        autoplay: 'on',
+        unmuteOverlay: 'hidden',
+        logLevel: 'warn',
+        letterbox: 'off',
+        parameters: {},
+      });
+      this.ruffleApi = this.player.ruffle();
+      return true;
+    } catch (e) {
+      console.warn('Overlay load failed:', swfFile, e);
+      return false;
+    }
+  }
+
+  setVar(name, value) {
+    if (!this.ruffleApi) return;
+    try {
+      this.ruffleApi.callExternalInterface('setVar', name, String(value));
+    } catch (e) { /* ignore */ }
+  }
+
+  getVar(name) {
+    if (!this.ruffleApi) return undefined;
+    try {
+      return this.ruffleApi.callExternalInterface('getVar', name);
+    } catch (e) {
+      return undefined;
+    }
+  }
+
+  gotoFrame(n) {
+    if (!this.ruffleApi) return;
+    try {
+      this.ruffleApi.callExternalInterface('gotoFrame', String(n));
+    } catch (e) { /* ignore */ }
+  }
+
+  callFrame(n) {
+    if (!this.ruffleApi) return;
+    try {
+      this.ruffleApi.callExternalInterface('callFrame', String(n));
+    } catch (e) { /* ignore */ }
+  }
+}
