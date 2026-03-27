@@ -1,3 +1,6 @@
 TFaHM-Mac/
 node_modules/
 .DS_Store
+
+# Generated patched SWFs (rebuild via scripts/patch_swfs.sh)
+poc/swf/
