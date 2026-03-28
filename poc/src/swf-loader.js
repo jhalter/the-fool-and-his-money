@@ -1,7 +1,7 @@
 // SWF loader wrapping Ruffle player instantiation.
 // Handles loading SWFs with FlashVars and ExternalInterface bridge.
 
-import { FRAME_TO_SWF, SWF_DIR } from './frame-swf-map.js';
+import { FRAME_TO_SWF, FRAME_STAGE_HEIGHT, SWF_DIR } from './frame-swf-map.js';
 import { PUZZLES } from './puzzle-data.js';
 
 export class SwfLoader {
@@ -25,6 +25,8 @@ export class SwfLoader {
       this.setStatus(`No SWF mapping for frame: ${puzzle.frameId}`);
       return false;
     }
+
+    this.stageHeight = FRAME_STAGE_HEIGHT[puzzle.frameId] ?? 320;
 
     const flashVars = gameState.getFlashVars(puzzleIndex);
     return this.loadSwf(SWF_DIR + swfFile, flashVars, puzzle.titleName);
@@ -55,9 +57,9 @@ export class SwfLoader {
       this.ruffleApi = this.player.ruffle();
       this.currentSwf = swfUrl;
 
-      // Force standalone mouse listeners for SWFs that hardcode DirectorInControl=1
-      // (e.g., Tokens hub). No-op for SWFs already in standalone mode.
-      setTimeout(() => this.enableStandaloneMode(), 200);
+      // Wait for SWF to signal readiness (gListener=666), then enable standalone
+      // mouse listeners. Mirrors Director's puzz_ExitInit loop.
+      this.waitForReady();
 
       this.setStatus(`${label || swfUrl} | Click inside to interact`);
       return true;
@@ -86,6 +88,10 @@ export class SwfLoader {
     }
   }
 
+  getStageHeight() {
+    return this.stageHeight ?? 320;
+  }
+
   enableStandaloneMode() {
     if (!this.ruffleApi) return;
     try {
@@ -93,6 +99,43 @@ export class SwfLoader {
     } catch (e) {
       // Silently ignore
     }
+  }
+
+  waitForReady() {
+    const swfAtStart = this.currentSwf;
+    let attempts = 0;
+    const maxAttempts = 50; // 5s at 100ms intervals
+    const check = () => {
+      if (!this.ruffleApi || this.currentSwf !== swfAtStart) return;
+      attempts++;
+      try {
+        const listener = this.ruffleApi.callExternalInterface('getVar', 'gListener');
+        if (String(listener) === '666') {
+          this.enableStandaloneMode();
+          return;
+        }
+      } catch (e) { /* ignore */ }
+      if (attempts >= maxAttempts) {
+        this.enableStandaloneMode();
+      } else {
+        setTimeout(check, 100);
+      }
+    };
+    setTimeout(check, 100);
+  }
+
+  gotoFrame(n) {
+    if (!this.ruffleApi) return;
+    try {
+      this.ruffleApi.callExternalInterface('gotoFrame', String(n));
+    } catch (e) { /* ignore */ }
+  }
+
+  callFrame(n) {
+    if (!this.ruffleApi) return;
+    try {
+      this.ruffleApi.callExternalInterface('callFrame', String(n));
+    } catch (e) { /* ignore */ }
   }
 
   setStatus(text) {
@@ -110,7 +153,7 @@ export class OverlayLoader {
     this.ruffleApi = null;
   }
 
-  async load(swfFile) {
+  async load(swfFile, options = {}) {
     this.container.innerHTML = '';
     try {
       const ruffle = window.RufflePlayer.newest();
@@ -126,6 +169,7 @@ export class OverlayLoader {
         logLevel: 'warn',
         letterbox: 'off',
         parameters: {},
+        ...options,
       });
       this.ruffleApi = this.player.ruffle();
       return true;

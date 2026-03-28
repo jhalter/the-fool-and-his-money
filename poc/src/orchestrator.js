@@ -4,6 +4,7 @@
 import { PUZZLES, SECTION_RANGES, C } from './puzzle-data.js';
 import { GameState } from './game-state.js';
 import { SwfLoader, OverlayLoader } from './swf-loader.js';
+import { PrologueController } from './prologue-controller.js';
 
 export class Orchestrator {
   constructor() {
@@ -13,6 +14,9 @@ export class Orchestrator {
     this.navEl = null;
     this.pollTimer = null;
     this.lastGStat = null;
+    this.prologueController = null;
+    this.clickToContinue = false;
+    this._ctcHandler = null;
   }
 
   async init() {
@@ -49,6 +53,7 @@ export class Orchestrator {
       this.menuLoader.setVar('saveBG._visible', 'false');
       this.menuLoader.setVar('clickText._visible', 'false');
       this.menuLoader.setVar('clickBG._visible', 'false');
+      this.menuLoader.setVar('clickBG-Full._visible', 'false');
     }, 500);
 
     // Load last puzzle or default to Tokens hub (the game's main screen)
@@ -122,6 +127,14 @@ export class Orchestrator {
     if (!puzzle) return;
 
     this.stopPolling();
+    this.exitClickToContinue();
+
+    // Clean up any running Prologue controller
+    if (this.prologueController) {
+      this.prologueController.stop();
+      this.prologueController = null;
+      document.getElementById('prologue-container').style.display = 'none';
+    }
 
     this.state.lastPuzzle = this.state.currPuzzle;
     this.state.currPuzzle = puzzleIndex;
@@ -141,23 +154,33 @@ export class Orchestrator {
         }, 300);
       }
 
-      // Switch layout based on puzzle type
-      const playerContainer = document.getElementById('player-container');
-      const helpContainer = document.getElementById('help-container');
-      const menuContainer = document.getElementById('menu-container');
-      const isFullHeight = puzzleIndex === C.TOKENS || puzzleIndex === C.GAME_MENUS
-        || puzzleIndex === C.PROLOGUE;
-      if (isFullHeight) {
-        playerContainer.style.height = '600px';
-        helpContainer.style.display = 'none';
-        menuContainer.style.display = 'none';
-      } else {
-        playerContainer.style.height = '320px';
-        helpContainer.style.display = 'flex';
-        menuContainer.style.display = 'block';
+      // Prologue needs its own two-SWF controller instead of normal polling
+      if (puzzleIndex === C.PROLOGUE) {
+        const prologueContainer = document.getElementById('prologue-container');
+        this.prologueController = new PrologueController(
+          () => {
+            this.state.pStat[C.PROLOGUE] = 100;
+            this.state.save();
+            this.refreshNav();
+            this.prologueController = null;
+            this.launchPuzzle(C.GAME_MENUS);
+          },
+          () => {
+            this.prologueController = null;
+            this.launchPuzzle(C.GAME_MENUS);
+          }
+        );
+        this.prologueController.start(this.loader, prologueContainer);
       }
 
-      this.startPolling();
+      // Switch layout based on SWF stage dimensions (mirrors Director's
+      // sprite(cActiveSN).height checks in misc_InitPuzzle / menu_Init / arrow_F_Init)
+      this.applyLayout(this.loader.getStageHeight());
+
+      // Prologue uses its own polling via PrologueController
+      if (puzzleIndex !== C.PROLOGUE) {
+        this.startPolling();
+      }
     }
   }
 
@@ -193,6 +216,17 @@ export class Orchestrator {
       this.loader.setVar('gFlashRequest', '');
       this.handleRequest(req);
     }
+
+    // Poll gClickToContinue for click-to-continue mode
+    const ctcRaw = this.loader.getVar('gClickToContinue');
+    const ctcBool = (ctcRaw === 'true' || ctcRaw === '1' || ctcRaw === true);
+    if (ctcBool !== this.clickToContinue) {
+      if (ctcBool) {
+        this.enterClickToContinue();
+      } else {
+        this.exitClickToContinue();
+      }
+    }
   }
 
   onPuzzleSolved(puzzleIndex, gStat) {
@@ -202,6 +236,32 @@ export class Orchestrator {
     this.state.save();
     this.refreshNav();
     console.log(`Puzzle ${puzzleIndex} solved (gStat=${gStat})`);
+  }
+
+  enterClickToContinue() {
+    this.clickToContinue = true;
+    this.menuLoader.setVar('clickText._visible', 'true');
+    this.menuLoader.setVar('clickBG._visible', 'true');
+    this._ctcHandler = () => this.dismissClickToContinue();
+    document.getElementById('player-container')
+      .addEventListener('click', this._ctcHandler, { once: true });
+  }
+
+  dismissClickToContinue() {
+    this.loader.setVar('gClickToContinue', '0');
+    this.exitClickToContinue();
+  }
+
+  exitClickToContinue() {
+    if (!this.clickToContinue && !this._ctcHandler) return;
+    this.clickToContinue = false;
+    this.menuLoader.setVar('clickText._visible', 'false');
+    this.menuLoader.setVar('clickBG._visible', 'false');
+    if (this._ctcHandler) {
+      document.getElementById('player-container')
+        .removeEventListener('click', this._ctcHandler);
+      this._ctcHandler = null;
+    }
   }
 
   // Parse and dispatch a gFlashRequest string which may contain multiple
@@ -338,6 +398,41 @@ export class Orchestrator {
     this.refreshNav();
   }
 
+  applyLayout(stageHeight) {
+    const playerContainer = document.getElementById('player-container');
+    const helpContainer = document.getElementById('help-container');
+    const menuContainer = document.getElementById('menu-container');
+    const helpPlayer = document.getElementById('help-player');
+
+    this.currentStageHeight = stageHeight;
+
+    if (stageHeight >= 600) {
+      // Full screen (600px SWFs): menu hidden, help hidden
+      playerContainer.style.height = '600px';
+      helpContainer.style.display = 'none';
+      menuContainer.style.display = 'none';
+      helpPlayer.style.display = 'none';
+    } else if (stageHeight > 320) {
+      // Special mode (580px SWFs): menu visible, help overlays puzzle when shown
+      playerContainer.style.height = '580px';
+      helpContainer.style.display = 'none';
+      menuContainer.style.display = 'block';
+      helpPlayer.style.display = 'none';
+      // Position help-player for overlay mode (over bottom of puzzle area)
+      helpPlayer.style.top = '364px';
+      helpPlayer.style.left = '100px';
+    } else {
+      // Regular puzzles (320px SWFs): menu visible, help area visible, arrows active
+      playerContainer.style.height = '320px';
+      helpContainer.style.display = 'flex';
+      menuContainer.style.display = 'block';
+      helpPlayer.style.display = 'none';
+      // Position help-player within the help-container zone
+      helpPlayer.style.top = '342px';
+      helpPlayer.style.left = '124px';
+    }
+  }
+
   bindControls() {
     document.getElementById('btn-reset').addEventListener('click', () => {
       if (confirm('Reset all game progress?')) {
@@ -377,6 +472,10 @@ export class Orchestrator {
 
   handleMenuClick(action) {
     console.log('Menu click:', action);
+    if (this.clickToContinue) {
+      if (action === 'help' || action === 'reset' || action === 'undo') return;
+      this.dismissClickToContinue();
+    }
     switch (action) {
       case 'tokens':
         this.launchPuzzle(C.TOKENS);
@@ -391,6 +490,7 @@ export class Orchestrator {
         this.saveCurrent();
         break;
       case 'help': {
+        if (this.currentStageHeight >= 600) break; // no help in full-screen mode
         const helpEl = document.getElementById('help-player');
         helpEl.style.display = helpEl.style.display === 'none' ? 'block' : 'none';
         break;

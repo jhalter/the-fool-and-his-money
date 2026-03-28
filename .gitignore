@@ -4,3 +4,6 @@ node_modules/
 
 # Generated patched SWFs (rebuild via scripts/patch_swfs.sh)
 poc/swf/
+
+# Unpatched SWF copies in poc/ root (originals live in extracted_media/)
+poc/*.swf

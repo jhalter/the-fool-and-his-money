@@ -56,9 +56,35 @@ export const FRAME_TO_SWF = {
   'tokens':       'chunk_02_CDGF_0x0026ce60_swf_001_v8.swf',
   'tokens-help':  'chunk_02_CDGF_0x0026ce60_swf_003_v8.swf',
 
-  // Prologue (main animation)
+  // Prologue (two SWFs: _prologue2 is background, _prologue1 is foreground)
   'PRO-1':        'chunk_08_CDGF_0x014566d6_swf_024_v8.swf',
 
   // Finale sequence
   'F01':          'chunk_23_CDGF_0x03b5de28_swf_041_v8.swf',
+};
+
+// Secondary SWF for the Prologue's foreground animation (sprite 1 / _prologue1)
+export const PROLOGUE_SWF_1 = 'chunk_08_CDGF_0x014566d6_swf_023_v8.swf';
+
+// SWF stage heights extracted from binary headers (twips / 20 → pixels).
+// Director checked sprite(cActiveSN).height to determine layout mode:
+//   320 → regular (menu + help + arrows)
+//   580 → special (menu visible, help overlays puzzle)
+//   600 → full screen (no menu, no help)
+// Only non-320 entries listed; all unlisted frameIds default to 320.
+export const FRAME_STAGE_HEIGHT = {
+  'HP':         580,
+  'seven-cups': 580,
+  'tarot-1':    580,
+  'tarot-2':    580,
+  'tarot-3':    580,
+  'tarot-4':    580,
+  'tarot-5':    580,
+  'map':        580,
+  'map-puzzles':580,
+  'game-menus': 580,
+  'tokens':     600,
+  'tokens-help':600,
+  'Pre-HP':     600,
+  'End-HP':     600,
 };
