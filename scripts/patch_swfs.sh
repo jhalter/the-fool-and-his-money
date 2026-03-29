@@ -45,6 +45,17 @@ if(flash.external.ExternalInterface.available)
    {
       return String(_root[name]);
    });
+   flash.external.ExternalInterface.addCallback("getPolledState", null, function()
+   {
+      var gs = (_root.gStat != undefined) ? String(_root.gStat) : "";
+      var gr = (_root.gFlashRequest != undefined) ? String(_root.gFlashRequest) : "";
+      var gc = (_root.gClickToContinue != undefined) ? String(_root.gClickToContinue) : "";
+      if(gr != "" && gr != "undefined")
+      {
+         _root.gFlashRequest = "";
+      }
+      return gs + "\x01" + gr + "\x01" + gc;
+   });
    flash.external.ExternalInterface.addCallback("gotoFrame", null, function(n)
    {
       _root.gotoAndStop(Number(n));
@@ -93,8 +104,10 @@ if(flash.external.ExternalInterface.available)
          var mw = Stage.width;
          var mh = Stage.height;
          _root.pMouseChunk = Math.round(_root._xmouse) + "," + Math.round(_root._ymouse) + ",";
-         _root.pLastIdleX = Math.round(_root._xmouse);
-         _root.pLastIdleY = Math.round(_root._ymouse);
+         _root.pIdleX = Math.round(_root._xmouse);
+         _root.pIdleY = Math.round(_root._ymouse);
+         _root.pLastIdleX = _root.pIdleX;
+         _root.pLastIdleY = _root.pIdleY;
          var mIdle = new Object();
          mIdle.onMouseMove = function()
          {
@@ -104,9 +117,15 @@ if(flash.external.ExternalInterface.available)
             if(cx > mw) cx = mw;
             if(cy < 0) cy = 0;
             if(cy > mh) cy = mh;
+            _root.pIdleX = cx;
+            _root.pIdleY = cy;
             if(cx != _root.pLastIdleX || cy != _root.pLastIdleY || _root.pMouseChunk == "")
             {
                _root.pMouseChunk = cx + "," + cy + "," + _root.pMouseChunk;
+               if(_root.pMouseChunk.length > 200)
+               {
+                  _root.pMouseChunk = cx + "," + cy + ",";
+               }
                _root.pLastIdleX = cx;
                _root.pLastIdleY = cy;
             }
@@ -150,6 +169,7 @@ if(flash.external.ExternalInterface.available)
          };
          Key.addListener(kUp);
       }
+      _root.DirectorInControl = 0;
    });
 }
 BRIDGE

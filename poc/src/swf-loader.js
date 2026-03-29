@@ -13,20 +13,21 @@ export class SwfLoader {
     this.currentSwf = null;
   }
 
-  async loadPuzzle(puzzleIndex, gameState) {
+  async loadPuzzle(puzzleIndex, gameState, frameIdOverride) {
     const puzzle = PUZZLES[puzzleIndex];
     if (!puzzle) {
       this.setStatus(`Invalid puzzle index: ${puzzleIndex}`);
       return false;
     }
 
-    const swfFile = FRAME_TO_SWF[puzzle.frameId];
+    const frameId = frameIdOverride || puzzle.frameId;
+    const swfFile = FRAME_TO_SWF[frameId];
     if (!swfFile) {
-      this.setStatus(`No SWF mapping for frame: ${puzzle.frameId}`);
+      this.setStatus(`No SWF mapping for frame: ${frameId}`);
       return false;
     }
 
-    this.stageHeight = FRAME_STAGE_HEIGHT[puzzle.frameId] ?? 320;
+    this.stageHeight = FRAME_STAGE_HEIGHT[frameId] ?? 320;
 
     const flashVars = gameState.getFlashVars(puzzleIndex);
     return this.loadSwf(SWF_DIR + swfFile, flashVars, puzzle.titleName);
@@ -85,6 +86,15 @@ export class SwfLoader {
       this.ruffleApi.callExternalInterface('setVar', name, String(value));
     } catch (e) {
       // Silently ignore — SWF may not have bridge
+    }
+  }
+
+  getPolledState() {
+    if (!this.ruffleApi) return null;
+    try {
+      return this.ruffleApi.callExternalInterface('getPolledState');
+    } catch (e) {
+      return null;
     }
   }
 

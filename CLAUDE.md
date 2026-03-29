@@ -148,7 +148,7 @@ Full path: `extracted_chunks/decompiled/chunk_09_CDGF_0x018e8434/casts/External/
 - **All ExternalInterface values are strings.** getVar returns strings; setVar coerces "true"/"false" and numeric strings. Use parseInt() when reading numbers.
 - **gListener=666 is the SWF ready signal.** enableStandaloneMode must only be called after this.
 - **gFlashCommand=666 is Tokens-only** — it tells the Tokens SWF that "Director" is ready. Don't send to puzzle SWFs.
-- **DirectorInControl=1** prevents the SWFs' built-in `_CHEAT()` from activating.
+- **DirectorInControl** is set to 1 in FlashVars at load time, then reset to 0 by `enableStandaloneMode`. The SWFs' main loop checks this flag: when 0, it synthesizes mouse coordinates from `pLastIdleX`/`pLastIdleY` when `pMouseChunk` is empty (mouse stationary). This is essential for hover/hit detection. Setting it to 1 permanently breaks hover because the SWF clears `pMouseChunk` every frame and has no fallback. The flag also gates `_CHEAT()` (harmless in the port).
 - **Prologue is special**: two SWFs synchronized via `prologueCue` variable, swapping roles between phases. See prologue-controller.js.
 - **Mansion puzzles have tiered progression**: pStat thresholds unlock deliveries→hexes→remainders→connections based on Game Menus progress.
 - **Menu bar is passive**: the SWF renders visuals but JS handles click detection via hardcoded x-coordinate rectangles from Director's misc_MakeRect calls.

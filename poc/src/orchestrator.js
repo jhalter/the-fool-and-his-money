@@ -1,7 +1,7 @@
 // Main orchestrator tying together game state, SWF loading, and navigation.
 // Polls SWFs via ExternalInterface for completion detection and navigation requests.
 
-import { PUZZLES, SECTION_RANGES, C } from './puzzle-data.js';
+import { PUZZLES, PUZZLE_TYPES, SECTION_RANGES, C } from './puzzle-data.js';
 import { GameState } from './game-state.js';
 import { SwfLoader, OverlayLoader } from './swf-loader.js';
 import { PrologueController } from './prologue-controller.js';
@@ -42,7 +42,7 @@ export class Orchestrator {
     const scrollRight = new OverlayLoader(document.getElementById('scroll-right'));
     await Promise.all([
       this.menuLoader.load('chunk_05_CDGF_0x00a7c7a8_swf_010_v8.swf'),
-      this.helpLoader.load('chunk_05_CDGF_0x00a7c7a8_swf_011_v8.swf'),
+      this.helpLoader.load('chunk_05_CDGF_0x00a7c7a8_swf_011_v8.swf', { wmode: 'transparent' }),
       scrollLeft.load('chunk_05_CDGF_0x00a7c7a8_swf_008_v8.swf'),
       this.scrollFrame.load('chunk_05_CDGF_0x00a7c7a8_swf_012_v8.swf'),
       scrollRight.load('chunk_05_CDGF_0x00a7c7a8_swf_009_v8.swf'),
@@ -123,6 +123,14 @@ export class Orchestrator {
   }
 
   async launchPuzzle(puzzleIndex) {
+    // Apply launch exception redirects (Finale→PreFinale, PreHP→HP, etc.)
+    // Skip for Tokens — Director uses a separate _Launch_Tokens() path that
+    // bypasses exceptionPuzzleLaunch. The Tokens redirect in exceptionPuzzleLaunch
+    // is only used when saving (to convert currPuzzle to a resume-safe value).
+    if (puzzleIndex !== C.TOKENS) {
+      puzzleIndex = this.state.exceptionPuzzleLaunch(puzzleIndex, false);
+    }
+
     const puzzle = PUZZLES[puzzleIndex];
     if (!puzzle) return;
 
@@ -133,16 +141,28 @@ export class Orchestrator {
     if (this.prologueController) {
       this.prologueController.stop();
       this.prologueController = null;
-      document.getElementById('prologue-container').style.display = 'none';
     }
+    // Always ensure prologue container is hidden — the completion/abort
+    // callbacks null prologueController before calling launchPuzzle,
+    // so the check above may not catch it.
+    document.getElementById('prologue-container').style.display = 'none';
 
     this.state.lastPuzzle = this.state.currPuzzle;
     this.state.currPuzzle = puzzleIndex;
+
+    // Run the core progression engine before loading the SWF
+    this.state.updateGameStats(this.state.currGame);
     this.state.save();
 
     document.title = `The Fool and his Money - ${puzzle.titleName}`;
 
-    const ok = await this.loader.loadPuzzle(puzzleIndex, this.state);
+    // Mansion puzzles use dynamic frameId based on game menu phase
+    let frameIdOverride;
+    if (puzzleIndex >= C.MANSION1 && puzzleIndex <= C.MANSION2) {
+      frameIdOverride = this.state.getMansionFrameId();
+    }
+
+    const ok = await this.loader.loadPuzzle(puzzleIndex, this.state, frameIdOverride);
     if (ok) {
       this.refreshNav();
       this.lastGStat = null;
@@ -177,6 +197,10 @@ export class Orchestrator {
       // sprite(cActiveSN).height checks in misc_InitPuzzle / menu_Init / arrow_F_Init)
       this.applyLayout(this.loader.getStageHeight());
 
+      // Update menu item visibility based on pMenu[currPuzzle], matching
+      // Director's menu_Set_Items() which hides/shows m1-m8 per-puzzle.
+      this.updateMenuItems(puzzleIndex);
+
       // Prologue uses its own polling via PrologueController
       if (puzzleIndex !== C.PROLOGUE) {
         this.startPolling();
@@ -185,7 +209,11 @@ export class Orchestrator {
   }
 
   startPolling() {
-    this.pollTimer = setInterval(() => this.poll(), 500);
+    // Director polled at 15ms (idleHandlerPeriod=15). 500ms was too slow —
+    // the SWF overwrites gFlashRequest each frame, so we missed codes.
+    // Uses a single batched ExternalInterface call (getPolledState) to minimize
+    // WASM boundary crossings, which interfere with Ruffle's mouse event processing.
+    this.pollTimer = setInterval(() => this.poll(), 100);
   }
 
   stopPolling() {
@@ -196,12 +224,18 @@ export class Orchestrator {
   }
 
   poll() {
+    // Single batched ExternalInterface call returns gStat, gFlashRequest,
+    // and gClickToContinue separated by \x01. The bridge also clears
+    // gFlashRequest atomically, eliminating a separate setVar call.
+    const raw = this.loader.getPolledState();
+    if (raw == null) return;
+
+    const [gStatStr, reqStr, ctcStr] = raw.split('\x01');
     const puzzleIndex = this.state.currPuzzle;
 
-    // Poll gStat for completion detection
-    const gStatRaw = this.loader.getVar('gStat');
-    if (gStatRaw !== undefined && gStatRaw !== null) {
-      const gStat = parseInt(gStatRaw, 10);
+    // gStat — completion detection
+    if (gStatStr) {
+      const gStat = parseInt(gStatStr, 10);
       if (!isNaN(gStat) && gStat !== this.lastGStat) {
         this.lastGStat = gStat;
         if (gStat >= 100 && this.state.pStat[puzzleIndex] < 100) {
@@ -210,16 +244,13 @@ export class Orchestrator {
       }
     }
 
-    // Poll gFlashRequest for navigation
-    const req = this.loader.getVar('gFlashRequest');
-    if (req && req !== '' && req !== 'undefined' && req !== 'null') {
-      this.loader.setVar('gFlashRequest', '');
-      this.handleRequest(req);
+    // gFlashRequest — navigation (already cleared by bridge)
+    if (reqStr && reqStr !== '' && reqStr !== 'undefined' && reqStr !== 'null') {
+      this.handleRequest(reqStr);
     }
 
-    // Poll gClickToContinue for click-to-continue mode
-    const ctcRaw = this.loader.getVar('gClickToContinue');
-    const ctcBool = (ctcRaw === 'true' || ctcRaw === '1' || ctcRaw === true);
+    // gClickToContinue
+    const ctcBool = (ctcStr === 'true' || ctcStr === '1');
     if (ctcBool !== this.clickToContinue) {
       if (ctcBool) {
         this.enterClickToContinue();
@@ -290,6 +321,24 @@ export class Orchestrator {
             i++;
           }
           break;
+        case 3: { // stat update — 1 param
+          if (i < parts.length) i++; // consume param
+          this.state.updateGameStats(this.state.currGame);
+          break;
+        }
+        case 4: // go to Moon's Map
+          this.launchPuzzle(C.MOONS_MAP);
+          break;
+        case 5: // go to Moon's Puzzles
+          this.launchPuzzle(C.MOONS_PUZZLES);
+          break;
+        case 6: // go to Seven Cups
+          this.launchPuzzle(C.SEVEN_CUPS);
+          break;
+        case 7: // go to Pre-Finale (with page=2)
+          this.state.pPage[C.PRE_FINALE] = 2;
+          this.launchPuzzle(C.PRE_FINALE);
+          break;
         case 13: { // calc page — 1 param (page number)
           if (i < parts.length) {
             const page = parseInt(parts[i], 10) + 1;
@@ -316,14 +365,72 @@ export class Orchestrator {
         case 17: // save current puzzle
           this.saveCurrent();
           break;
+        case 18: // go to Pre-High Priestess
+          this.launchPuzzle(C.PRE_HP);
+          break;
+        case 19: { // update menu key — 1 param (menu string like "12345--8")
+          if (i < parts.length) {
+            const menuStr = parts[i];
+            if (menuStr.length === 8) {
+              this.state.pMenu[this.state.currPuzzle] = menuStr;
+              this.updateMenuItems(this.state.currPuzzle);
+            }
+            i++;
+          }
+          break;
+        }
+        case 20: { // game menu status update + compendium
+          const gStat = parseInt(this.loader.getVar('gStat'), 10);
+          if (!isNaN(gStat)) {
+            this.state._setGameMenuStatus(gStat);
+          }
+          // Minimal compendium: update stats and return to game menus
+          this.state.updateGameStats(this.state.currGame);
+          this.launchPuzzle(C.GAME_MENUS);
+          break;
+        }
+        case 30: // launch Finale
+          this.launchPuzzle(C.FINALE);
+          break;
         case 88: // go to game menus
           this.launchPuzzle(C.GAME_MENUS);
           break;
+        case 89: // HP sequence from Pre-HP
+          this.state._setGameMenuStatus(69);
+          this.launchPuzzle(C.HIGH_PRIESTESS);
+          break;
+        case 90: // end HP
+          this.launchPuzzle(C.END_HP);
+          break;
+        case 91: // moon morph from End-HP
+          this.state.pStat[C.MOON_MORPH] = 190;
+          this.launchPuzzle(C.MOON_MORPH);
+          break;
+        case 95: { // tarot launch — 1 param (tarot index 1-5)
+          if (i < parts.length) {
+            const n = parseInt(parts[i], 10);
+            i++;
+            if (n >= 1 && n <= 5) {
+              this.state.csWagerTarot[n] = PUZZLE_TYPES.tarot[n - 1];
+              this.launchPuzzle(this.state.csWagerTarot[n]);
+            }
+          }
+          break;
+        }
+        case 96: { // wager launch — 1 param (wager index 1-5)
+          if (i < parts.length) {
+            const n = parseInt(parts[i], 10);
+            i++;
+            if (n >= 1 && n <= 5) {
+              this.state._updateSolvedTarot();
+              this.state.csWagerTarot[n] = PUZZLE_TYPES.wager[n - 1];
+              this.launchPuzzle(this.state.csWagerTarot[n]);
+            }
+          }
+          break;
+        }
         case 98: // go to Moon's Map
           this.launchPuzzle(C.MOONS_MAP);
-          break;
-        case 19: // update menu key — 1 param (menu string like "12345--8")
-          i++; // consume the menu key param
           break;
         default:
           console.log(`Unhandled request code: ${code}`);
@@ -385,6 +492,27 @@ export class Orchestrator {
     const gData = this.loader.getVar('gData');
     if (gStat) this.state.pStat[idx] = parseInt(gStat, 10) || this.state.pStat[idx];
     if (gData && gData !== 'undefined') this.state.pData[idx] = gData;
+
+    // Read suit progress from SWF
+    const gSwords = this.loader.getVar('gSwords');
+    const gWands = this.loader.getVar('gWands');
+    const gCups = this.loader.getVar('gCups');
+    const gPentacles = this.loader.getVar('gPentacles');
+    if (gSwords) this.state.pSwords[idx] = parseInt(gSwords, 10) || 0;
+    if (gWands) this.state.pWands[idx] = parseInt(gWands, 10) || 0;
+    if (gCups) this.state.pCups[idx] = parseInt(gCups, 10) || 0;
+    if (gPentacles) this.state.pPentacles[idx] = parseInt(gPentacles, 10) || 0;
+
+    // Read completion marker
+    const gDone = this.loader.getVar('gDone');
+    if (gDone && gDone !== 'undefined') this.state.pDone[idx] = gDone;
+
+    // Sync completion data from Game Menus SWF
+    const gMenuUpdate = this.loader.getVar('gMenuUpdate');
+    if (gMenuUpdate) this.state.getMenuStatsFromFlash(gMenuUpdate);
+
+    // Run progression engine after saving state
+    this.state.updateGameStats(this.state.currGame);
     this.state.save();
     this.refreshNav();
   }
@@ -396,6 +524,27 @@ export class Orchestrator {
       this.state.markSolved(puzzleIndex);
     }
     this.refreshNav();
+  }
+
+  // Show/hide individual menu items (m1-m8) in the menu SWF based on
+  // pMenu[currPuzzle], matching Director's menu_Set_Items().
+  // pMenu is an 8-char string: each position corresponds to m1-m8.
+  // A dash "-" means hidden; any other char means visible.
+  //
+  // Note: Director also changed the menu SWF's visual frame per puzzle
+  // (tan scroll for regular, blue for Game Menus, etc.) via sprite.goToFrame().
+  // That was a Director-level operation on the sprite timeline, not the Flash
+  // timeline, so we can't replicate it via gotoAndStop on the SWF directly.
+  updateMenuItems(puzzleIndex) {
+    const menuKey = this.state.pMenu[puzzleIndex] || '12345--8';
+    for (let x = 1; x <= 8; x++) {
+      // Positions 6 (Reset) and 7 (Undo) are always kept visible.
+      // The SWFs never send code 19 to enable them — they handled reset/undo
+      // internally in Director. In our web port the menu bar is the primary
+      // UI for these actions, so we keep them available.
+      const visible = (x === 6 || x === 7) || menuKey[x - 1] !== '-';
+      this.menuLoader.setVar(`m${x}._visible`, visible ? 'true' : 'false');
+    }
   }
 
   applyLayout(stageHeight) {
