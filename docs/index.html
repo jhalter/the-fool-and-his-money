@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>The Fool and his Money</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: #1a1a2e;
+            color: #eee;
+            font-family: Georgia, serif;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Sidebar navigation */
+        #sidebar {
+            width: 260px;
+            background: #16213e;
+            border-right: 2px solid #c9a84c;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        #sidebar h1 {
+            font-size: 15px;
+            color: #c9a84c;
+            padding: 12px;
+            border-bottom: 1px solid #2a2a4e;
+            text-align: center;
+        }
+        #nav-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 4px 0;
+        }
+        #sidebar-controls {
+            padding: 8px 12px;
+            border-top: 1px solid #2a2a4e;
+            display: flex;
+            gap: 6px;
+        }
+        #sidebar-controls button {
+            flex: 1;
+            padding: 6px;
+            font-size: 12px;
+            border: 1px solid #c9a84c;
+            background: #16213e;
+            color: #eee;
+            cursor: pointer;
+            border-radius: 3px;
+        }
+        #sidebar-controls button:hover { background: #1a1a4e; }
+
+        .nav-section {
+            padding: 8px 12px 4px;
+            font-size: 13px;
+            color: #c9a84c;
+            font-weight: bold;
+            cursor: pointer;
+            user-select: none;
+            border-top: 1px solid #2a2a4e;
+        }
+        .nav-section:first-child { border-top: none; }
+        .nav-section:hover { color: #e0c060; }
+        .nav-items.collapsed { display: none; }
+        .nav-item {
+            padding: 4px 12px 4px 20px;
+            font-size: 12px;
+            cursor: pointer;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            color: #aaa;
+        }
+        .nav-item:hover { background: #1a1a4e; color: #eee; }
+        .nav-item.current { background: #2a2a5e; color: #fff; }
+        .nav-item.solved { color: #7a7; }
+        .nav-item.solved.current { color: #afa; }
+
+        /* Main area */
+        #main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        #game-area {
+            width: 800px;
+            height: 600px;
+            border: 2px solid #c9a84c;
+            position: relative;
+            overflow: hidden;
+        }
+        #player-container {
+            width: 800px;
+            height: 320px;
+            background: #000;
+        }
+        #help-container {
+            width: 800px;
+            height: 260px;
+            background: #000;
+            position: relative;
+        }
+        #scroll-left, #scroll-frame, #scroll-right {
+            pointer-events: none;
+        }
+        #scroll-left {
+            position: absolute;
+            left: 0; top: 0;
+            width: 24px; height: 260px;
+        }
+        #scroll-frame {
+            position: absolute;
+            left: 24px; top: 0;
+            width: 752px; height: 260px;
+        }
+        #scroll-right {
+            position: absolute;
+            right: 0; top: 0;
+            width: 24px; height: 260px;
+        }
+        #help-player {
+            position: absolute;
+            left: 124px; top: 342px;
+            width: 600px; height: 216px;
+            display: none;
+            z-index: 10;
+        }
+        #menu-container {
+            width: 800px;
+            height: 20px;
+            background: #000;
+        }
+        #status {
+            color: #888;
+            font-size: 12px;
+            margin-top: 8px;
+            text-align: center;
+            max-width: 800px;
+        }
+        #hint {
+            color: #555;
+            font-size: 11px;
+            margin-top: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div id="sidebar">
+        <h1>The Fool and his Money</h1>
+        <div id="nav-list"></div>
+        <div id="sidebar-controls">
+            <button id="btn-reset">Reset Progress</button>
+        </div>
+    </div>
+    <div id="main">
+        <div id="game-area">
+            <div id="player-container"></div>
+            <div id="prologue-container" style="display:none; position:absolute; left:0; top:0; width:800px; height:600px; z-index:5;"></div>
+            <div id="help-player"></div>
+            <div id="help-container">
+                <div id="scroll-left"></div>
+                <div id="scroll-frame"></div>
+                <div id="scroll-right"></div>
+            </div>
+            <div id="menu-container"></div>
+        </div>
+        <div id="status">Loading...</div>
+        <div id="hint">Right-click a puzzle in the sidebar to toggle solved/unsolved</div>
+    </div>
+
+    <script src="ruffle/ruffle.js"></script>
+    <script type="module">
+        import { Orchestrator } from './src/orchestrator.js';
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const app = new Orchestrator();
+            app.init();
+            window._app = app; // expose for debugging
+        });
+    </script>
+</body>
+</html>
