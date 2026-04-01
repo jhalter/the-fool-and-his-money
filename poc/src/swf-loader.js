@@ -47,6 +47,7 @@ export class SwfLoader {
 
       await this.player.load({
         url: swfUrl,
+        splashScreen: false,
         allowScriptAccess: true,
         autoplay: 'on',
         unmuteOverlay: 'hidden',
@@ -173,6 +174,7 @@ export class OverlayLoader {
       this.container.appendChild(this.player);
       await this.player.load({
         url: SWF_DIR + swfFile,
+        splashScreen: false,
         allowScriptAccess: true,
         autoplay: 'on',
         unmuteOverlay: 'hidden',
