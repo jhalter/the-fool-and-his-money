@@ -1,61 +1,71 @@
 # The Fool and his Money — Web Port
 
-An exploration to see if we can run Cliff Johnson's puzzle game
-"The Fool and his Money" on a modern platform (the web).
+A web port of Cliff Johnson's 2012 puzzle game
+*[The Fool and his Money](http://www.fools-errand.com/09-TFAHM/index.htm)*,
+originally built as a Macromedia Director 11 Projector.
 
-## Background
+The original binary is long dead on modern macOS. This project extracts all
+assets and scripts from the Director projector and rebuilds the runtime in
+JavaScript, rendering the game's 68 Flash SWF puzzle modules via
+[Ruffle](https://ruffle.rs) (a Rust/WASM Flash emulator).
 
-The original game is a **Macromedia Director 11 Projector** (circa 2012) that
-embeds Flash (SWF) modules for its puzzle UIs. Director orchestrates everything:
-puzzle sequencing, save/load, menus, audio, and state management. The SWF
-modules handle rendering and input for individual puzzles.
+## How it works
 
-Director 11 is long dead, and the PPC/Intel binary won't run on current macOS.
-This project extracts the game's assets and scripts and rebuilds the runtime
-for the browser.
+JavaScript replaces Director as the orchestrator: puzzle sequencing, navigation,
+save/load, menus, and state management. The 68 original Flash SWFs remain as
+puzzle UIs, rendered by Ruffle in the browser. An ExternalInterface bridge
+(injected into each SWF by `scripts/patch_swfs.sh`) enables JS to read/write
+SWF variables, send commands, and poll for state changes.
 
-## Architecture
-
-The game is a two-layer system:
-
-1. **Director layer** (Lingo scripts) — the orchestrator. Manages 128 puzzles
-   across tarot-themed sections (Swords, Wands, Cups, Pentacles, Mansion, etc.),
-   handles save/load across 12 game slots, and communicates with the Flash
-   modules via `getVariable`/`setVariable`.
-
-2. **Flash layer** (68 SWF files) — the puzzle UIs. Each puzzle is a
-   self-contained Flash module that receives state from Director and reports
-   results back.
+No build step — vanilla ES6 modules loaded directly by the browser.
 
 ## Repository structure
 
 ```
-extracted_chunks/     Decompiled Director data (44 chunks)
-  decompiled/           Lingo scripts (.ls), cast data, binary chunks
-extracted_media/      68 SWF files extracted from the Director binary
-poc/                  Proof-of-concept web player (Ruffle + static HTML)
-TFaHM-Mac/            Original Mac app (not committed, in .gitignore)
+poc/                        Web player
+  index.html                  800x600 game area + sidebar navigation
+  package.json                @ruffle-rs/ruffle + serve
+  src/
+    orchestrator.js              Navigation, polling, request dispatch
+    game-state.js                Save/load, puzzle state arrays (localStorage)
+    puzzle-data.js               128 puzzle definitions
+    swf-loader.js                Ruffle player wrapper + ExternalInterface bridge
+    frame-swf-map.js             Maps frameId -> SWF filename + stage heights
+    prologue-controller.js       Two-SWF synchronized prologue FSM
+  swf/                        Patched SWFs (gitignored; rebuild via scripts/patch_swfs.sh)
+
+extracted_chunks/decompiled/  Decompiled Lingo scripts (authoritative reference)
+extracted_media/              68 original (unpatched) SWF files
+scripts/
+  patch_swfs.sh                 Batch-patches SWFs with ExternalInterface bridge
+  build-pages.sh                GitHub Pages deploy script
 ```
 
-## Running the POC
-
-The proof of concept loads extracted SWF files in the browser using
-[Ruffle](https://ruffle.rs), a Rust/WASM Flash emulator.
+## Running
 
 ```sh
-cd poc
-npm install
-npm start
+cd poc && npm install && npm start   # http://localhost:3000
 ```
 
-Then open the URL shown in the terminal (typically http://localhost:3000).
+SWF patching (only needed after modifying bridge code or re-extracting):
 
-Select a SWF from the dropdown and click "Load SWF". Puzzles run in standalone
-mode without the Director orchestration layer.
+```sh
+# Requires Java + JPEXS FFDec at ~/Downloads/ffdec/ffdec-cli.jar
+./scripts/patch_swfs.sh              # extracted_media/*.swf -> poc/swf/*.swf
+```
 
 ## Status
 
-- **Done**: Asset extraction, Lingo script decompilation, SWF extraction,
-  Ruffle-based rendering proof of concept
-- **Not started**: Director-to-Flash communication bridge, puzzle state machine,
-  save/load system, menu/navigation, audio
+**Working:**
+- All 128 puzzles loadable and playable via sidebar navigation
+- ExternalInterface bridge (JS <-> SWF communication)
+- Puzzle state persistence across navigation (gFlashCommand=4 save handshake)
+- Save/load system (localStorage)
+- Puzzle completion detection and progression engine
+- Prologue sequence (two-SWF synchronized state machine)
+- Menu bar, help overlay, scroll frame overlays
+- Mansion tiered progression, Moon's Map, tarot/wager navigation
+- Layout system (three modes by SWF stage height)
+
+**Not implemented:**
+- Audio
