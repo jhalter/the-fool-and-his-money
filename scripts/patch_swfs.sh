@@ -250,7 +250,22 @@ if(flash.external.ExternalInterface.available)
          };
          Key.addListener(kUp);
       }
-      _root.DirectorInControl = 0;
+      // Keep DirectorInControl=1 so SWFs send gFlashRequest for navigation.
+      // With DirectorInControl==0, functions like _Launch_Tarot_Game() skip
+      // setting gFlashRequest (they only do $.debug() in standalone mode).
+      // Compensate for the missing pMouseChunk fallback (which in the SWF
+      // only fires when DirectorInControl==0) by watching pMouseChunk and
+      // restoring the last known position whenever the SWF clears it.
+      _root.watch("pMouseChunk", function(prop, oldVal, newVal) {
+         if(newVal == "" || newVal == undefined) {
+            var x = _root.pLastIdleX;
+            var y = _root.pLastIdleY;
+            if(x == undefined) x = Math.round(_root._xmouse);
+            if(y == undefined) y = Math.round(_root._ymouse);
+            return x + "," + y + ",";
+         }
+         return newVal;
+      });
    });
 }
 BRIDGE
@@ -291,9 +306,25 @@ for swf in "$SRC_DIR"/*.swf; do
     echo "OK: $filename"
     patched=$((patched + 1))
   else
-    echo "FAIL: $filename"
-    cp "$swf" "$OUT_DIR/$filename"
-    failed=$((failed + 1))
+    # Fallback: if frame_1/DoAction replacement fails (e.g. nested function +
+    # switch/case that FFDec can't recompile), inject bridge into frame_2 instead.
+    frame2="$export_dir/scripts/frame_2/DoAction.as"
+    if [ -f "$frame2" ]; then
+      fallback="$TMPDIR/fallback_$total.as"
+      cat "$TMPDIR/bridge.as" "$frame2" > "$fallback"
+      if java -jar "$FFDEC_JAR" -replace "$swf" "$out_swf" "/frame_2/DoAction" "$fallback" 2>&1 | grep -q "^Replace"; then
+        echo "OK (via frame_2): $filename"
+        patched=$((patched + 1))
+      else
+        echo "FAIL: $filename"
+        cp "$swf" "$OUT_DIR/$filename"
+        failed=$((failed + 1))
+      fi
+    else
+      echo "FAIL: $filename"
+      cp "$swf" "$OUT_DIR/$filename"
+      failed=$((failed + 1))
+    fi
   fi
 done
 

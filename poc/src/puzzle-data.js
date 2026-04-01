@@ -23,6 +23,7 @@ export const PUZZLE_TYPES = {
   morph: [],
   phrase: [],
   wager: [],
+  tarot: [],
   concat: [],
   grid: [],          // 4x4
   coins: [],
@@ -233,6 +234,13 @@ export const C = {
   GAME_MENUS: 99,
   TOKENS: 100,
   PUZZLE_TOTAL: 128,
+  // Type arrays (1-indexed to match Director globals)
+  TAROT: [0, 92, 93, 94, 95, 96],
+  WAGER: [0, 5, 18, 35, 55, 71],
+  PATCH_PIRATE: [0, 2, 19, 38, 56],
+  DEL1: 101, DEL7: 107,
+  HEX1: 108, HEX7: 114,
+  REM1: 115, REM7: 121,
 };
 
 // Section ranges for the navigation UI

@@ -36,6 +36,7 @@ export const FRAME_TO_SWF = {
   'unnecessary':'chunk_35_CDGF_0x060358b0_swf_058_v8.swf',
   'REM':        'chunk_35_CDGF_0x060358b0_swf_059_v8.swf',
   'CON':        'chunk_42_CDGF_0x07c93878_swf_066_v8.swf',
+  'connects':   'chunk_42_CDGF_0x07c93878_swf_066_v8.swf',
 
   // Special puzzles
   'pre-Finale': 'chunk_10_CDGF_0x018f2842_swf_025_v8.swf',
