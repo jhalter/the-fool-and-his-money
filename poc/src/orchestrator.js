@@ -139,6 +139,15 @@ export class Orchestrator {
     this.stopPolling();
     this.exitClickToContinue();
 
+    // Save current puzzle state before unloading, mirroring Director's
+    // _Set_Save_Mode state machine: send gFlashCommand=4, wait for the
+    // SWF to serialize into gData, then read it.
+    // Director skips this for Tokens, HelpTokens, and Prologue.
+    const cp = this.state.currPuzzle;
+    if (cp && cp !== C.TOKENS && cp !== C.HELP_TOKENS && cp !== C.PROLOGUE) {
+      await this.saveCurrentAsync();
+    }
+
     // Clean up any running Prologue controller
     if (this.prologueController) {
       this.prologueController.stop();
@@ -365,7 +374,7 @@ export class Orchestrator {
           break;
         }
         case 17: // save current puzzle
-          this.saveCurrent();
+          this.saveCurrentAsync();
           break;
         case 18: // go to Pre-High Priestess
           this.launchPuzzle(C.PRE_HP);
@@ -486,6 +495,29 @@ export class Orchestrator {
         // Acknowledge by clearing command
         this.loader.setVar('gFlashCommand', '0');
     }
+  }
+
+  // Send gFlashCommand=4, wait for the SWF to serialize state into gData,
+  // then call saveCurrent(). Mirrors Director's pollSaveStageStatus state machine.
+  saveCurrentAsync() {
+    return new Promise((resolve) => {
+      this.loader.setVar('gFlashCommand', '4');
+      let attempts = 0;
+      const maxAttempts = 30; // 1.5s at 50ms
+      const poll = () => {
+        attempts++;
+        const stages = this.loader.getVar('gSaveStages');
+        if (stages === '4' || stages === '' || stages === undefined || attempts >= maxAttempts) {
+          this.loader.setVar('gSaveStages', '0');
+          this.loader.setVar('gFlashCommand', '0');
+          this.saveCurrent();
+          resolve();
+          return;
+        }
+        setTimeout(poll, 50);
+      };
+      setTimeout(poll, 50);
+    });
   }
 
   saveCurrent() {

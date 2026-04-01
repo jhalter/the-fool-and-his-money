@@ -35,6 +35,7 @@ export class SwfLoader {
 
   async loadSwf(swfUrl, parameters = {}, label = '') {
     this.ruffleApi = null;
+    this.pendingFlashVars = parameters;
     this.container.innerHTML = '';
     this.setStatus(`Loading ${label || swfUrl}...`);
 
@@ -59,8 +60,9 @@ export class SwfLoader {
       this.ruffleApi = this.player.ruffle();
       this.currentSwf = swfUrl;
 
-      // Wait for SWF to signal readiness (gListener=666), then enable standalone
-      // mouse listeners. Mirrors Director's puzz_ExitInit loop.
+      // Wait for SWF to signal readiness (gListener=666), then push saved
+      // state and enable standalone mouse listeners.
+      // Mirrors Director's puzz_ExitInit → sendFlashData → enableStandaloneMode.
       this.waitForReady();
 
       this.setStatus(`${label || swfUrl} | Click inside to interact`);
@@ -122,17 +124,34 @@ export class SwfLoader {
       try {
         const listener = this.ruffleApi.callExternalInterface('getVar', 'gListener');
         if (String(listener) === '666') {
+          // Mirror Director's sendFlashData(): re-push saved state via
+          // ExternalInterface after the SWF's init code has run, since
+          // initFlashEvents() may overwrite FlashVars with defaults.
+          this.sendFlashData();
           this.enableStandaloneMode();
           return;
         }
       } catch (e) { /* ignore */ }
       if (attempts >= maxAttempts) {
+        this.sendFlashData();
         this.enableStandaloneMode();
       } else {
         setTimeout(check, 100);
       }
     };
     setTimeout(check, 100);
+  }
+
+  // Push saved state to SWF via setVar, matching Director's sendFlashData()
+  // in 02-Misc.ls. Called after gListener=666 so it overwrites any defaults
+  // the SWF's init code set.
+  sendFlashData() {
+    const vars = this.pendingFlashVars;
+    if (!vars || !this.ruffleApi) return;
+    for (const [key, value] of Object.entries(vars)) {
+      this.setVar(key, value);
+    }
+    this.pendingFlashVars = null;
   }
 
   gotoFrame(n) {
