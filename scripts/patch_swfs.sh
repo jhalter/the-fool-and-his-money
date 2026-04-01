@@ -24,6 +24,18 @@ fi
 cat > "$TMPDIR/bridge.as" << 'BRIDGE'
 if(flash.external.ExternalInterface.available)
 {
+   // Capture gFlashRequest writes so they survive until the next JS poll.
+   // SWFs may overwrite gFlashRequest every frame; without this, the 100ms
+   // polling interval misses single-frame requests.
+   var _pendingRequest = "";
+   _root.watch("gFlashRequest", function(prop, oldVal, newVal)
+   {
+      if(newVal != undefined && newVal != "" && String(newVal) != "undefined")
+      {
+         _pendingRequest = String(newVal);
+      }
+      return newVal;
+   });
    flash.external.ExternalInterface.addCallback("setVar", null, function(name, value)
    {
       var parts = name.split(".");
@@ -48,12 +60,20 @@ if(flash.external.ExternalInterface.available)
    flash.external.ExternalInterface.addCallback("getPolledState", null, function()
    {
       var gs = (_root.gStat != undefined) ? String(_root.gStat) : "";
-      var gr = (_root.gFlashRequest != undefined) ? String(_root.gFlashRequest) : "";
-      var gc = (_root.gClickToContinue != undefined) ? String(_root.gClickToContinue) : "";
+      // Read from _pendingRequest (populated by watch callback) so we never
+      // miss a request that was overwritten between polls.
+      var gr = _pendingRequest;
+      _pendingRequest = "";
+      // Also check the live variable in case watch didn't fire (e.g. Ruffle quirk)
+      if(gr == "" || gr == "undefined")
+      {
+         gr = (_root.gFlashRequest != undefined) ? String(_root.gFlashRequest) : "";
+      }
       if(gr != "" && gr != "undefined")
       {
          _root.gFlashRequest = "";
       }
+      var gc = (_root.gClickToContinue != undefined) ? String(_root.gClickToContinue) : "";
       return gs + "\x01" + gr + "\x01" + gc;
    });
    flash.external.ExternalInterface.addCallback("gotoFrame", null, function(n)
@@ -95,6 +115,56 @@ if(flash.external.ExternalInterface.available)
    });
    flash.external.ExternalInterface.addCallback("enableStandaloneMode", null, function()
    {
+      // Tokens SWF: its initFlashEvents() overwrites pNum/pStat/pData with
+      // defaults, and with DirectorInControl=0 the SWF never sends
+      // gFlashRequest for navigation (playWaitLOOP uses clickToContinue
+      // instead). Keep DirectorInControl=1 and set up g-prefix mouse
+      // listeners that the Tokens ActionScript reads.
+      if(_root.puzzleName == "Tokens")
+      {
+         var mIdle = new Object();
+         mIdle.onMouseMove = function()
+         {
+            _root.gIdleX = Math.round(_root._xmouse);
+            _root.gIdleY = Math.round(_root._ymouse);
+         };
+         Mouse.addListener(mIdle);
+         var mDown = new Object();
+         mDown.onMouseDown = function()
+         {
+            _root.gIdleX = Math.round(_root._xmouse);
+            _root.gIdleY = Math.round(_root._ymouse);
+            _root.gMouseDown = 1;
+         };
+         Mouse.addListener(mDown);
+         var mUp = new Object();
+         mUp.onMouseUp = function()
+         {
+            _root.gIdleX = Math.round(_root._xmouse);
+            _root.gIdleY = Math.round(_root._ymouse);
+            _root.gMouseDown = 0;
+            _root.gMouseUp = 1;
+            if(_root.timeClick < _root.lastClick + 5)
+            {
+               _root.gMouseUp = 2;
+            }
+            _root.lastClick = _root.timeClick;
+         };
+         Mouse.addListener(mUp);
+         var kUp = new Object();
+         kUp.onKeyUp = function()
+         {
+            _root.gKeyDown = Key.getAscii();
+         };
+         Key.addListener(kUp);
+         // Double-click timer (same as initFlashEvents)
+         _root.BG.attachMovie("flash-timer","timer",13);
+         _root.timeClick = 0;
+         _root.lastClick = 0;
+         // Do NOT set DirectorInControl=0 — the SWF needs it to be 1
+         // so playWaitLOOP sends gFlashRequest instead of looping.
+         return;
+      }
       if(typeof _root.initFlashEvents == "function")
       {
          _root.initFlashEvents(0, 0);
@@ -130,6 +200,9 @@ if(flash.external.ExternalInterface.available)
                _root.pLastIdleY = cy;
             }
             _root.pShiftKey = Number(Key.isDown(16));
+            _root.gIdleX = cx;
+            _root.gIdleY = cy;
+            _root.gShiftKey = Number(Key.isDown(16));
          };
          Mouse.addListener(mIdle);
          var mDown = new Object();
@@ -138,6 +211,8 @@ if(flash.external.ExternalInterface.available)
             _root.pMouseDown = 1;
             _root.pMouseUp = 0;
             _root.pShiftKey = Number(Key.isDown(16));
+            _root.gMouseDown = 1;
+            _root.gMouseUp = 0;
          };
          Mouse.addListener(mDown);
          var mUp = new Object();
@@ -146,6 +221,8 @@ if(flash.external.ExternalInterface.available)
             _root.pMouseDown = 0;
             _root.pMouseUp = 1;
             _root.pShiftKey = Number(Key.isDown(16));
+            _root.gMouseDown = 0;
+            _root.gMouseUp = 1;
          };
          Mouse.addListener(mUp);
          var kDown = new Object();
@@ -158,6 +235,8 @@ if(flash.external.ExternalInterface.available)
             {
                _root.pKeyChunk = _root.pKeyChunk + _root.pKeyDown + ",";
             }
+            _root.gKeyDown = Key.getAscii();
+            _root.gKeyUp = 0;
          };
          Key.addListener(kDown);
          var kUp = new Object();
@@ -166,6 +245,8 @@ if(flash.external.ExternalInterface.available)
             _root.pKeyUp = 1;
             _root.pKeyDown = 0;
             _root.pKeyCode = 0;
+            _root.gKeyUp = 1;
+            _root.gKeyDown = 0;
          };
          Key.addListener(kUp);
       }
