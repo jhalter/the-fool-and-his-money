@@ -9,6 +9,8 @@ assets and scripts from the Director projector and rebuilds the runtime in
 JavaScript, rendering the game's 68 Flash SWF puzzle modules via
 [Ruffle](https://ruffle.rs) (a Rust/WASM Flash emulator).
 
+<img width="824" height="620" alt="Screenshot 2026-04-01 at 5 42 50 PM" src="https://github.com/user-attachments/assets/46a1f251-634a-4a19-944e-951cc46e71cc" />
+
 ## How it works
 
 JavaScript replaces Director as the orchestrator: puzzle sequencing, navigation,
