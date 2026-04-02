@@ -654,6 +654,24 @@ export class Orchestrator {
         }
       }
     });
+
+    // Keyboard shortcuts — mirrors Director's puzz_KeyDown in 23-Puzzles.ls.
+    // SWFs that support space-bar undo set gSpaceUndo="true" on _root.
+    document.addEventListener('keydown', (e) => {
+      if (!this.loader) return;
+
+      if (e.key === ' ' && !e.ctrlKey && !e.metaKey) {
+        if (this.loader.getVar('gSpaceUndo') === 'true') {
+          e.preventDefault();
+          this.loader.setVar('gFlashCommand', '7');
+        }
+      } else if (e.key === ' ' && e.ctrlKey) {
+        if (this.loader.getVar('gSpaceReset') === 'true') {
+          e.preventDefault();
+          this.loader.setVar('gFlashCommand', '6');
+        }
+      }
+    });
   }
 
   handleMenuClick(action) {
