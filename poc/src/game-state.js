@@ -190,6 +190,9 @@ export class GameState {
     if (puzzleIndex === C.GAME_MENUS) {
       return this.getChunkMenuName() + this.getWindowCode() + '|';
     }
+    if (puzzleIndex === C.MOONS_MAP) {
+      return this._tallyMapPieces();
+    }
     if (puzzleIndex >= 101 && puzzleIndex <= 107) {
       // DEL (Delivery) puzzles receive the window code
       return this.getWindowCode();
@@ -431,6 +434,19 @@ export class GameState {
       if (this.pStat[x] < 400) t++;
     }
     return t;
+  }
+
+  // Build binary string of solved puzzles for Moon's Map star display.
+  // Matches tallyMapPieces() in 06-Update-Stats.ls:521-541.
+  _tallyMapPieces() {
+    let s = '';
+    for (let x = C.SWORDS1; x <= C.PENTACLES2; x++) {
+      s += this.pStat[x] >= 100 ? '1' : '0';
+    }
+    for (let x = C.MANSION1; x <= C.MANSION2; x++) {
+      s += this.pStat[x] >= 400 ? '1' : '0';
+    }
+    return s;
   }
 
   // Set pPage values for mansion-tier puzzles.
