@@ -55,18 +55,3 @@ SWF patching (only needed after modifying bridge code or re-extracting):
 ./scripts/patch_swfs.sh              # extracted_media/*.swf -> poc/swf/*.swf
 ```
 
-## Status
-
-**Working:**
-- All 128 puzzles loadable and playable via sidebar navigation
-- ExternalInterface bridge (JS <-> SWF communication)
-- Puzzle state persistence across navigation (gFlashCommand=4 save handshake)
-- Save/load system (localStorage)
-- Puzzle completion detection and progression engine
-- Prologue sequence (two-SWF synchronized state machine)
-- Menu bar, help overlay, scroll frame overlays
-- Mansion tiered progression, Moon's Map, tarot/wager navigation
-- Layout system (three modes by SWF stage height)
-
-**Not implemented:**
-- Audio
