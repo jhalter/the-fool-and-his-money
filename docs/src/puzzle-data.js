@@ -19,33 +19,34 @@ export const SECTIONS = {
 
 // Puzzle type groups (indices into PUZZLES array, 1-based to match Director)
 export const PUZZLE_TYPES = {
-  patchPirate: [2, 19, 38, 56],
-  morph: [3],
-  phrase: [4, 28, 52, 66],
-  wager: [5, 18, 35, 55, 71],
-  concat: [6, 22, 40, 68],
-  grid: [7, 23, 42, 58],
-  coins: [8],
-  morphText: [9, 13, 17],
-  stamp: [10, 33, 43, 64],
-  jumble: [11, 30, 51, 59],
-  auction: [12, 32, 45, 70],
-  letterSlide: [14, 25, 37, 41, 47, 53, 67],
-  clickCode: [15, 29, 46, 63],
-  seven: [16, 27, 50, 60],
-  halves: [20],
-  herb: [21, 26, 31, 36],
-  fillIn: [24],
-  tracer: [39, 44, 49, 54],
-  inventory: [34, 48, 62],
-  pentacle: [61, 65, 69],
-  slider: [57],
-  mansion: [73, 74, 75, 76, 77, 78, 79],
-  tarot: [92, 93, 94, 95, 96],
-  DEL: [101, 102, 103, 104, 105, 106, 107],
-  HEX: [108, 109, 110, 111, 112, 113, 114],
-  REM: [115, 116, 117, 118, 119, 120, 121],
-  CON: [122, 123, 124, 125, 126, 127, 128],
+  patchPirate: [],   // patchwork
+  morph: [],
+  phrase: [],
+  wager: [],
+  tarot: [],
+  concat: [],
+  grid: [],          // 4x4
+  coins: [],
+  morphText: [],
+  stamp: [],
+  jumble: [],
+  auction: [],
+  letterSlide: [],   // cross-slide
+  clickCode: [],     // code-grid
+  seven: [],         // sevens
+  halves: [],
+  herb: [],          // herbs
+  fillIn: [],
+  tracer: [],
+  inventory: [],
+  pentacle: [],      // market
+  slider: [],
+  mansion: [],
+  wagerTarot: [],
+  DEL: [],
+  HEX: [],
+  REM: [],
+  CON: [],
 };
 
 function definePuzzle(id, menuName, pNum, volume, frameId, titleName, section) {
@@ -233,6 +234,13 @@ export const C = {
   GAME_MENUS: 99,
   TOKENS: 100,
   PUZZLE_TOTAL: 128,
+  // Type arrays (1-indexed to match Director globals)
+  TAROT: [0, 92, 93, 94, 95, 96],
+  WAGER: [0, 5, 18, 35, 55, 71],
+  PATCH_PIRATE: [0, 2, 19, 38, 56],
+  DEL1: 101, DEL7: 107,
+  HEX1: 108, HEX7: 114,
+  REM1: 115, REM7: 121,
 };
 
 // Section ranges for the navigation UI

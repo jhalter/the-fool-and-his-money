@@ -1,7 +1,7 @@
 // Game state management, mirroring Director's global state arrays.
 // Persistence via localStorage.
 
-import { PUZZLES, PUZZLE_TYPES, C } from './puzzle-data.js';
+import { PUZZLES, C } from './puzzle-data.js';
 
 const STORAGE_KEY = 'tfahm_game_state';
 
@@ -13,43 +13,23 @@ export class GameState {
     this.pStat = new Array(C.PUZZLE_TOTAL + 1).fill(0);
     this.pData = new Array(C.PUZZLE_TOTAL + 1).fill('empty');
     this.pPage = new Array(C.PUZZLE_TOTAL + 1).fill(0);
-    this.pDone = new Array(C.PUZZLE_TOTAL + 1).fill('-');
     this.pSwords = new Array(C.PUZZLE_TOTAL + 1).fill(0);
     this.pWands = new Array(C.PUZZLE_TOTAL + 1).fill(0);
     this.pCups = new Array(C.PUZZLE_TOTAL + 1).fill(0);
     this.pPentacles = new Array(C.PUZZLE_TOTAL + 1).fill(0);
     this.pMenu = new Array(C.PUZZLE_TOTAL + 1).fill('12345--8');
 
+    this.pDone = new Array(C.PUZZLE_TOTAL + 1).fill('-');
+    // csWagerTarot tracks which wager puzzle is paired with each tarot slot.
+    // Initialized to csWager values; swapped to tarot index on tarot launch.
+    this.csWagerTarot = [0, 5, 18, 35, 55, 71]; // 1-indexed
+
     // Special menu defaults from 01-Initialization.ls
     this.pMenu[C.MOONS_MAP] = '12-45--8';
     this.pMenu[C.MOONS_PUZZLES] = '12-45--8';
     this.pMenu[C.GAME_MENUS] = '1-345--8';
     this.pMenu[C.HELP_TOKENS] = '1234---8';
-
-    // Wager ↔ Tarot pairing: csWagerTarot[x] starts equal to csWager[x]
-    // Index 1-5 maps to the 5 wager puzzle indices
-    this.csWagerTarot = [null, ...PUZZLE_TYPES.wager];
-
-    // Word state tracking for jumble/morphtext puzzles (1-indexed, 4 entries)
-    this.pWordStat63 = [null, '', '', '', ''];
-
-    // Token descriptions for 15 slots (12 games + new + revert + open)
-    this.token1 = new Array(16).fill('77 Bewitchments remain');
-    this.token2 = new Array(16).fill("and the Moon's Map is a mystery.");
-    this.token3 = new Array(16).fill(1); // 1 = new/fresh game
-    this.token1[0] = ''; this.token2[0] = ''; this.token3[0] = 0;
-
-    // Internal working state (not persisted)
-    this.menuStat = new Array(C.PUZZLE_TOTAL + 1).fill(0);
-    this.thePuzzlesSolved = 0;
-    this.pInfo = '';
-    this.pSeven = '-';
-    this.windowCode = null;
   }
-
-  // -----------------------------------------------------------------------
-  // FlashVars — sent to SWF at load time
-  // -----------------------------------------------------------------------
 
   // Build FlashVars object for a puzzle launch, matching sendFlashData() in 02-Misc.ls
   getFlashVars(puzzleIndex) {
@@ -73,7 +53,7 @@ export class GameState {
       pWands: String(this.pWands[puzzleIndex]),
       pCups: String(this.pCups[puzzleIndex]),
       pPentacles: String(this.pPentacles[puzzleIndex]),
-      // Totals across all puzzles (Director sends 0 in sendFlashData)
+      // Totals across all puzzles
       pTotalSwords: '0',
       pTotalWands: '0',
       pTotalCups: '0',
@@ -81,8 +61,8 @@ export class GameState {
       // Menu and miscellaneous
       pMenu: this.getChunkMenuStat(),
       pMisc: this.getMisc(puzzleIndex),
-      pInfo: this.pInfo,
-      pSeven: this.pSeven,
+      pInfo: '',
+      pSeven: '-',
       // Control flags
       pClickToContinue: '0',
       pTraceMenu: '0',
@@ -98,33 +78,43 @@ export class GameState {
   // Generate pipe-delimited token strings for the Tokens hub screen.
   // Format: token1|token2|token3| repeated for 15 slots
   // (12 game slots + new game template + revert + open game)
+  // Mirrors getTokenStrings() from 03-Launch.ls
   getTokenStrings() {
     const parts = [];
     for (let x = 1; x <= 15; x++) {
-      parts.push(this.token1[x] || '77 Bewitchments remain');
-      parts.push(this.token2[x] || "and the Moon's Map is a mystery.");
-      parts.push(String(this.token3[x] ?? 1));
+      if (x <= 12) {
+        // Game slots — show progress summary
+        parts.push('77 Bewitchments remain');
+        parts.push("and the Moon's Map is a mystery.");
+        parts.push('1'); // 1 = new/fresh game
+      } else {
+        // Slots 13-15: new game template, revert, open
+        parts.push('77 Bewitchments remain');
+        parts.push("and the Moon's Map is a mystery.");
+        parts.push('1');
+      }
     }
     return parts.join('|') + '|';
   }
 
   // Build 128-char status string matching putMenuStatsFromFlash() in 06-Update-Stats.ls.
   // Each character is a digit 0-9 representing the completion level of that puzzle.
-  // Side effect: populates this.menuStat[] array for use by other methods.
   getChunkMenuStat() {
+    const menuStat = new Array(C.PUZZLE_TOTAL + 1).fill(0);
+
     for (let x = 1; x <= C.PUZZLE_TOTAL; x++) {
       if (x >= C.MANSION1 && x <= C.MANSION2) continue; // handled below
       const s = this.pStat[x];
-      if (s === 0)       { this.menuStat[x] = 0; continue; }
-      if (s === 1)       { this.menuStat[x] = 1; continue; }
-      if (s < 100)       { this.menuStat[x] = 2; continue; }
-      if (s < 200)       { this.menuStat[x] = 3; continue; }
-      if (s < 300)       { this.menuStat[x] = 4; continue; }
-      if (s < 400)       { this.menuStat[x] = 5; continue; }
-      if (s < 500)       { this.menuStat[x] = 6; continue; }
-      if (s < 600)       { this.menuStat[x] = 7; continue; }
-      if (s < 700)       { this.menuStat[x] = 8; continue; }
-      this.menuStat[x] = 9;
+      if (s === 0)       { menuStat[x] = 0; continue; }
+      if (s === 1)       { menuStat[x] = 1; continue; }
+      if (s < 100)       { menuStat[x] = 2; continue; }
+      if (s < 200)       { menuStat[x] = 3; continue; }
+      if (s < 300)       { menuStat[x] = 4; continue; }
+      if (s < 400)       { menuStat[x] = 5; continue; }
+      if (s < 500)       { menuStat[x] = 6; continue; }
+      if (s < 600)       { menuStat[x] = 7; continue; }
+      if (s < 700)       { menuStat[x] = 8; continue; }
+      menuStat[x] = 9;
     }
 
     // Mansion puzzles: thresholds shift based on game-menus progress
@@ -132,34 +122,38 @@ export class GameState {
     for (let x = C.MANSION1; x <= C.MANSION2; x++) {
       let s = this.pStat[x];
       if (gmStat <= 20) {
-        if (s === 0)      this.menuStat[x] = 0;
-        else if (s === 1) this.menuStat[x] = 1;
-        else if (s < 100) this.menuStat[x] = 2;
-        else              this.menuStat[x] = 3;
+        // Tier 0: passwords
+        if (s === 0)      menuStat[x] = 0;
+        else if (s === 1) menuStat[x] = 1;
+        else if (s < 100) menuStat[x] = 2;
+        else              menuStat[x] = 3;
       } else if (gmStat <= 60) {
+        // Tier 1: deliveries
         if (s < 100) { this.pStat[x] = 100; s = 100; }
-        if (s === 100)     this.menuStat[x] = 0;
-        else if (s <= 110) this.menuStat[x] = 1;
-        else if (s < 200)  this.menuStat[x] = 2;
-        else               this.menuStat[x] = 3;
+        if (s === 100)     menuStat[x] = 0;
+        else if (s <= 110) menuStat[x] = 1;
+        else if (s < 200)  menuStat[x] = 2;
+        else               menuStat[x] = 3;
       } else if (gmStat <= 90) {
+        // Tier 2: hexes
         if (s < 200) { this.pStat[x] = 200; s = 200; }
-        if (s === 200)     this.menuStat[x] = 0;
-        else if (s <= 201) this.menuStat[x] = 1;
-        else if (s < 300)  this.menuStat[x] = 2;
-        else               this.menuStat[x] = 3;
+        if (s === 200)     menuStat[x] = 0;
+        else if (s <= 201) menuStat[x] = 1;
+        else if (s < 300)  menuStat[x] = 2;
+        else               menuStat[x] = 3;
       } else {
+        // Tier 3: remainders/connections
         if (s < 300) { this.pStat[x] = 300; s = 300; }
-        if (s === 300)     this.menuStat[x] = 0;
-        else if (s <= 310) this.menuStat[x] = 1;
-        else if (s < 400)  this.menuStat[x] = 2;
-        else               this.menuStat[x] = 3;
+        if (s === 300)     menuStat[x] = 0;
+        else if (s <= 310) menuStat[x] = 1;
+        else if (s < 400)  menuStat[x] = 2;
+        else               menuStat[x] = 3;
       }
     }
 
     let result = '';
     for (let x = 1; x <= C.PUZZLE_TOTAL; x++) {
-      result += String(this.menuStat[x]);
+      result += String(menuStat[x]);
     }
     return result;
   }
@@ -196,53 +190,57 @@ export class GameState {
     if (puzzleIndex === C.GAME_MENUS) {
       return this.getChunkMenuName() + this.getWindowCode() + '|';
     }
-    if (puzzleIndex >= C.MANSION1 && puzzleIndex <= C.MANSION2) {
-      const gmStat = this.pStat[C.GAME_MENUS];
-      if (gmStat <= 20) return this.getWindowCode();
-      if (gmStat >= 70 && gmStat <= 90) return String(gmStat);
-      return '';
-    }
     if (puzzleIndex >= 101 && puzzleIndex <= 107) {
       // DEL (Delivery) puzzles receive the window code
       return this.getWindowCode();
     }
-    if (puzzleIndex === C.MOONS_MAP && this.pStat[C.MOONS_MAP] < 100) {
-      return this.tallyMapPieces();
-    }
     return '';
   }
 
-  // -----------------------------------------------------------------------
-  // Game Stats Engine — translated from 06-Update-Stats.ls
-  // -----------------------------------------------------------------------
+  // Redirect certain puzzle launches based on game state, matching
+  // exceptionPuzzleLaunch() in 06-Update-Stats.ls.
+  // b=true is "save mode" (prevents launching Prologue/Finale directly).
+  exceptionPuzzleLaunch(n, b) {
+    if (n === C.FINALE && this.lastPuzzle === C.FINALE) {
+      n = C.PRE_FINALE;
+    }
+    if (n === C.TOKENS) {
+      n = (this.lastPuzzle !== C.TOKENS) ? this.lastPuzzle : C.GAME_MENUS;
+    }
+    if (n < 1 || n > C.PUZZLE_TOTAL) {
+      n = C.GAME_MENUS;
+    }
+    if (b) {
+      if (n === C.PROLOGUE) n = C.GAME_MENUS;
+      if (n === C.FINALE) n = C.PRE_FINALE;
+    }
+    if (n === C.PRE_HP && this.pStat[C.PRE_HP] === 100) {
+      n = C.HIGH_PRIESTESS;
+    }
+    if (n === C.HIGH_PRIESTESS && this.pStat[C.HIGH_PRIESTESS] === 100) {
+      n = C.MOON_MORPH;
+    }
+    return n;
+  }
 
-  // Core progression function. Called on every puzzle launch and save.
-  // Translates updateGameStats() from MovieScript 4 lines 3-184.
-  updateGameStats(gameNumber) {
-    // Mark current puzzle as "in progress" if it's a playable puzzle
-    if (this.currPuzzle < C.GAME_MENUS) {
-      if (this.pStat[this.currPuzzle] < 2) {
-        this.pStat[this.currPuzzle] = 2;
-      }
+  // Core progression engine — translates updateGameStats() from 06-Update-Stats.ls.
+  // Called before every puzzle launch and after saving puzzle state.
+  updateGameStats(gameNum) {
+    // Mark current puzzle as visited
+    if (this.currPuzzle < C.GAME_MENUS && this.pStat[this.currPuzzle] < 2) {
+      this.pStat[this.currPuzzle] = 2;
     }
 
-    // Generate window code if needed
-    if (!this.windowCode) {
-      if (this.calcMapPiecesRemaining(3) > 4) {
-        this.getWindowCode();
-      }
-    }
-
-    // Count solved puzzles across main suits (Swords through Pentacles)
+    // Count available and solved puzzles (Swords through Pentacles)
     let puzzAvail = 0;
-    this.thePuzzlesSolved = 0;
+    let puzzlesSolved = 0;
     for (let x = C.SWORDS1; x <= C.PENTACLES2; x++) {
       if (this.pStat[x] > 0) puzzAvail++;
-      if (this.pStat[x] >= 100) this.thePuzzlesSolved++;
+      if (this.pStat[x] >= 100) puzzlesSolved++;
     }
 
-    // Progressive unlock: every 3 puzzles solved → 1 new puzzle unlocks
-    let puzzReady = this.thePuzzlesSolved - 3;
+    // Unlock puzzles: for each solved beyond 3, open one locked puzzle
+    let puzzReady = puzzlesSolved - 3;
     if (puzzReady > 0) {
       for (let x = C.WANDS1; x <= C.PENTACLES2; x++) {
         if (puzzReady <= 0) break;
@@ -253,7 +251,7 @@ export class GameState {
       }
     }
 
-    // Seven Cups / GameMenus interlock (before the case statement)
+    // Seven Cups gate
     if (this.pStat[C.GAME_MENUS] >= 95) {
       if (this.pStat[C.SEVEN_CUPS] < 100) {
         this.pStat[C.GAME_MENUS] = 95;
@@ -262,185 +260,152 @@ export class GameState {
       }
     }
 
-    // Game Menus phase progression
+    // Game menu phase progression
     const gmStat = this.pStat[C.GAME_MENUS];
     if (gmStat === 0) {
-      // Phase 0: unlock all Swords, advance to 10
+      // Phase 0: open all Swords, advance to 10
       for (let x = C.SWORDS1; x <= C.SWORDS2; x++) {
         if (this.pStat[x] < 1) this.pStat[x] = 1;
       }
       this._setGameMenuStatus(10);
-    } else if (gmStat === 10) {
-      // Phase 10: mansion tier 1
-      this.updateMansionWindows(1, 0, 1);
-      this.updateForMansionPhase(100, 20);
-    } else if (gmStat === 20 || gmStat === 30) {
-      // Phase 20/30: mansion tier 2 + consolidation
-      this.updateMansionWindows(2, 100, 101);
-      this.updateForMansionPhase(200, 60);
-      // Mansion stat consolidation
+    }
+    if (gmStat === 10) {
+      this._updateMansionWindows(1, 0, 1, puzzlesSolved);
+      this._updateForMansionPhase(100, 20);
+    }
+    // Phase 20: no special action (fall through)
+    if (gmStat === 30) {
+      this._updateMansionWindows(2, 100, 101, puzzlesSolved);
+      this._updateForMansionPhase(200, 60);
+      // Sync delivery progress across mansion puzzles
       let highest = 0;
       for (let x = C.MANSION1; x <= C.MANSION2; x++) {
         if (this.pStat[x] > highest) highest = this.pStat[x];
       }
       if (highest >= 150) {
         for (let x = C.MANSION1; x <= C.MANSION2; x++) {
-          if (this.pStat[x] > 100 && this.pStat[x] < 150) {
-            this.pStat[x] = 150;
-          }
+          if (this.pStat[x] > 100 && this.pStat[x] < 150) this.pStat[x] = 150;
         }
       } else if (highest === 108) {
         for (let x = C.MANSION1; x <= C.MANSION2; x++) {
-          if (this.pStat[x] > 100 && this.pStat[x] < 108) {
-            this.pStat[x] = 108;
-          }
+          if (this.pStat[x] > 100 && this.pStat[x] < 108) this.pStat[x] = 108;
         }
       }
-    } else if (gmStat === 60 || gmStat === 70 || gmStat === 75) {
-      // Phase 60/70/75: HP gating + mansion tier 3
-      if (this.pStat[C.GAME_MENUS] === 70) {
-        if (this.pStat[C.HIGH_PRIESTESS] >= 100) {
-          this.pStat[C.GAME_MENUS] = 75;
-        }
-      }
-      this.updateMansionWindows(3, 200, 201);
-      this.updateForMansionBeam();
-    } else if (gmStat === 80 || gmStat === 90 || gmStat === 95) {
-      // Phase 80/90/95: mansion tier 4
-      this.updateMansionWindows(4, 300, 301);
     }
-    // Phase 100: nothing
+    // Phase 60: no special action
+    if (gmStat === 70 || gmStat === 75) {
+      if (this.pStat[C.GAME_MENUS] === 70 && this.pStat[C.HIGH_PRIESTESS] >= 100) {
+        this.pStat[C.GAME_MENUS] = 75;
+      }
+      this._updateMansionWindows(3, 200, 201, puzzlesSolved);
+      this._updateForMansionBeam();
+    }
+    // Phase 80, 90: no special action
+    if (gmStat === 95) {
+      this._updateMansionWindows(4, 300, 301, puzzlesSolved);
+    }
+    // Phase 100: no special action
 
-    // Ensure prologue is always available
+    // Special gates
     if (this.pStat[C.PROLOGUE] === 0) {
       this.pStat[C.PROLOGUE] = 1;
     }
-
-    // Special rule: patchwork pirate[1] >= 400 → pirate[4] = 700
-    if (this.pStat[PUZZLE_TYPES.patchPirate[0]] >= 400) {
-      this.pStat[PUZZLE_TYPES.patchPirate[3]] = 700;
+    // PatchPirate[1] (puzzle 2) >= 400 → PatchPirate[4] (puzzle 56) = 700
+    if (this.pStat[C.PATCH_PIRATE[1]] >= 400) {
+      this.pStat[C.PATCH_PIRATE[4]] = 700;
     }
-
-    // Propagate tarot completion to paired wager
     this._updateSolvedTarot();
 
-    // Moon's Map gating
+    // Moon's Map gate
     if (this.pStat[C.MOONS_MAP] < 100) {
-      const pr = this.calcMapPiecesRemaining(3);
-      if (pr > 0) {
+      const remaining = this._calcMapPiecesRemaining(3);
+      if (remaining > 0) {
         this.pStat[C.MOONS_MAP] = 2;
         this.pStat[C.MOONS_PUZZLES] = 0;
       }
     }
 
-    // Seven Cups gating
+    // Seven Cups availability
     if (this.pStat[C.GAME_MENUS] < 95) {
       this.pStat[C.SEVEN_CUPS] = 0;
     }
-    if (this.pStat[C.GAME_MENUS] === 95) {
-      if (this.pStat[C.SEVEN_CUPS] > 20) {
-        this.pStat[C.SEVEN_CUPS] = 10;
-      }
+    if (this.pStat[C.GAME_MENUS] === 95 && this.pStat[C.SEVEN_CUPS] > 20) {
+      this.pStat[C.SEVEN_CUPS] = 10;
     }
 
-    // Pre-Finale gating: requires both MoonsPuzzles=700 AND SevenCups=700
+    // Pre-Finale / Finale gate
     if (this.pStat[C.MOONS_PUZZLES] < 700 || this.pStat[C.SEVEN_CUPS] < 700) {
-      if (this.pStat[C.PRE_FINALE] === 0) {
-        this.pStat[C.PRE_FINALE] = 2;
-      }
-      if (this.pStat[C.PRE_FINALE] > 10) {
-        this.pStat[C.PRE_FINALE] = 10;
-      }
+      if (this.pStat[C.PRE_FINALE] === 0) this.pStat[C.PRE_FINALE] = 2;
+      if (this.pStat[C.PRE_FINALE] > 10) this.pStat[C.PRE_FINALE] = 10;
       this.pData[C.PRE_FINALE] = 'empty';
       this.pStat[C.FINALE] = 0;
     } else {
-      if (this.pStat[C.PRE_FINALE] < 100) {
-        this.pStat[C.PRE_FINALE] = 100;
-      }
+      if (this.pStat[C.PRE_FINALE] < 100) this.pStat[C.PRE_FINALE] = 100;
     }
 
-    // Token description update
-    this.setTokenDescription(gameNumber);
-
-    // Build pInfo string
-    const cp = this.currPuzzle;
-    let c3 = cp + ' of 100';
-    let c4 = '';
-    let c5 = '';
-    const c6 = this.pSwords[cp] + ' of 0 Swords';
-    const c7 = this.pWands[cp] + ' of 0 Wands';
-    const c8 = this.pCups[cp] + ' of 0 Cups';
-    const c9 = this.pPentacles[cp] + ' of 0 Pentacles';
-    if (cp >= C.SWORDS1 && cp <= C.SWORDS2) {
-      c4 = (cp - C.SWORDS1 + 1) + ' of ' + (C.SWORDS2 - C.SWORDS1 + 1) + ' SWORDS';
-    } else if (cp >= C.WANDS1 && cp <= C.WANDS2) {
-      c4 = (cp - C.WANDS1 + 1) + ' of ' + (C.WANDS2 - C.WANDS1 + 1) + ' WANDS';
-    } else if (cp >= C.CUPS1 && cp <= C.CUPS2) {
-      c4 = (cp - C.CUPS1 + 1) + ' of ' + (C.CUPS2 - C.CUPS1 + 1) + ' CUPS';
-    } else if (cp >= C.PENTACLES1 && cp <= C.PENTACLES2) {
-      c4 = (cp - C.PENTACLES1 + 1) + ' of ' + (C.PENTACLES2 - C.PENTACLES1 + 1) + ' PENTACLES';
-    } else if (cp >= C.MANSION1 && cp <= C.MANSION2) {
-      c4 = (cp - C.MANSION1 + 1) + ' of ' + (C.MANSION2 - C.MANSION1 + 1) + ' MANSION';
-    }
-    if (this.menuStat[cp] >= 3) {
-      c5 = '--- SOLVED ---';
-    }
-    if (gameNumber !== 0) {
-      const t1 = this.token1[gameNumber] || '';
-      const t2 = this.token2[gameNumber] || '';
-      this.pInfo = [c3, c4, t1, t2, c5, c6, c7, c8, c9].join('\r');
-    }
-
-    // Set pPage for mansion/DEL/HEX/REM puzzles
-    this.updatePages();
+    this._updatePages();
   }
 
-  // Only advance game menu status, never retreat (line 273)
+  // Only advance game menu status, never go backward.
+  // Matches _Set_Game_Menu_Status() in 06-Update-Stats.ls:273-277.
   _setGameMenuStatus(n) {
     if (this.pStat[C.GAME_MENUS] < n) {
       this.pStat[C.GAME_MENUS] = n;
     }
   }
 
-  // Open mansion windows based on puzzles-solved thresholds (line 210)
-  updateMansionWindows(which, closeW, openW) {
+  // When a tarot puzzle's pData reaches 100, auto-complete its paired wager.
+  // Matches _Update_Solved_Tarot() in 06-Update-Stats.ls:279-287.
+  _updateSolvedTarot() {
+    for (let x = 1; x <= 5; x++) {
+      if (parseInt(this.pData[C.TAROT[x]]) === 100) {
+        if (parseInt(this.pData[C.WAGER[x]]) < 100) {
+          this.pData[C.WAGER[x]] = '100';
+        }
+      }
+    }
+  }
+
+  // Open/close mansion puzzles based on total solved count.
+  // Matches updateMansionWindows() in 06-Update-Stats.ls:210-236.
+  _updateMansionWindows(which, closeW, openW, puzzlesSolved) {
     let base;
     switch (which) {
       case 1: base = 17; break;
-      case 2: base = 36; break;
-      case 3: base = 54; break;
-      case 4: base = 70; break;
-      default: return;
+      case 2: base = 17 + 19; break;
+      case 3: base = 17 + 19 + 18; break;
+      case 4: base = 17 + 19 + 18 + 16; break;
     }
-    // Build threshold array: base, base-2, base-4, ... (descending, assigned 7→1)
-    const windowStat = new Array(8); // 1-indexed
+    const windowStat = [];
     for (let x = 7; x >= 1; x--) {
       windowStat[x] = base;
       base -= 2;
     }
     for (let x = 1; x <= 7; x++) {
       const n = C.MANSION1 + (x - 1);
-      if (this.thePuzzlesSolved < windowStat[x]) {
+      if (puzzlesSolved < windowStat[x]) {
         this.pStat[n] = closeW;
-      } else if (this.pStat[n] < openW) {
+        continue;
+      }
+      if (this.pStat[n] < openW) {
         this.pStat[n] = openW;
       }
     }
   }
 
-  // Check if all 7 mansion puzzles are at exactly goal; if so, advance phase (line 238)
-  updateForMansionPhase(goal, stat) {
+  // Check if all 7 mansion puzzles reached a goal → advance game menu status.
+  // Matches updateForMansionPhase() in 06-Update-Stats.ls:238-248.
+  _updateForMansionPhase(goal, stat) {
     let ct = 0;
     for (let x = C.MANSION1; x <= C.MANSION2; x++) {
       if (this.pStat[x] === goal) ct++;
     }
-    if (ct === 7) {
-      this._setGameMenuStatus(stat);
-    }
+    if (ct === 7) this._setGameMenuStatus(stat);
   }
 
-  // HP + mansion beam completion check (line 250)
-  updateForMansionBeam() {
+  // HP-gated mansion beam progression.
+  // Matches updateForMansionBeam() in 06-Update-Stats.ls:250-264.
+  _updateForMansionBeam() {
     if (this.pStat[C.HIGH_PRIESTESS] >= 100) {
       let ct = 0;
       for (let x = C.MANSION1; x <= C.MANSION2; x++) {
@@ -454,12 +419,13 @@ export class GameState {
     }
   }
 
-  // Count unsolved puzzles for map progress (line 505)
-  calcMapPiecesRemaining(byMenuStat) {
-    this.getChunkMenuStat(); // refresh menuStat[]
+  // Count unsolved puzzles for moon's map.
+  // Matches calcMapPiecesRemaining() in 06-Update-Stats.ls:505-519.
+  _calcMapPiecesRemaining(byMenuStat) {
+    const menuStatStr = this.getChunkMenuStat();
     let t = 0;
     for (let x = C.SWORDS1; x <= C.PENTACLES2; x++) {
-      if (this.menuStat[x] < byMenuStat) t++;
+      if (parseInt(menuStatStr[x - 1]) < byMenuStat) t++;
     }
     for (let x = C.MANSION1; x <= C.MANSION2; x++) {
       if (this.pStat[x] < 400) t++;
@@ -467,148 +433,27 @@ export class GameState {
     return t;
   }
 
-  // Binary string of solved status for map display (line 521)
-  tallyMapPieces() {
-    let s = '';
-    for (let x = C.SWORDS1; x <= C.PENTACLES2; x++) {
-      s += this.pStat[x] >= 100 ? '1' : '0';
-    }
-    for (let x = C.MANSION1; x <= C.MANSION2; x++) {
-      s += this.pStat[x] >= 400 ? '1' : '0';
-    }
-    return s;
-  }
-
-  // Propagate tarot completion to paired wager via pData (line 279).
-  // In Director, solving a tarot sets its pData to 100, which then
-  // propagates to the paired wager's pData.
-  _updateSolvedTarot() {
-    for (let x = 0; x < 5; x++) {
-      const tarotIdx = PUZZLE_TYPES.tarot[x];
-      const wagerIdx = PUZZLE_TYPES.wager[x];
-      if (parseInt(this.pData[tarotIdx], 10) === 100) {
-        const wagerData = parseInt(this.pData[wagerIdx], 10);
-        if (isNaN(wagerData) || wagerData < 100) {
-          this.pData[wagerIdx] = '100';
-        }
-      }
-    }
-  }
-
-  // Compute dynamic token descriptions based on progress (line 543)
-  setTokenDescription(gn) {
-    if (!gn) return;
-    this.getChunkMenuStat(); // refresh menuStat[]
-
-    let newGameStat = 0;
-    let virgin = 0;
-    let solved = 0;
-
-    for (let x = C.SWORDS1; x <= C.PENTACLES2; x++) {
-      if (this.menuStat[x] >= 2) virgin++;
-      if (this.menuStat[x] >= 3) solved++;
-    }
-    for (let x = C.MANSION1; x <= C.MANSION2; x++) {
-      if (this.menuStat[x] >= 2) virgin++;
-      if (this.pStat[x] >= 400) solved++;
-    }
-    if (this.menuStat[C.MOONS_MAP] >= 2) virgin++;
-
-    let c1, c2;
-    if (solved === 0) {
-      if (virgin === 0) newGameStat = 1;
-      c1 = '77 Bewitchments remain';
-      c2 = "and the Moon's Map is a mystery.";
-    } else if (solved < 77) {
-      c1 = (solved === 76)
-        ? '1 Bewitchment remains'
-        : (77 - solved) + ' Bewitchments remain';
-      c2 = "and the Moon's Map is muddled.";
-    } else {
-      // All 77 bewitchments solved — check endgame milestones
-      if (this.menuStat[C.MOONS_MAP] < 3) {
-        c1 = 'All the pieces are gathered';
-        c2 = "yet the Moon's Map is not whole.";
-      } else if (this.menuStat[C.MOONS_PUZZLES] < 9) {
-        c1 = "The Moon's Map is whole";
-        c2 = 'yet Spirits and Innominates await.';
-      } else if (this.menuStat[C.SEVEN_CUPS] < 9) {
-        c1 = "The Moon's Map is complete";
-        c2 = 'yet the Seven Cups are not restored.';
-      } else if (this.menuStat[C.PRE_FINALE] < 9) {
-        c1 = "The Moon's Map is complete";
-        c2 = 'and the Finale awaits.';
-      } else if (this.menuStat[C.FINALE] < 9) {
-        c1 = "The Moon's Map is complete.";
-        c2 = 'The Book of Thoth remains hidden.';
-      } else {
-        c1 = 'The Fool has earned the Gift of Prophecy.';
-        c2 = 'The Book of Thoth is entombed once again.';
-      }
-    }
-
-    this.token1[gn] = c1;
-    this.token2[gn] = c2;
-    this.token3[gn] = newGameStat;
-  }
-
-  // Set pPage values for mansion/DEL/HEX/REM puzzles (line 619)
-  updatePages() {
-    for (let x = PUZZLE_TYPES.DEL[0]; x <= PUZZLE_TYPES.DEL[6]; x++) {
-      this.pPage[x] = 2;
-    }
-    for (let x = PUZZLE_TYPES.HEX[0]; x <= PUZZLE_TYPES.HEX[6]; x++) {
-      this.pPage[x] = 4;
-    }
-    for (let x = PUZZLE_TYPES.REM[0]; x <= PUZZLE_TYPES.REM[6]; x++) {
-      this.pPage[x] = 6;
-    }
+  // Set pPage values for mansion-tier puzzles.
+  // Matches updatePages() in 06-Update-Stats.ls:619-660.
+  _updatePages() {
+    for (let x = C.DEL1; x <= C.DEL7; x++) this.pPage[x] = 2;
+    for (let x = C.HEX1; x <= C.HEX7; x++) this.pPage[x] = 4;
+    for (let x = C.REM1; x <= C.REM7; x++) this.pPage[x] = 6;
     for (let x = C.MANSION1; x <= C.MANSION2; x++) {
       const s = this.pStat[x];
       if (s < 100)      { this.pPage[x] = 1; continue; }
-      if (s === 100)    { this.pPage[x] = 2; continue; }
-      if (s < 200)      { this.pPage[x] = 3; continue; }
-      if (s === 200)    { this.pPage[x] = 4; continue; }
-      if (s < 300)      { this.pPage[x] = 5; continue; }
-      if (s === 300)    { this.pPage[x] = 6; continue; }
-      if (s < 400)      { this.pPage[x] = 7; continue; }
+      if (s === 100)     { this.pPage[x] = 2; continue; }
+      if (s < 200)       { this.pPage[x] = 3; continue; }
+      if (s === 200)     { this.pPage[x] = 4; continue; }
+      if (s < 300)       { this.pPage[x] = 5; continue; }
+      if (s === 300)     { this.pPage[x] = 6; continue; }
+      if (s < 400)       { this.pPage[x] = 7; continue; }
       this.pPage[x] = 8;
     }
   }
 
-  // -----------------------------------------------------------------------
-  // Launch Logic
-  // -----------------------------------------------------------------------
-
-  // Redirect certain puzzle launches (line 289 of 06-Update-Stats.ls)
-  exceptionPuzzleLaunch(n, isSaving) {
-    if (n === C.FINALE) {
-      if (this.lastPuzzle === C.FINALE) n = C.PRE_FINALE;
-    }
-    if (n === C.TOKENS) {
-      if (this.lastPuzzle !== C.TOKENS) {
-        n = this.lastPuzzle;
-      } else {
-        n = C.GAME_MENUS;
-      }
-    }
-    if (n < 1 || n > C.PUZZLE_TOTAL) {
-      n = C.GAME_MENUS;
-    }
-    if (isSaving) {
-      if (n === C.PROLOGUE) n = C.GAME_MENUS;
-      if (n === C.FINALE) n = C.PRE_FINALE;
-    }
-    if (n === C.PRE_HP && this.pStat[C.PRE_HP] === 100) {
-      n = C.HIGH_PRIESTESS;
-    }
-    if (n === C.HIGH_PRIESTESS && this.pStat[C.HIGH_PRIESTESS] === 100) {
-      n = C.MOON_MORPH;
-    }
-    return n;
-  }
-
-  // Get the effective frameId for mansion puzzles based on game menu phase
+  // Return mansion frame ID based on game menu progression phase.
+  // Matches launchMansionPuzzle() in 06-Update-Stats.ls:322-341.
   getMansionFrameId() {
     const gmStat = this.pStat[C.GAME_MENUS];
     if (gmStat <= 20) return 'passwords';
@@ -617,42 +462,33 @@ export class GameState {
     return 'connects';
   }
 
-  // -----------------------------------------------------------------------
-  // SWF State Sync
-  // -----------------------------------------------------------------------
-
-  // Sync completion data from Game Menus SWF back to game state (line 466)
-  getMenuStatsFromFlash(updateString) {
-    if (!updateString || updateString.length < 100) return;
-    // Pad to 128 if only 100 chars (Director pads with '3')
-    let s = updateString;
+  // Sync completion data from Game Menus SWF back into pStat.
+  // Matches getMenuStatsFromFlash() in 06-Update-Stats.ls:466-503.
+  getMenuStatsFromFlash(menuUpdateStr) {
+    if (!menuUpdateStr || menuUpdateStr.length < 100) return;
+    let s = menuUpdateStr;
+    // Pad to 128 chars if only 100 (older format)
     if (s.length === 100) {
       for (let x = 101; x <= C.PUZZLE_TOTAL; x++) s += '3';
     }
     const chunkMenuStat = this.getChunkMenuStat();
-    if (s === chunkMenuStat || s.substring(0, 3) === 'NaN' || !chunkMenuStat) return;
-
-    for (let x = 0; x < C.PUZZLE_TOTAL; x++) {
-      const m1 = parseInt(chunkMenuStat[x], 10);
-      const m2 = parseInt(s[x], 10);
+    if (s === chunkMenuStat || s.substring(0, 3) === 'NaN' || chunkMenuStat === '') return;
+    for (let x = 1; x <= C.PUZZLE_TOTAL; x++) {
+      const m1 = parseInt(chunkMenuStat[x - 1]);
+      const m2 = parseInt(s[x - 1]);
       if (m2 > m1) {
-        const puzzIdx = x + 1; // chunkMenuStat is 0-indexed, puzzles are 1-indexed
         switch (m2) {
-          case 3: this.pStat[puzzIdx] = 100; break;
-          case 4: this.pStat[puzzIdx] = 200; break;
-          case 5: this.pStat[puzzIdx] = 300; break;
-          case 6: this.pStat[puzzIdx] = 400; break;
-          case 7: this.pStat[puzzIdx] = 500; break;
-          case 8: this.pStat[puzzIdx] = 600; break;
-          case 9: this.pStat[puzzIdx] = 700; break;
+          case 3: this.pStat[x] = 100; break;
+          case 4: this.pStat[x] = 200; break;
+          case 5: this.pStat[x] = 300; break;
+          case 6: this.pStat[x] = 400; break;
+          case 7: this.pStat[x] = 500; break;
+          case 8: this.pStat[x] = 600; break;
+          case 9: this.pStat[x] = 700; break;
         }
       }
     }
   }
-
-  // -----------------------------------------------------------------------
-  // Dev Tools
-  // -----------------------------------------------------------------------
 
   markSolved(puzzleIndex) {
     this.pStat[puzzleIndex] = 100;
@@ -665,10 +501,6 @@ export class GameState {
     this.save();
   }
 
-  // -----------------------------------------------------------------------
-  // Persistence
-  // -----------------------------------------------------------------------
-
   save() {
     const data = {
       currGame: this.currGame,
@@ -677,17 +509,12 @@ export class GameState {
       pStat: this.pStat,
       pData: this.pData,
       pPage: this.pPage,
-      pDone: this.pDone,
       pSwords: this.pSwords,
       pWands: this.pWands,
       pCups: this.pCups,
       pPentacles: this.pPentacles,
-      pMenu: this.pMenu,
+      pDone: this.pDone,
       csWagerTarot: this.csWagerTarot,
-      pWordStat63: this.pWordStat63,
-      token1: this.token1,
-      token2: this.token2,
-      token3: this.token3,
       windowCode: this.windowCode || null,
     };
     try {
@@ -708,17 +535,12 @@ export class GameState {
       if (data.pStat) this.pStat = data.pStat;
       if (data.pData) this.pData = data.pData;
       if (data.pPage) this.pPage = data.pPage;
-      if (data.pDone) this.pDone = data.pDone;
       if (data.pSwords) this.pSwords = data.pSwords;
       if (data.pWands) this.pWands = data.pWands;
       if (data.pCups) this.pCups = data.pCups;
       if (data.pPentacles) this.pPentacles = data.pPentacles;
-      if (data.pMenu) this.pMenu = data.pMenu;
+      if (data.pDone) this.pDone = data.pDone;
       if (data.csWagerTarot) this.csWagerTarot = data.csWagerTarot;
-      if (data.pWordStat63) this.pWordStat63 = data.pWordStat63;
-      if (data.token1) this.token1 = data.token1;
-      if (data.token2) this.token2 = data.token2;
-      if (data.token3) this.token3 = data.token3;
       if (data.windowCode) this.windowCode = data.windowCode;
       return true;
     } catch (e) {

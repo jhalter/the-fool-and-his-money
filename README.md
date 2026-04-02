@@ -23,7 +23,8 @@ No build step — vanilla ES6 modules loaded directly by the browser.
 
 ```
 poc/                        Web player
-  index.html                  800x600 game area + sidebar navigation
+  index.html                  Game mode (800x600 game area)
+  debug.html                  Debug mode (sidebar navigation for testing)
   package.json                @ruffle-rs/ruffle + serve
   src/
     orchestrator.js              Navigation, polling, request dispatch

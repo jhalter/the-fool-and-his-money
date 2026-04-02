@@ -19,7 +19,8 @@ export class Orchestrator {
     this._ctcHandler = null;
   }
 
-  async init() {
+  async init(opts = {}) {
+    this.gameMode = opts.gameMode || false;
     this.loader = new SwfLoader(
       document.getElementById('player-container'),
       document.getElementById('status')
@@ -33,7 +34,7 @@ export class Orchestrator {
     this.navEl = document.getElementById('nav-list');
 
     this.state.load();
-    this.buildNav();
+    if (this.navEl) this.buildNav();
     this.bindControls();
 
     // Load the overlay SWFs
@@ -57,7 +58,7 @@ export class Orchestrator {
     }, 500);
 
     // Load last puzzle or default to Tokens hub (the game's main screen)
-    const startPuzzle = this.state.currPuzzle || C.TOKENS;
+    const startPuzzle = this.gameMode ? C.TOKENS : (this.state.currPuzzle || C.TOKENS);
     this.launchPuzzle(startPuzzle);
   }
 
@@ -115,6 +116,7 @@ export class Orchestrator {
   }
 
   refreshNav() {
+    if (!this.navEl) return;
     const items = this.navEl.querySelectorAll('.nav-item');
     for (const item of items) {
       const id = parseInt(item.dataset.puzzleId);
@@ -136,6 +138,15 @@ export class Orchestrator {
 
     this.stopPolling();
     this.exitClickToContinue();
+
+    // Save current puzzle state before unloading, mirroring Director's
+    // _Set_Save_Mode state machine: send gFlashCommand=4, wait for the
+    // SWF to serialize into gData, then read it.
+    // Director skips this for Tokens, HelpTokens, and Prologue.
+    const cp = this.state.currPuzzle;
+    if (cp && cp !== C.TOKENS && cp !== C.HELP_TOKENS && cp !== C.PROLOGUE) {
+      await this.saveCurrentAsync();
+    }
 
     // Clean up any running Prologue controller
     if (this.prologueController) {
@@ -363,7 +374,7 @@ export class Orchestrator {
           break;
         }
         case 17: // save current puzzle
-          this.saveCurrent();
+          this.saveCurrentAsync();
           break;
         case 18: // go to Pre-High Priestess
           this.launchPuzzle(C.PRE_HP);
@@ -411,7 +422,7 @@ export class Orchestrator {
             const n = parseInt(parts[i], 10);
             i++;
             if (n >= 1 && n <= 5) {
-              this.state.csWagerTarot[n] = PUZZLE_TYPES.tarot[n - 1];
+              this.state.csWagerTarot[n] = C.TAROT[n];
               this.launchPuzzle(this.state.csWagerTarot[n]);
             }
           }
@@ -423,7 +434,7 @@ export class Orchestrator {
             i++;
             if (n >= 1 && n <= 5) {
               this.state._updateSolvedTarot();
-              this.state.csWagerTarot[n] = PUZZLE_TYPES.wager[n - 1];
+              this.state.csWagerTarot[n] = C.WAGER[n];
               this.launchPuzzle(this.state.csWagerTarot[n]);
             }
           }
@@ -484,6 +495,29 @@ export class Orchestrator {
         // Acknowledge by clearing command
         this.loader.setVar('gFlashCommand', '0');
     }
+  }
+
+  // Send gFlashCommand=4, wait for the SWF to serialize state into gData,
+  // then call saveCurrent(). Mirrors Director's pollSaveStageStatus state machine.
+  saveCurrentAsync() {
+    return new Promise((resolve) => {
+      this.loader.setVar('gFlashCommand', '4');
+      let attempts = 0;
+      const maxAttempts = 30; // 1.5s at 50ms
+      const poll = () => {
+        attempts++;
+        const stages = this.loader.getVar('gSaveStages');
+        if (stages === '4' || stages === '' || stages === undefined || attempts >= maxAttempts) {
+          this.loader.setVar('gSaveStages', '0');
+          this.loader.setVar('gFlashCommand', '0');
+          this.saveCurrent();
+          resolve();
+          return;
+        }
+        setTimeout(poll, 50);
+      };
+      setTimeout(poll, 50);
+    });
   }
 
   saveCurrent() {
@@ -583,13 +617,16 @@ export class Orchestrator {
   }
 
   bindControls() {
-    document.getElementById('btn-reset').addEventListener('click', () => {
-      if (confirm('Reset all game progress?')) {
-        this.state.reset();
-        this.buildNav();
-        this.launchPuzzle(C.TOKENS);
-      }
-    });
+    const btnReset = document.getElementById('btn-reset');
+    if (btnReset) {
+      btnReset.addEventListener('click', () => {
+        if (confirm('Reset all game progress?')) {
+          this.state.reset();
+          this.buildNav();
+          this.launchPuzzle(C.TOKENS);
+        }
+      });
+    }
 
     // Menu bar click handling — the menu SWF is a passive display,
     // so we detect clicks in JS based on x-position.

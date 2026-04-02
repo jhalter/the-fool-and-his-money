@@ -8,7 +8,8 @@ rendering SWFs via [Ruffle](https://ruffle.rs) (Rust/WASM Flash emulator).
 ## Directory Layout
 
     poc/                      Web player (the thing we're building)
-      index.html                Entry point — 800x600 game area + sidebar nav
+      index.html                Game mode entry point (/ route)
+      debug.html                Debug mode with sidebar nav (/debug route)
       package.json              @ruffle-rs/ruffle + serve
       src/
         orchestrator.js           Main coordinator: navigation, polling, request dispatch
