@@ -241,6 +241,11 @@ export const C = {
   DEL1: 101, DEL7: 107,
   HEX1: 108, HEX7: 114,
   REM1: 115, REM7: 121,
+  // Mansion tier index arrays: mansion index 1-7 → puzzle index (from Lingo globals)
+  MANSION_TIER: [0, 73, 74, 75, 76, 77, 78, 79],
+  DEL_TIER: [0, 101, 102, 103, 104, 105, 106, 107],
+  HEX_TIER: [0, 108, 109, 110, 111, 112, 113, 114],
+  REM_TIER: [0, 115, 116, 117, 118, 119, 120, 121],
 };
 
 // Section ranges for the navigation UI

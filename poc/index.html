@@ -25,7 +25,7 @@
         #game-area {
             width: 800px;
             height: 600px;
-            border: 2px solid #c9a84c;
+            outline: 2px solid #c9a84c;
             position: relative;
             overflow: hidden;
         }
@@ -44,6 +44,7 @@
             position: absolute;
             left: 0; top: 0;
             width: 24px; height: 260px;
+            cursor: pointer;
         }
         #scroll-frame {
             position: absolute;
@@ -54,6 +55,7 @@
             position: absolute;
             right: 0; top: 0;
             width: 24px; height: 260px;
+            cursor: pointer;
         }
         #help-player {
             position: absolute;
@@ -63,9 +65,19 @@
             z-index: 10;
         }
         #menu-container {
+            position: relative;
             width: 800px;
             height: 20px;
             background: #000;
+        }
+        #menu-highlight {
+            position: absolute;
+            top: 0;
+            height: 100%;
+            background: rgba(100, 180, 255, 0.3);
+            pointer-events: none;
+            z-index: 1;
+            display: none;
         }
         #status {
             color: #888;

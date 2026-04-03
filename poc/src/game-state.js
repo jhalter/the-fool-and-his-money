@@ -158,6 +158,135 @@ export class GameState {
     return result;
   }
 
+  // Navigate to the next/previous available puzzle via arrow click.
+  // Ports launch_InitList() + activity_NextKey(direction, "999") from 11-Arrows.ls.
+  // direction: +1 (right/forward) or -1 (left/backward). Returns puzzle index or 0.
+  getNextArrowPuzzle(direction) {
+    const gmStat = this.pStat[C.GAME_MENUS];
+    const available = [];
+
+    // --- launch_InitList ---
+    // Swords
+    for (let x = C.SWORDS1; x <= C.SWORDS2; x++) available.push(x);
+
+    // Delivery tier (launch_Delivery)
+    for (let n = 1; n <= 7; n++) {
+      const mansion = C.MANSION1 + (n - 1);
+      if (gmStat <= 20) {
+        if (this.pStat[mansion] >= 1 && this.pStat[mansion] <= 100) {
+          available.push(mansion);
+        }
+      } else {
+        this.pStat[C.DEL_TIER[n]] = 100; // calcSolvedMansionStats side effect
+        available.push(C.DEL_TIER[n]);
+      }
+    }
+
+    // Wands
+    for (let x = C.WANDS1; x <= C.WANDS2; x++) available.push(x);
+
+    // Hex tier (launch_Hex)
+    if (gmStat >= 30) {
+      for (let n = 1; n <= 7; n++) {
+        const mansion = C.MANSION1 + (n - 1);
+        if (gmStat <= 60) {
+          if (this.pStat[mansion] >= 101 && this.pStat[mansion] <= 200) {
+            available.push(mansion);
+          }
+        } else {
+          this.pStat[C.HEX_TIER[n]] = 100;
+          available.push(C.HEX_TIER[n]);
+        }
+      }
+    }
+
+    // Cups
+    for (let x = C.CUPS1; x <= C.CUPS2; x++) available.push(x);
+
+    // Remainder tier (launch_Remainder)
+    if (gmStat >= 70) {
+      for (let n = 1; n <= 7; n++) {
+        const mansion = C.MANSION1 + (n - 1);
+        if (gmStat <= 90) {
+          if (this.pStat[mansion] >= 201 && this.pStat[mansion] <= 300) {
+            available.push(mansion);
+          }
+        } else {
+          this.pStat[C.REM_TIER[n]] = 100;
+          available.push(C.REM_TIER[n]);
+        }
+      }
+    }
+
+    // Pentacles
+    for (let x = C.PENTACLES1; x <= C.PENTACLES2; x++) available.push(x);
+
+    // Connection tier (launch_Connection)
+    if (gmStat >= 95) {
+      for (let n = 1; n <= 7; n++) {
+        const mansion = C.MANSION1 + (n - 1);
+        if (this.pStat[mansion] >= 301) {
+          available.push(mansion);
+        }
+      }
+    }
+
+    // Special puzzles
+    if (gmStat === 70) available.push(C.HIGH_PRIESTESS);
+    if (gmStat >= 95) available.push(C.SEVEN_CUPS);
+    if (this.pStat[C.MOONS_MAP] < 100) {
+      available.push(C.MOONS_MAP);
+    } else {
+      available.push(C.MOONS_PUZZLES);
+    }
+    available.push(C.PRE_FINALE);
+    available.push(C.GAME_MENUS);
+
+    // Compute menuStat after list building (captures pStat side effects)
+    const menuStat = this.getChunkMenuStat();
+
+    // --- activity_NextKey(direction, "999") ---
+    // Map tarot puzzles to wager equivalents
+    let cp = this.currPuzzle;
+    for (let x = 1; x <= 5; x++) {
+      if (cp === C.TAROT[x]) { cp = C.WAGER[x]; break; }
+    }
+
+    // Find current puzzle in available list
+    let calcIdx = available.indexOf(cp);
+    if (calcIdx === -1) return 0;
+
+    // Walk in direction, wrapping around
+    const len = available.length;
+    for (let i = 0; i < len; i++) {
+      calcIdx += direction;
+      if (calcIdx < 0) calcIdx = len - 1;
+      if (calcIdx >= len) calcIdx = 0;
+
+      const test = available[calcIdx];
+      if (test === cp) return 0; // wrapped back to start
+
+      // "999" mode: skip special hub puzzles
+      if (test === C.HIGH_PRIESTESS || test === C.SEVEN_CUPS ||
+          test === C.MOONS_MAP || test === C.MOONS_PUZZLES || test === C.GAME_MENUS) {
+        continue;
+      }
+
+      // Accept if menuStat > 0 (puzzle has been visited/available)
+      if (parseInt(menuStat[test - 1]) > 0) {
+        // Wager puzzle: reset csWagerTarot pairing
+        for (let x = 1; x <= 5; x++) {
+          if (test === C.WAGER[x]) {
+            this.csWagerTarot[x] = C.WAGER[x];
+            return test;
+          }
+        }
+        return test;
+      }
+    }
+    return 0;
+  }
+
   // Build pipe-delimited string of the first 72 puzzle menuNames,
   // matching chunkMenuName from 07-Data.ls.
   getChunkMenuName() {

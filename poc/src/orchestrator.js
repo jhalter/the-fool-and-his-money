@@ -6,6 +6,19 @@ import { GameState } from './game-state.js';
 import { SwfLoader, OverlayLoader } from './swf-loader.js';
 import { PrologueController } from './prologue-controller.js';
 
+// Menu bar click/hover rectangles from Lingo misc_MakeRect calls in 01-Initialization.ls.
+// Coordinates are in the 800px-wide menu SWF coordinate space.
+const MENU_RECTS = [
+  { x1: 57,  x2: 131, action: 'tokens',  index: 1 },
+  { x1: 163, x2: 228, action: 'menus',   index: 2 },
+  { x1: 260, x2: 301, action: 'map',     index: 3 },
+  { x1: 338, x2: 387, action: 'save',    index: 4 },
+  { x1: 423, x2: 471, action: 'help',    index: 5 },
+  { x1: 508, x2: 580, action: 'reset',   index: 6 },
+  { x1: 611, x2: 664, action: 'undo',    index: 7 },
+  { x1: 696, x2: 739, action: 'quit',    index: 8 },
+];
+
 export class Orchestrator {
   constructor() {
     this.state = new GameState();
@@ -39,15 +52,25 @@ export class Orchestrator {
 
     // Load the overlay SWFs
     this.scrollFrame = new OverlayLoader(document.getElementById('scroll-frame'));
-    const scrollLeft = new OverlayLoader(document.getElementById('scroll-left'));
-    const scrollRight = new OverlayLoader(document.getElementById('scroll-right'));
+    this.scrollLeft = new OverlayLoader(document.getElementById('scroll-left'));
+    this.scrollRight = new OverlayLoader(document.getElementById('scroll-right'));
     await Promise.all([
       this.menuLoader.load('chunk_05_CDGF_0x00a7c7a8_swf_010_v8.swf'),
       this.helpLoader.load('chunk_05_CDGF_0x00a7c7a8_swf_011_v8.swf', { wmode: 'transparent' }),
-      scrollLeft.load('chunk_05_CDGF_0x00a7c7a8_swf_008_v8.swf'),
+      this.scrollLeft.load('chunk_05_CDGF_0x00a7c7a8_swf_008_v8.swf'),
       this.scrollFrame.load('chunk_05_CDGF_0x00a7c7a8_swf_012_v8.swf'),
-      scrollRight.load('chunk_05_CDGF_0x00a7c7a8_swf_009_v8.swf'),
+      this.scrollRight.load('chunk_05_CDGF_0x00a7c7a8_swf_009_v8.swf'),
     ]);
+
+    // Arrow click handlers — navigate prev/next puzzle (mirrors launch_GameKey in 11-Arrows.ls)
+    document.getElementById('scroll-left').addEventListener('click', () => this.handleArrowClick(-1));
+    document.getElementById('scroll-right').addEventListener('click', () => this.handleArrowClick(1));
+
+    // Arrow hover feedback — frame 1=normal, 2=hover (matching arrow_F_Show/arrow_R_Show)
+    for (const [id, loader] of [['scroll-left', this.scrollLeft], ['scroll-right', this.scrollRight]]) {
+      document.getElementById(id).addEventListener('mouseenter', () => loader.gotoFrame(2));
+      document.getElementById(id).addEventListener('mouseleave', () => loader.gotoFrame(1));
+    }
     // Hide menu text overlays after init
     setTimeout(() => {
       this.menuLoader.setVar('saveText._visible', 'false');
@@ -56,6 +79,11 @@ export class Orchestrator {
       this.menuLoader.setVar('clickBG._visible', 'false');
       this.menuLoader.setVar('clickBG-Full._visible', 'false');
     }, 500);
+
+    // Create hover highlight overlay for menu bar
+    this.menuHighlight = document.createElement('div');
+    this.menuHighlight.id = 'menu-highlight';
+    document.getElementById('menu-container').appendChild(this.menuHighlight);
 
     // Load last puzzle or default to Tokens hub (the game's main screen)
     const startPuzzle = this.gameMode ? C.TOKENS : (this.state.currPuzzle || C.TOKENS);
@@ -184,6 +212,8 @@ export class Orchestrator {
           this.loader.setVar('gFlashCommand', '666');
         }, 300);
       }
+
+
 
       // Prologue needs its own two-SWF controller instead of normal polling
       if (puzzleIndex === C.PROLOGUE) {
@@ -582,6 +612,7 @@ export class Orchestrator {
   }
 
   applyLayout(stageHeight) {
+    const gameArea = document.getElementById('game-area');
     const playerContainer = document.getElementById('player-container');
     const helpContainer = document.getElementById('help-container');
     const menuContainer = document.getElementById('menu-container');
@@ -595,15 +626,17 @@ export class Orchestrator {
       helpContainer.style.display = 'none';
       menuContainer.style.display = 'none';
       helpPlayer.style.display = 'none';
+      gameArea.style.height = '600px';
     } else if (stageHeight > 320) {
-      // Special mode (580px SWFs): menu visible, help overlays puzzle when shown
-      playerContainer.style.height = '580px';
+      // Special mode (580px+ SWFs): menu visible, help overlays puzzle when shown
+      playerContainer.style.height = stageHeight + 'px';
       helpContainer.style.display = 'none';
       menuContainer.style.display = 'block';
       helpPlayer.style.display = 'none';
       // Position help-player for overlay mode (over bottom of puzzle area)
       helpPlayer.style.top = '364px';
       helpPlayer.style.left = '100px';
+      gameArea.style.height = (stageHeight + 20) + 'px';
     } else {
       // Regular puzzles (320px SWFs): menu visible, help area visible, arrows active
       playerContainer.style.height = '320px';
@@ -613,6 +646,7 @@ export class Orchestrator {
       // Position help-player within the help-container zone
       helpPlayer.style.top = '342px';
       helpPlayer.style.left = '124px';
+      gameArea.style.height = '600px';
     }
   }
 
@@ -633,26 +667,45 @@ export class Orchestrator {
     // Menu rects from Lingo misc_MakeRect calls in 01-Initialization.ls:
     // Items are within y=571-599 in Director coords, but our menu container
     // is the full menu SWF (800x20), so any click in it counts.
-    const menuRects = [
-      { x1: 57,  x2: 131, action: 'tokens' },   // 1: Tokens
-      { x1: 163, x2: 228, action: 'menus' },     // 2: Menus
-      { x1: 260, x2: 301, action: 'map' },       // 3: Map
-      { x1: 338, x2: 387, action: 'save' },      // 4: Save
-      { x1: 423, x2: 471, action: 'help' },      // 5: Help
-      { x1: 508, x2: 580, action: 'reset' },     // 6: Reset
-      { x1: 611, x2: 664, action: 'undo' },      // 7: Undo
-      { x1: 696, x2: 739, action: 'quit' },      // 8: Quit
-    ];
+    const menuContainer = document.getElementById('menu-container');
 
-    document.getElementById('menu-container').addEventListener('click', (e) => {
+    menuContainer.addEventListener('click', (e) => {
       const rect = e.currentTarget.getBoundingClientRect();
       const x = (e.clientX - rect.left) / rect.width * 800;
-      for (const item of menuRects) {
+      for (const item of MENU_RECTS) {
         if (x >= item.x1 && x <= item.x2) {
           this.handleMenuClick(item.action);
           return;
         }
       }
+    });
+
+    // Menu hover highlighting — mirrors Director's menu_MouseOver() which
+    // tracked cursor position and called menu_Display(N) to show highlighted
+    // frames. Since those frames were Director sprite-level (not Flash timeline),
+    // we use a CSS overlay instead.
+    menuContainer.addEventListener('mousemove', (e) => {
+      const rect = e.currentTarget.getBoundingClientRect();
+      const x = (e.clientX - rect.left) / rect.width * 800;
+      const menuKey = this.state.pMenu[this.state.currPuzzle] || '12345--8';
+      for (const item of MENU_RECTS) {
+        if (x >= item.x1 && x <= item.x2) {
+          // Skip disabled items (marked "-" in pMenu), but always allow reset/undo
+          if (item.index !== 6 && item.index !== 7 && menuKey[item.index - 1] === '-') {
+            this.menuHighlight.style.display = 'none';
+            return;
+          }
+          this.menuHighlight.style.left = (item.x1 / 800 * 100) + '%';
+          this.menuHighlight.style.width = ((item.x2 - item.x1) / 800 * 100) + '%';
+          this.menuHighlight.style.display = 'block';
+          return;
+        }
+      }
+      this.menuHighlight.style.display = 'none';
+    });
+
+    menuContainer.addEventListener('mouseleave', () => {
+      this.menuHighlight.style.display = 'none';
     });
 
     // Keyboard shortcuts — mirrors Director's puzz_KeyDown in 23-Puzzles.ls.
@@ -691,7 +744,13 @@ export class Orchestrator {
         this.launchPuzzle(C.MOONS_MAP);
         break;
       case 'save':
+        this.menuLoader.setVar('saveText._visible', 'true');
+        this.menuLoader.setVar('saveBG._visible', 'true');
         this.saveCurrent();
+        setTimeout(() => {
+          this.menuLoader.setVar('saveText._visible', 'false');
+          this.menuLoader.setVar('saveBG._visible', 'false');
+        }, 800);
         break;
       case 'help': {
         if (this.currentStageHeight >= 600) break; // no help in full-screen mode
@@ -709,6 +768,21 @@ export class Orchestrator {
       case 'quit':
         this.launchPuzzle(C.TOKENS);
         break;
+    }
+  }
+
+  handleArrowClick(direction) {
+    // Guards matching launch_GameKey exclusions in 11-Arrows.ls / 23-Puzzles.ls
+    if (this.currentStageHeight !== 320) return;
+    if (this.clickToContinue) return;
+    const cp = this.state.currPuzzle;
+    if (cp === C.PRE_HP || cp === C.END_HP || cp === C.HELP_TOKENS) return;
+    const menuKey = this.state.pMenu[cp] || '12345--8';
+    if (menuKey === '--------') return;
+
+    const target = this.state.getNextArrowPuzzle(direction);
+    if (target > 0 && target !== cp) {
+      this.launchPuzzle(target);
     }
   }
 }
