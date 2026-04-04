@@ -1,3 +1,4 @@
+.claude/
 TFaHM-Mac/
 extracted_chunks/projector_APPL.rifx
 node_modules/
@@ -5,6 +6,9 @@ node_modules/
 
 # Generated patched SWFs (rebuild via scripts/patch_swfs.sh)
 poc/swf/
+
+# GitHub Pages build output (deployed via gh-pages branch)
+docs/
 
 # Unpatched SWF copies in poc/ root (originals live in extracted_media/)
 poc/*.swf
